@@ -23,6 +23,7 @@ event-certificate-generator/
         Sidebar.jsx
         StatCard.jsx
       data/
+        posterData.js
         templateData.js
       services/
         certificateApi.js
@@ -144,6 +145,18 @@ Expected response:
 - Certificate ID based PDF file naming
 - Improved certificate print/export quality
 
+## Step 6 Completed Features
+
+- 24 certificate templates
+- 12 poster design templates
+- Template gallery tabs
+- Template search
+- Category filter
+- Dynamic certificate design styling
+- Improved dashboard stats
+- Updated categories page
+- PDF support for all certificate templates
+
 ## GitHub Upload Instructions
 
 ```bash
@@ -157,10 +170,10 @@ git push -u origin main
 
 ## Next Planned Features
 
-- Add 20+ certificate templates
-- Improve template gallery
-- Add template categories
-- Add poster-style designs
-- Add better visual designs for different event types
-- Category based certificate generation
+- Bulk certificate generation
+- Upload student list manually or using CSV
+- Generate multiple certificates from list
+- Download multiple certificates
+- Same category/template for all students
+- Different category/template support later
 - Bulk certificate generation from student list

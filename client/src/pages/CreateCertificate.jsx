@@ -18,7 +18,22 @@ const initialFormData = {
   templateStyle: ""
 };
 
-const certificateCategories = ["Seminar", "Conference", "FDP", "Expert Talk", "Workshop", "Webinar"];
+const certificateCategories = [
+  "Seminar",
+  "Conference",
+  "FDP",
+  "Expert Talk",
+  "Workshop",
+  "Webinar",
+  "Hackathon",
+  "Training",
+  "Competition",
+  "Appreciation",
+  "Academic",
+  "Cultural",
+  "Sports",
+  "Technical"
+];
 
 function CreateCertificate() {
   const [formData, setFormData] = useState(initialFormData);
@@ -223,6 +238,9 @@ function CreateCertificate() {
                 </option>
               ))}
             </select>
+            <span className="rounded-md bg-blue-50 px-4 py-3 text-xs font-semibold leading-5 text-blue-700">
+              24+ certificate templates available. Select any design to preview instantly.
+            </span>
           </label>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
