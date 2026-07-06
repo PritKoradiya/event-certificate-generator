@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CertificatePreview from "../components/CertificatePreview.jsx";
+import templateData from "../data/templateData.js";
 
 const inputClass =
   "w-full rounded-md border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-primary-100";
@@ -17,17 +18,19 @@ const initialFormData = {
 
 const certificateCategories = ["Seminar", "Conference", "FDP", "Expert Talk", "Workshop", "Webinar"];
 
-const templateStyles = [
-  "Classic Certificate",
-  "Modern Blue Certificate",
-  "Gold Achievement Certificate",
-  "Seminar Certificate",
-  "Conference Certificate",
-  "FDP Certificate"
-];
-
 function CreateCertificate() {
   const [formData, setFormData] = useState(initialFormData);
+
+  useEffect(() => {
+    const selectedTemplate = localStorage.getItem("selectedCertificateTemplate");
+
+    if (selectedTemplate) {
+      setFormData((currentData) => ({
+        ...currentData,
+        templateStyle: selectedTemplate
+      }));
+    }
+  }, []);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -48,6 +51,8 @@ function CreateCertificate() {
   const handleGenerateCertificate = () => {
     alert("Certificate generation will be added in next step.");
   };
+
+  const selectedTemplateName = formData.templateStyle || "Classic Certificate";
 
   return (
     <section className="space-y-6">
@@ -136,9 +141,9 @@ function CreateCertificate() {
             Template Style
             <select className={inputClass} name="templateStyle" value={formData.templateStyle} onChange={handleChange}>
               <option value="">Select template style</option>
-              {templateStyles.map((templateStyle) => (
-                <option key={templateStyle} value={templateStyle}>
-                  {templateStyle}
+              {templateData.map((template) => (
+                <option key={template.id} value={template.name}>
+                  {template.name}
                 </option>
               ))}
             </select>
@@ -169,7 +174,14 @@ function CreateCertificate() {
           </div>
         </form>
 
-        <CertificatePreview certificateData={formData} />
+        <div className="space-y-3">
+          <div className="rounded-lg border border-slate-200 bg-white px-5 py-4 shadow-soft">
+            <p className="text-sm font-semibold text-slate-700">
+              Selected Template: <span className="text-primary-700">{selectedTemplateName}</span>
+            </p>
+          </div>
+          <CertificatePreview certificateData={formData} />
+        </div>
       </div>
     </section>
   );

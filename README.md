@@ -18,9 +18,12 @@ event-certificate-generator/
   client/
     src/
       components/
+        CertificatePreview.jsx
         Navbar.jsx
         Sidebar.jsx
         StatCard.jsx
+      data/
+        templateData.js
       pages/
         Dashboard.jsx
         CreateCertificate.jsx
@@ -103,6 +106,16 @@ Expected response:
 - Improved category cards
 - GitHub ready `.gitignore` file
 
+## Step 3 Completed Features
+
+- Working template selection
+- Template data file
+- 8 certificate templates
+- Template based preview design
+- Templates page connected with Create Certificate page
+- `localStorage` selected template support
+- Responsive form and preview layout
+
 ## GitHub Upload Instructions
 
 ```bash
@@ -116,6 +129,10 @@ git push -u origin main
 
 ## Next Planned Features
 
+- Save certificate data in backend
+- Create certificate model
+- Store generated certificate record in MongoDB
+- Show generated certificates list
 - PDF download
 - 20+ certificate designs
 - Category based certificate generation
