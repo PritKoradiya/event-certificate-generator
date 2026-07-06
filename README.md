@@ -133,6 +133,17 @@ Expected response:
 - Frontend API service
 - MongoDB-ready certificate storage
 
+## Step 5 Completed Features
+
+- Frontend PDF download
+- `html2canvas` integration
+- `jsPDF` integration
+- A4 landscape PDF export
+- Download PDF from Create Certificate page
+- Download PDF from Generated Certificates page
+- Certificate ID based PDF file naming
+- Improved certificate print/export quality
+
 ## GitHub Upload Instructions
 
 ```bash
@@ -146,10 +157,10 @@ git push -u origin main
 
 ## Next Planned Features
 
-- Download certificate as PDF
-- Export certificate preview as PDF
-- Improve certificate print quality
-- Add PDF file naming with participant name and certificate ID
-- 20+ certificate designs
+- Add 20+ certificate templates
+- Improve template gallery
+- Add template categories
+- Add poster-style designs
+- Add better visual designs for different event types
 - Category based certificate generation
 - Bulk certificate generation from student list

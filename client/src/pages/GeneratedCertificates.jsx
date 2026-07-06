@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
+import CertificatePreview from "../components/CertificatePreview.jsx";
 import { getCertificates } from "../services/certificateApi.js";
+import downloadCertificatePdf from "../utils/downloadCertificatePdf.js";
 
 function GeneratedCertificates() {
   const [certificates, setCertificates] = useState([]);
+  const [selectedCertificate, setSelectedCertificate] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -10,7 +13,9 @@ function GeneratedCertificates() {
     const fetchCertificates = async () => {
       try {
         const result = await getCertificates();
-        setCertificates(result.data || []);
+        const savedCertificates = result.data || [];
+        setCertificates(savedCertificates);
+        setSelectedCertificate(savedCertificates[0] || null);
       } catch (error) {
         setErrorMessage(error.message || "Unable to fetch certificates.");
       } finally {
@@ -33,12 +38,24 @@ function GeneratedCertificates() {
     });
   };
 
-  const handleView = () => {
-    alert("Certificate view details will be added in next step.");
+  const createPdfFileName = (certificate) => {
+    const participantName = certificate.participantName.trim().replace(/\s+/g, "_") || "Participant";
+    const certificateId = certificate.certificateId || "CERT-2026-001";
+
+    return `${participantName}_${certificateId}.pdf`;
   };
 
-  const handleDownloadPdf = () => {
-    alert("PDF download will be added in next step.");
+  const handleView = (certificate) => {
+    setSelectedCertificate(certificate);
+  };
+
+  const handleDownloadPdf = async () => {
+    if (!selectedCertificate) {
+      alert("Please select a certificate first.");
+      return;
+    }
+
+    await downloadCertificatePdf("saved-certificate-preview", createPdfFileName(selectedCertificate));
   };
 
   if (isLoading) {
@@ -123,14 +140,19 @@ function GeneratedCertificates() {
               <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
                 <button
                   type="button"
-                  onClick={handleView}
+                  onClick={() => handleView(certificate)}
                   className="rounded-md border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
                 >
                   View
                 </button>
                 <button
                   type="button"
-                  onClick={handleDownloadPdf}
+                  onClick={() => {
+                    setSelectedCertificate(certificate);
+                    setTimeout(() => {
+                      downloadCertificatePdf("saved-certificate-preview", createPdfFileName(certificate));
+                    }, 0);
+                  }}
                   className="rounded-md bg-primary-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-primary-700"
                 >
                   Download PDF
@@ -140,6 +162,26 @@ function GeneratedCertificates() {
           </article>
         ))}
       </div>
+
+      {selectedCertificate && (
+        <section className="space-y-4 rounded-lg border border-slate-200 bg-white p-5 shadow-soft">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-wide text-primary-600">Selected Preview</p>
+              <h3 className="mt-1 text-xl font-bold text-slate-950">{selectedCertificate.participantName}</h3>
+            </div>
+            <button
+              type="button"
+              onClick={handleDownloadPdf}
+              className="rounded-md bg-emerald-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-emerald-700"
+            >
+              Download PDF
+            </button>
+          </div>
+
+          <CertificatePreview certificateData={selectedCertificate} previewId="saved-certificate-preview" />
+        </section>
+      )}
     </section>
   );
 }

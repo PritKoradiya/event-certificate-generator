@@ -81,24 +81,35 @@ const templateDesigns = {
   }
 };
 
-function CertificatePreview({ certificateData }) {
+function CertificatePreview({ certificateData, previewId = "certificate-preview" }) {
   const {
     participantName,
     organizationName,
     eventName,
     category,
+    certificateCategory,
     certificateTitle,
     eventDate,
     description,
-    templateStyle
+    templateStyle,
+    certificateId,
+    createdAt
   } = certificateData;
 
   const selectedTemplate = templateStyle || "Classic Certificate";
   const design = templateDesigns[selectedTemplate] || templateDesigns["Classic Certificate"];
   const displayValue = (value, fallback) => value || fallback;
+  const displayCategory = category || certificateCategory;
+  const displayCertificateId = certificateId || "CERT-2026-001";
+  const issueDate = createdAt ? new Date(createdAt) : new Date();
+  const formattedIssueDate = issueDate.toLocaleDateString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  });
 
   return (
-    <section className={`mx-auto aspect-[11/8] w-full max-w-4xl rounded-lg border p-3 shadow-soft sm:p-4 ${design.outer}`}>
+    <section id={previewId} className={`mx-auto aspect-[11/8] w-full max-w-4xl rounded-lg border p-3 shadow-soft sm:p-4 ${design.outer}`}>
       <div className={`flex h-full flex-col rounded-lg border-2 bg-white/80 px-4 py-4 text-center shadow-sm sm:px-8 sm:py-6 ${design.inner}`}>
         <div className="mx-auto flex w-full max-w-lg items-center gap-3">
           <div className={`h-1 flex-1 rounded-full ${design.accent}`} />
@@ -134,7 +145,7 @@ function CertificatePreview({ certificateData }) {
 
           <div className="mx-auto mt-3 flex max-w-xl flex-wrap justify-center gap-2 text-[10px] sm:text-xs">
             <span className={`rounded-full px-3 py-1.5 font-semibold ${design.badge}`}>
-              {displayValue(category, "Category")}
+              {displayValue(displayCategory, "Category")}
             </span>
             <span className="rounded-full bg-white px-3 py-1.5 font-semibold text-slate-700 shadow-sm">
               Event Date: {displayValue(eventDate, "Event Date")}
@@ -153,7 +164,7 @@ function CertificatePreview({ certificateData }) {
             <div className="mx-auto w-full max-w-36 border-t border-slate-300 pt-1 font-semibold">
               Authorized Signature
             </div>
-            <p className="mt-1 truncate">Issue Date Placeholder</p>
+            <p className="mt-1 truncate">Issue Date: {formattedIssueDate}</p>
           </div>
 
           <div className="flex justify-center">
@@ -164,7 +175,7 @@ function CertificatePreview({ certificateData }) {
 
           <div className="min-w-0">
             <p className="truncate font-semibold uppercase tracking-wide text-slate-500">Certificate ID</p>
-            <p className="mt-1 truncate font-bold text-slate-700">CERT-2026-001</p>
+            <p className="mt-1 truncate font-bold text-slate-700">{displayCertificateId}</p>
           </div>
         </div>
       </div>

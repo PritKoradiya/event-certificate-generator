@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import CertificatePreview from "../components/CertificatePreview.jsx";
 import templateData from "../data/templateData.js";
 import { createCertificate } from "../services/certificateApi.js";
+import downloadCertificatePdf from "../utils/downloadCertificatePdf.js";
 
 const inputClass =
   "w-full rounded-md border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-primary-100";
@@ -22,6 +23,7 @@ const certificateCategories = ["Seminar", "Conference", "FDP", "Expert Talk", "W
 function CreateCertificate() {
   const [formData, setFormData] = useState(initialFormData);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedCertificate, setGeneratedCertificate] = useState(null);
 
   useEffect(() => {
     const selectedTemplate = localStorage.getItem("selectedCertificateTemplate");
@@ -40,10 +42,12 @@ function CreateCertificate() {
       ...currentData,
       [name]: value
     }));
+    setGeneratedCertificate(null);
   };
 
   const handleReset = () => {
     setFormData(initialFormData);
+    setGeneratedCertificate(null);
   };
 
   const handleSaveDraft = () => {
@@ -81,7 +85,7 @@ function CreateCertificate() {
     try {
       setIsGenerating(true);
 
-      await createCertificate({
+      const result = await createCertificate({
         participantName: formData.participantName,
         organizationName: formData.organizationName,
         eventName: formData.eventName,
@@ -92,6 +96,7 @@ function CreateCertificate() {
         templateStyle: formData.templateStyle
       });
 
+      setGeneratedCertificate(result.data);
       alert("Certificate generated and saved successfully.");
     } catch (error) {
       alert(error.message || "Unable to generate certificate. Please try again.");
@@ -100,7 +105,30 @@ function CreateCertificate() {
     }
   };
 
+  const createPdfFileName = () => {
+    const participantName = formData.participantName.trim().replace(/\s+/g, "_") || "Participant";
+    const certificateId = generatedCertificate?.certificateId || "CERT-2026-001";
+
+    return `${participantName}_${certificateId}.pdf`;
+  };
+
+  const handleDownloadPdf = async () => {
+    if (!generatedCertificate) {
+      alert("Please generate certificate first.");
+      return;
+    }
+
+    await downloadCertificatePdf("certificate-preview", createPdfFileName());
+  };
+
   const selectedTemplateName = formData.templateStyle || "Classic Certificate";
+  const previewData = generatedCertificate
+    ? {
+        ...formData,
+        certificateId: generatedCertificate.certificateId,
+        createdAt: generatedCertificate.createdAt
+      }
+    : formData;
 
   return (
     <section className="space-y-6">
@@ -220,6 +248,15 @@ function CreateCertificate() {
             >
               {isGenerating ? "Generating..." : "Generate Certificate"}
             </button>
+            {generatedCertificate && (
+              <button
+                type="button"
+                onClick={handleDownloadPdf}
+                className="rounded-md bg-emerald-600 px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-emerald-700"
+              >
+                Download PDF
+              </button>
+            )}
           </div>
         </form>
 
@@ -229,7 +266,7 @@ function CreateCertificate() {
               Selected Template: <span className="text-primary-700">{selectedTemplateName}</span>
             </p>
           </div>
-          <CertificatePreview certificateData={formData} />
+          <CertificatePreview certificateData={previewData} previewId="certificate-preview" />
         </div>
       </div>
     </section>
