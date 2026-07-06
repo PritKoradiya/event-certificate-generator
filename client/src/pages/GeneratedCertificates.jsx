@@ -6,6 +6,7 @@ import downloadCertificatePdf from "../utils/downloadCertificatePdf.js";
 function GeneratedCertificates() {
   const [certificates, setCertificates] = useState([]);
   const [selectedCertificate, setSelectedCertificate] = useState(null);
+  const [pendingDownload, setPendingDownload] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -25,6 +26,20 @@ function GeneratedCertificates() {
 
     fetchCertificates();
   }, []);
+
+  useEffect(() => {
+    if (!pendingDownload || !selectedCertificate) {
+      return;
+    }
+
+    const downloadSelectedCertificate = async () => {
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+      await downloadCertificatePdf("saved-certificate-preview", createPdfFileName(selectedCertificate));
+      setPendingDownload(false);
+    };
+
+    downloadSelectedCertificate();
+  }, [pendingDownload, selectedCertificate]);
 
   const formatDate = (dateValue) => {
     if (!dateValue) {
@@ -60,7 +75,7 @@ function GeneratedCertificates() {
 
   if (isLoading) {
     return (
-      <section className="rounded-lg border border-slate-200 bg-white p-8 text-center shadow-soft">
+      <section className="page-transition rounded-lg border border-slate-200 bg-white p-8 text-center shadow-soft">
         <p className="text-sm font-semibold text-slate-600">Loading generated certificates...</p>
       </section>
     );
@@ -68,7 +83,7 @@ function GeneratedCertificates() {
 
   if (errorMessage) {
     return (
-      <section className="rounded-lg border border-red-100 bg-red-50 p-8 text-center shadow-soft">
+      <section className="page-transition rounded-lg border border-red-100 bg-red-50 p-8 text-center shadow-soft">
         <h2 className="text-xl font-bold text-red-700">Unable to load certificates</h2>
         <p className="mt-2 text-sm text-red-600">{errorMessage}</p>
       </section>
@@ -77,7 +92,7 @@ function GeneratedCertificates() {
 
   if (certificates.length === 0) {
     return (
-      <section className="rounded-lg border border-slate-200 bg-white p-8 text-center shadow-soft">
+      <section className="page-transition rounded-lg border border-slate-200 bg-white p-8 text-center shadow-soft">
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-2xl font-bold text-slate-500">
           0
         </div>
@@ -90,7 +105,7 @@ function GeneratedCertificates() {
   }
 
   return (
-    <section className="space-y-6">
+    <section className="page-transition space-y-6">
       <div>
         <p className="text-sm font-semibold uppercase tracking-wide text-primary-600">Generated Certificates</p>
         <h2 className="mt-2 text-2xl font-bold text-slate-950">Saved certificate records</h2>
@@ -98,7 +113,7 @@ function GeneratedCertificates() {
 
       <div className="grid gap-5">
         {certificates.map((certificate) => (
-          <article key={certificate._id} className="rounded-lg border border-slate-200 bg-white p-5 shadow-soft">
+          <article key={certificate._id} className="card-hover rounded-lg border border-slate-200 bg-white p-5 shadow-soft">
             <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-start">
               <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                 <div>
@@ -141,7 +156,7 @@ function GeneratedCertificates() {
                 <button
                   type="button"
                   onClick={() => handleView(certificate)}
-                  className="rounded-md border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
+                  className="soft-hover rounded-md border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
                 >
                   View
                 </button>
@@ -149,11 +164,9 @@ function GeneratedCertificates() {
                   type="button"
                   onClick={() => {
                     setSelectedCertificate(certificate);
-                    setTimeout(() => {
-                      downloadCertificatePdf("saved-certificate-preview", createPdfFileName(certificate));
-                    }, 0);
+                    setPendingDownload(true);
                   }}
-                  className="rounded-md bg-primary-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-primary-700"
+                  className="soft-hover rounded-md bg-primary-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-primary-700"
                 >
                   Download PDF
                 </button>
@@ -164,7 +177,7 @@ function GeneratedCertificates() {
       </div>
 
       {selectedCertificate && (
-        <section className="space-y-4 rounded-lg border border-slate-200 bg-white p-5 shadow-soft">
+        <section className="slide-up space-y-4 rounded-lg border border-slate-200 bg-white p-5 shadow-soft">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm font-semibold uppercase tracking-wide text-primary-600">Selected Preview</p>
@@ -173,7 +186,7 @@ function GeneratedCertificates() {
             <button
               type="button"
               onClick={handleDownloadPdf}
-              className="rounded-md bg-emerald-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-emerald-700"
+              className="soft-hover rounded-md bg-emerald-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-emerald-700"
             >
               Download PDF
             </button>

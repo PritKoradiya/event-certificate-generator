@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import posterData from "../data/posterData.js";
 import templateData from "../data/templateData.js";
@@ -64,6 +64,15 @@ function Templates() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
 
+  useEffect(() => {
+    const savedCategory = localStorage.getItem("selectedTemplateCategory");
+
+    if (savedCategory) {
+      setSelectedCategory(savedCategory);
+      localStorage.removeItem("selectedTemplateCategory");
+    }
+  }, []);
+
   const activeItems = activeTab === "certificate" ? templateData : posterData;
 
   const filteredItems = useMemo(() => {
@@ -88,7 +97,7 @@ function Templates() {
   const itemLabel = activeTab === "certificate" ? "certificate templates" : "poster designs";
 
   return (
-    <section className="space-y-6">
+    <section className="page-transition space-y-6">
       <div>
         <p className="text-sm font-semibold uppercase tracking-wide text-primary-600">Templates</p>
         <h2 className="mt-2 text-2xl font-bold text-slate-950">Design gallery</h2>
@@ -101,14 +110,14 @@ function Templates() {
             <button
               type="button"
               onClick={() => setActiveTab("certificate")}
-              className={`rounded-md px-4 py-2 text-sm font-bold transition ${activeTab === "certificate" ? "bg-white text-primary-700 shadow-sm" : "text-slate-600 hover:text-slate-950"}`}
+              className={`soft-hover rounded-md px-4 py-2 text-sm font-bold transition ${activeTab === "certificate" ? "bg-white text-primary-700 shadow-sm" : "text-slate-600 hover:text-slate-950"}`}
             >
               Certificate Templates
             </button>
             <button
               type="button"
               onClick={() => setActiveTab("poster")}
-              className={`rounded-md px-4 py-2 text-sm font-bold transition ${activeTab === "poster" ? "bg-white text-primary-700 shadow-sm" : "text-slate-600 hover:text-slate-950"}`}
+              className={`soft-hover rounded-md px-4 py-2 text-sm font-bold transition ${activeTab === "poster" ? "bg-white text-primary-700 shadow-sm" : "text-slate-600 hover:text-slate-950"}`}
             >
               Poster Designs
             </button>
@@ -143,7 +152,7 @@ function Templates() {
 
       <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
         {filteredItems.map((item) => (
-          <div key={item.id} className="rounded-lg border border-slate-200 bg-white p-5 shadow-soft transition hover:-translate-y-1 hover:shadow-lg">
+          <div key={item.id} className="card-hover rounded-lg border border-slate-200 bg-white p-5 shadow-soft">
             {activeTab === "certificate" ? <CertificateMiniPreview template={item} /> : <PosterMiniPreview poster={item} />}
 
             <div className="mt-4 flex items-start justify-between gap-3">
@@ -158,7 +167,7 @@ function Templates() {
             <button
               type="button"
               onClick={() => (activeTab === "certificate" ? handleUseTemplate(item.name) : handleUsePoster())}
-              className="mt-4 w-full rounded-md bg-primary-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-primary-700"
+              className="soft-hover mt-4 w-full rounded-md bg-primary-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-primary-700"
             >
               {activeTab === "certificate" ? "Use Template" : "Use Poster"}
             </button>

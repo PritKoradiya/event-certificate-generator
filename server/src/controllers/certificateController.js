@@ -41,6 +41,7 @@ export const createCertificate = async (req, res) => {
     const certificateId = await generateCertificateId();
     const certificate = await Certificate.create({
       ...req.body,
+      authorizedSignatureName: req.body.authorizedSignatureName || "Authorized Person",
       certificateId
     });
 

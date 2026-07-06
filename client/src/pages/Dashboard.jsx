@@ -9,8 +9,8 @@ const recentDevelopment = [
 
 function Dashboard() {
   return (
-    <section className="space-y-6">
-      <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-soft">
+    <section className="page-transition space-y-6">
+      <div className="fade-in rounded-lg border border-slate-200 bg-white p-6 shadow-soft">
         <p className="text-sm font-semibold uppercase tracking-wide text-primary-600">Dashboard</p>
         <h2 className="mt-2 text-2xl font-bold text-slate-950">Certificate workspace</h2>
         <p className="mt-3 max-w-3xl text-slate-600">
@@ -26,11 +26,11 @@ function Dashboard() {
         <StatCard title="Bulk Generation" value="Coming Soon" description="Generate multiple certificates from a student list later." />
       </div>
 
-      <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-soft">
+      <div className="slide-up rounded-lg border border-slate-200 bg-white p-6 shadow-soft">
         <p className="text-sm font-semibold uppercase tracking-wide text-primary-600">Recent Development</p>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           {recentDevelopment.map((item) => (
-            <div key={item} className="rounded-md border border-slate-100 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700">
+            <div key={item} className="soft-hover rounded-md border border-slate-100 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700">
               {item}
             </div>
           ))}

@@ -11,17 +11,17 @@ const menuItems = [
 
 function Sidebar() {
   return (
-    <aside className="w-full shrink-0 rounded-lg border border-slate-200 bg-white p-3 shadow-soft md:w-64">
+    <aside className="fade-in w-full shrink-0 rounded-lg border border-slate-200 bg-white p-3 shadow-soft md:w-64">
       <nav className="grid gap-2">
         {menuItems.map((item) => (
           <NavLink
             key={item.path}
             to={item.path}
             className={({ isActive }) =>
-              `rounded-md px-4 py-3 text-sm font-semibold transition ${
+              `rounded-md border px-4 py-3 text-sm font-semibold transition ${
                 isActive
-                  ? "bg-primary-600 text-white shadow-sm"
-                  : "text-slate-600 hover:bg-primary-50 hover:text-primary-700"
+                  ? "border-primary-100 bg-primary-50 text-primary-700 shadow-sm"
+                  : "border-transparent text-slate-600 hover:border-primary-100 hover:bg-primary-50 hover:text-primary-700"
               }`
             }
           >

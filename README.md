@@ -157,6 +157,17 @@ Expected response:
 - Updated categories page
 - PDF support for all certificate templates
 
+## Step 6A Completed Features
+
+- UI animations added
+- Certificate preview layout polished
+- Signature name to signature-style text feature
+- PDF cutting issue fixed
+- PDF size optimized using JPEG compression
+- Improved Categories page design
+- Categories page connected with template filter
+- Better responsive UI
+
 ## GitHub Upload Instructions
 
 ```bash

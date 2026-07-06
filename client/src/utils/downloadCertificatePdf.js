@@ -2,50 +2,69 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
 const downloadCertificatePdf = async (elementId, fileName) => {
+  let certificateElement;
+
   try {
-    const certificateElement = document.getElementById(elementId);
+    certificateElement = document.getElementById(elementId);
 
     if (!certificateElement) {
       throw new Error("Certificate preview was not found. Please try again.");
     }
 
+    certificateElement.classList.add("pdf-export-mode");
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+
     const canvas = await html2canvas(certificateElement, {
-      scale: 3,
+      scale: 1.5,
       backgroundColor: "#ffffff",
-      useCORS: true
+      useCORS: true,
+      logging: false,
+      removeContainer: true,
+      windowWidth: certificateElement.scrollWidth,
+      windowHeight: certificateElement.scrollHeight
     });
 
-    const imageData = canvas.toDataURL("image/png");
+    // Using JPEG compression to keep PDF size smaller.
+    const imageData = canvas.toDataURL("image/jpeg", 0.72);
     const pdf = new jsPDF({
       orientation: "landscape",
       unit: "mm",
-      format: "a4"
+      format: "a4",
+      compress: true
     });
 
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = pdf.internal.pageSize.getHeight();
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
     const margin = 8;
-    const availableWidth = pdfWidth - margin * 2;
-    const availableHeight = pdfHeight - margin * 2;
+    const availableWidth = pageWidth - margin * 2;
+    const availableHeight = pageHeight - margin * 2;
     const imageRatio = canvas.width / canvas.height;
+    const pageRatio = availableWidth / availableHeight;
 
-    let imageWidth = availableWidth;
-    let imageHeight = imageWidth / imageRatio;
+    let imageWidth;
+    let imageHeight;
 
-    if (imageHeight > availableHeight) {
+    if (imageRatio > pageRatio) {
+      imageWidth = availableWidth;
+      imageHeight = imageWidth / imageRatio;
+    } else {
       imageHeight = availableHeight;
       imageWidth = imageHeight * imageRatio;
     }
 
-    const xPosition = (pdfWidth - imageWidth) / 2;
-    const yPosition = (pdfHeight - imageHeight) / 2;
+    const xPosition = (pageWidth - imageWidth) / 2;
+    const yPosition = (pageHeight - imageHeight) / 2;
 
-    pdf.addImage(imageData, "PNG", xPosition, yPosition, imageWidth, imageHeight);
+    pdf.addImage(imageData, "JPEG", xPosition, yPosition, imageWidth, imageHeight, undefined, "FAST");
     pdf.save(fileName || "certificate.pdf");
     return true;
   } catch (error) {
     alert(error.message || "Unable to download certificate PDF.");
     return false;
+  } finally {
+    if (certificateElement) {
+      certificateElement.classList.remove("pdf-export-mode");
+    }
   }
 };
 

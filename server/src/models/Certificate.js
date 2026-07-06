@@ -40,6 +40,11 @@ const certificateSchema = new mongoose.Schema(
       required: true,
       trim: true
     },
+    authorizedSignatureName: {
+      type: String,
+      default: "Authorized Person",
+      trim: true
+    },
     certificateId: {
       type: String,
       unique: true
