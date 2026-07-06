@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import CertificatePreview from "../components/CertificatePreview.jsx";
 import templateData from "../data/templateData.js";
+import { createCertificate } from "../services/certificateApi.js";
 
 const inputClass =
   "w-full rounded-md border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-primary-100";
@@ -20,6 +21,7 @@ const certificateCategories = ["Seminar", "Conference", "FDP", "Expert Talk", "W
 
 function CreateCertificate() {
   const [formData, setFormData] = useState(initialFormData);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
     const selectedTemplate = localStorage.getItem("selectedCertificateTemplate");
@@ -48,8 +50,54 @@ function CreateCertificate() {
     alert("Save draft feature will be added in next step.");
   };
 
-  const handleGenerateCertificate = () => {
-    alert("Certificate generation will be added in next step.");
+  const validateForm = () => {
+    const requiredFields = [
+      { key: "participantName", label: "Participant Name" },
+      { key: "organizationName", label: "Organization Name" },
+      { key: "eventName", label: "Event Name" },
+      { key: "category", label: "Certificate Category" },
+      { key: "certificateTitle", label: "Certificate Title" },
+      { key: "eventDate", label: "Event Date" },
+      { key: "templateStyle", label: "Template Style" }
+    ];
+
+    const missingFields = requiredFields
+      .filter((field) => !formData[field.key])
+      .map((field) => field.label);
+
+    if (missingFields.length > 0) {
+      alert(`Please fill these required fields: ${missingFields.join(", ")}`);
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleGenerateCertificate = async () => {
+    if (!validateForm()) {
+      return;
+    }
+
+    try {
+      setIsGenerating(true);
+
+      await createCertificate({
+        participantName: formData.participantName,
+        organizationName: formData.organizationName,
+        eventName: formData.eventName,
+        certificateCategory: formData.category,
+        certificateTitle: formData.certificateTitle,
+        eventDate: formData.eventDate,
+        description: formData.description,
+        templateStyle: formData.templateStyle
+      });
+
+      alert("Certificate generated and saved successfully.");
+    } catch (error) {
+      alert(error.message || "Unable to generate certificate. Please try again.");
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const selectedTemplateName = formData.templateStyle || "Classic Certificate";
@@ -167,9 +215,10 @@ function CreateCertificate() {
             <button
               type="button"
               onClick={handleGenerateCertificate}
-              className="rounded-md bg-primary-600 px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-primary-700"
+              disabled={isGenerating}
+              className="rounded-md bg-primary-600 px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-primary-700 disabled:cursor-not-allowed disabled:bg-primary-500 disabled:opacity-70"
             >
-              Generate Certificate
+              {isGenerating ? "Generating..." : "Generate Certificate"}
             </button>
           </div>
         </form>

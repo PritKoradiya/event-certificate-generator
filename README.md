@@ -24,6 +24,8 @@ event-certificate-generator/
         StatCard.jsx
       data/
         templateData.js
+      services/
+        certificateApi.js
       pages/
         Dashboard.jsx
         CreateCertificate.jsx
@@ -40,9 +42,13 @@ event-certificate-generator/
     src/
       config/
         db.js
+      models/
+        Certificate.js
       routes/
+        certificateRoutes.js
         healthRoutes.js
       controllers/
+        certificateController.js
         healthController.js
       app.js
       server.js
@@ -116,6 +122,17 @@ Expected response:
 - `localStorage` selected template support
 - Responsive form and preview layout
 
+## Step 4 Completed Features
+
+- Landscape certificate preview fix
+- Certificate Mongoose model
+- Certificate backend routes
+- Save generated certificate data
+- Fetch generated certificates
+- Dynamic Generated Certificates page
+- Frontend API service
+- MongoDB-ready certificate storage
+
 ## GitHub Upload Instructions
 
 ```bash
@@ -129,11 +146,10 @@ git push -u origin main
 
 ## Next Planned Features
 
-- Save certificate data in backend
-- Create certificate model
-- Store generated certificate record in MongoDB
-- Show generated certificates list
-- PDF download
+- Download certificate as PDF
+- Export certificate preview as PDF
+- Improve certificate print quality
+- Add PDF file naming with participant name and certificate ID
 - 20+ certificate designs
 - Category based certificate generation
 - Bulk certificate generation from student list

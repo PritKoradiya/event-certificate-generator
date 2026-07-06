@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const connectDB = async () => {
   if (!process.env.MONGO_URI) {
-    console.log("MONGO_URI not found. Skipping MongoDB connection for now.");
+    console.log("MONGO_URI missing, running without database");
     return;
   }
 
