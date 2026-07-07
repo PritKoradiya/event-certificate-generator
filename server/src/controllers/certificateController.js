@@ -3,11 +3,26 @@ import Certificate from "../models/Certificate.js";
 
 const isDatabaseConnected = () => mongoose.connection.readyState === 1;
 
-const generateCertificateId = async () => {
-  const certificateCount = await Certificate.countDocuments();
-  const nextNumber = String(certificateCount + 1).padStart(4, "0");
+const createCertificateIdFromNumber = (number) => {
+  return `CERT-2026-${String(number).padStart(4, "0")}`;
+};
 
-  return `CERT-2026-${nextNumber}`;
+const getNextCertificateNumber = async () => {
+  const latestCertificate = await Certificate.findOne({ certificateId: /^CERT-2026-/ }).sort({ certificateId: -1 });
+
+  if (!latestCertificate?.certificateId) {
+    return 1;
+  }
+
+  const latestNumber = Number(latestCertificate.certificateId.replace("CERT-2026-", ""));
+
+  return Number.isNaN(latestNumber) ? 1 : latestNumber + 1;
+};
+
+const generateCertificateId = async () => {
+  const nextNumber = await getNextCertificateNumber();
+
+  return createCertificateIdFromNumber(nextNumber);
 };
 
 const requiredFields = [
@@ -42,6 +57,7 @@ export const createCertificate = async (req, res) => {
     const certificate = await Certificate.create({
       ...req.body,
       authorizedSignatureName: req.body.authorizedSignatureName || "Authorized Person",
+      generationType: "Single",
       certificateId
     });
 
@@ -54,6 +70,88 @@ export const createCertificate = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Failed to generate certificate",
+      error: error.message
+    });
+  }
+};
+
+export const bulkCreateCertificates = async (req, res) => {
+  try {
+    if (!isDatabaseConnected()) {
+      return res.status(503).json({
+        success: false,
+        message: "Database is not connected. Please set MONGO_URI and restart the server."
+      });
+    }
+
+    const { participants, commonDetails } = req.body;
+
+    if (!Array.isArray(participants) || participants.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Participants must be a non-empty array."
+      });
+    }
+
+    const participantWithoutName = participants.find((participant) => !participant.participantName);
+
+    if (participantWithoutName) {
+      return res.status(400).json({
+        success: false,
+        message: "Participant name is required for every participant."
+      });
+    }
+
+    if (!commonDetails || typeof commonDetails !== "object") {
+      return res.status(400).json({
+        success: false,
+        message: "Common certificate details are required."
+      });
+    }
+
+    const requiredCommonFields = [
+      "eventName",
+      "certificateCategory",
+      "certificateTitle",
+      "eventDate",
+      "templateStyle"
+    ];
+    const missingCommonFields = requiredCommonFields.filter((field) => !commonDetails[field]);
+
+    if (missingCommonFields.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: `Missing required common fields: ${missingCommonFields.join(", ")}`
+      });
+    }
+
+    const nextCertificateNumber = await getNextCertificateNumber();
+    const certificatesToSave = participants.map((participant, index) => ({
+      participantName: participant.participantName.trim(),
+      organizationName: (participant.organizationName || commonDetails.organizationName || "Organization Name").trim(),
+      eventName: commonDetails.eventName,
+      certificateCategory: commonDetails.certificateCategory,
+      certificateTitle: commonDetails.certificateTitle,
+      eventDate: commonDetails.eventDate,
+      description: commonDetails.description || "",
+      templateStyle: commonDetails.templateStyle,
+      authorizedSignatureName: commonDetails.authorizedSignatureName || "Authorized Person",
+      certificateId: createCertificateIdFromNumber(nextCertificateNumber + index),
+      generationType: "Bulk"
+    }));
+
+    const savedCertificates = await Certificate.insertMany(certificatesToSave);
+
+    return res.status(201).json({
+      success: true,
+      message: "Bulk certificates generated successfully",
+      count: savedCertificates.length,
+      data: savedCertificates
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to generate bulk certificates",
       error: error.message
     });
   }

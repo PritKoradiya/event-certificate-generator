@@ -22,6 +22,18 @@ export const createCertificate = async (certificateData) => {
   return handleResponse(response);
 };
 
+export const bulkCreateCertificates = async (payload) => {
+  const response = await fetch(`${API_BASE_URL}/certificates/bulk`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(payload)
+  });
+
+  return handleResponse(response);
+};
+
 export const getCertificates = async () => {
   const response = await fetch(`${API_BASE_URL}/certificates`);
 

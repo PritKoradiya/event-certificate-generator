@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import CertificatePreview from "../components/CertificatePreview.jsx";
 import { getCertificates } from "../services/certificateApi.js";
 import downloadCertificatePdf from "../utils/downloadCertificatePdf.js";
@@ -9,6 +9,31 @@ function GeneratedCertificates() {
   const [pendingDownload, setPendingDownload] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+
+  const categories = useMemo(() => {
+    const certificateCategories = certificates
+      .map((certificate) => certificate.certificateCategory)
+      .filter(Boolean);
+
+    return ["All", ...new Set(certificateCategories)];
+  }, [certificates]);
+
+  const filteredCertificates = useMemo(() => {
+    const normalizedSearchTerm = searchTerm.toLowerCase().trim();
+
+    return certificates.filter((certificate) => {
+      const matchesSearch =
+        !normalizedSearchTerm ||
+        certificate.participantName?.toLowerCase().includes(normalizedSearchTerm) ||
+        certificate.eventName?.toLowerCase().includes(normalizedSearchTerm) ||
+        certificate.certificateCategory?.toLowerCase().includes(normalizedSearchTerm);
+      const matchesCategory = selectedCategory === "All" || certificate.certificateCategory === selectedCategory;
+
+      return matchesSearch && matchesCategory;
+    });
+  }, [certificates, searchTerm, selectedCategory]);
 
   useEffect(() => {
     const fetchCertificates = async () => {
@@ -112,8 +137,34 @@ function GeneratedCertificates() {
         <p className="mt-3 text-lg leading-8 text-slate-600">View saved MongoDB certificates and download the selected certificate as A4 landscape PDF.</p>
       </div>
 
+      <div className="slide-up rounded-2xl border border-slate-200 bg-white p-5 shadow-soft">
+        <div className="grid gap-3 md:grid-cols-[1fr_260px]">
+          <input
+            type="search"
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+            placeholder="Search by participant, event, or category"
+            className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-base outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-primary-100"
+          />
+          <select
+            value={selectedCategory}
+            onChange={(event) => setSelectedCategory(event.target.value)}
+            className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-base outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-primary-100"
+          >
+            {categories.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+        </div>
+        <p className="mt-4 text-base font-bold text-slate-600">
+          Showing {filteredCertificates.length} of {certificates.length} certificates
+        </p>
+      </div>
+
       <div className="grid gap-5">
-        {certificates.map((certificate) => (
+        {filteredCertificates.map((certificate) => (
           <article key={certificate._id} className="card-hover rounded-2xl border border-slate-200 bg-white p-6 shadow-soft">
             <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-start">
               <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -151,6 +202,16 @@ function GeneratedCertificates() {
                     {certificate.status}
                   </span>
                 </div>
+                <div>
+                  <p className="text-xs font-black uppercase tracking-wide text-slate-400">Generation</p>
+                  <span className={`mt-1 inline-flex rounded-full px-3 py-1 text-sm font-black ${
+                    certificate.generationType === "Bulk"
+                      ? "bg-blue-50 text-primary-700"
+                      : "bg-slate-100 text-slate-700"
+                  }`}>
+                    {certificate.generationType || "Single"}
+                  </span>
+                </div>
               </div>
 
               <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
@@ -176,6 +237,12 @@ function GeneratedCertificates() {
           </article>
         ))}
       </div>
+
+      {filteredCertificates.length === 0 && (
+        <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-soft">
+          <p className="text-base font-bold text-slate-600">No generated certificates matched your filters.</p>
+        </div>
+      )}
 
       {selectedCertificate && (
         <section className="slide-up space-y-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-soft">

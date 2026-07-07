@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  bulkCreateCertificates,
   createCertificate,
   getCertificateById,
   getCertificates
@@ -8,6 +9,7 @@ import {
 const router = express.Router();
 
 router.post("/", createCertificate);
+router.post("/bulk", bulkCreateCertificates);
 router.get("/", getCertificates);
 router.get("/:id", getCertificateById);
 

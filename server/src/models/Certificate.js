@@ -49,6 +49,11 @@ const certificateSchema = new mongoose.Schema(
       type: String,
       unique: true
     },
+    generationType: {
+      type: String,
+      enum: ["Single", "Bulk"],
+      default: "Single"
+    },
     status: {
       type: String,
       default: "Generated"

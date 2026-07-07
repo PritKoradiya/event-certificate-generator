@@ -6,13 +6,15 @@ const progressItems = [
   "Step 3 Template Selection Done",
   "Step 4 MongoDB Save Done",
   "Step 5 PDF Download Done",
-  "Step 6 Templates Added"
+  "Step 6 Templates Added",
+  "Step 7 Bulk Generation Added"
 ];
 
 const featureCards = [
   { title: "Live Preview", text: "Certificate changes appear instantly while you type.", icon: "L" },
   { title: "Template Gallery", text: "Choose from academic, technical, cultural, sports, and training styles.", icon: "T" },
-  { title: "A4 PDF Export", text: "Generated certificates download in landscape A4 format.", icon: "P" }
+  { title: "A4 PDF Export", text: "Generated certificates download in landscape A4 format.", icon: "P" },
+  { title: "Bulk Generation", text: "Bulk certificates can be generated from manual list or CSV.", icon: "B" }
 ];
 
 function Dashboard() {
@@ -32,9 +34,9 @@ function Dashboard() {
 
           <div className="float-slow rounded-2xl border border-white bg-white/80 p-6 shadow-soft">
             <p className="text-sm font-bold uppercase tracking-wide text-slate-500">Current Build</p>
-            <p className="mt-2 text-4xl font-black text-primary-700">Step 6B</p>
+            <p className="mt-2 text-4xl font-black text-primary-700">Step 7</p>
             <p className="mt-2 text-base font-semibold leading-7 text-slate-600">
-              UI scaling, animation polish, and export-safe PDF capture completed.
+              Bulk certificate generation from manual list and CSV is available.
             </p>
           </div>
         </div>
@@ -45,7 +47,7 @@ function Dashboard() {
         <StatCard title="Poster Designs" value="12+" icon="12" delayClass="delay-200" description="Poster gallery cards prepared for upcoming poster generation." />
         <StatCard title="Categories" value="14+" icon="14" delayClass="delay-300" description="Event categories for academic, cultural, sports, and technical use cases." />
         <StatCard title="PDF Download" value="Ready" icon="PDF" delayClass="delay-400" description="Download generated previews as optimized A4 landscape PDFs." />
-        <StatCard title="Bulk Generation" value="Soon" icon="CSV" delayClass="delay-400" description="Multiple certificate generation remains planned for later steps." />
+        <StatCard title="Bulk Generation" value="Available" icon="CSV" delayClass="delay-400" description="Generate many certificates from a manual list or a simple CSV file." />
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">

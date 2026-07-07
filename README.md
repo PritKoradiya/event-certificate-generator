@@ -181,6 +181,19 @@ Expected response:
 - PDF size optimized with JPEG compression
 - Improved templates and categories UI
 
+## Step 7 Completed Features
+
+- Bulk certificate generation
+- Manual participant list input
+- CSV upload support
+- Participant preview table
+- Common certificate details form
+- Bulk save to MongoDB
+- Bulk generated certificate result table
+- Sample live preview
+- Individual PDF download for bulk certificates
+- Generation type Single/Bulk
+
 ## GitHub Upload Instructions
 
 ```bash
@@ -194,10 +207,7 @@ git push -u origin main
 
 ## Next Planned Features
 
-- Bulk certificate generation
-- Upload student list manually or using CSV
-- Generate multiple certificates from list
-- Download multiple certificates
-- Same category/template for all students
-- Different category/template support later
-- Bulk certificate generation from student list
+- Download all bulk certificates as ZIP
+- Add CSV template download
+- Add edit participant before generation
+- Add different category/template per participant support
