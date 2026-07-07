@@ -4,7 +4,17 @@ import jsPDF from "jspdf";
 const EXPORT_WIDTH = 1123;
 const EXPORT_HEIGHT = 794;
 
-const downloadCertificatePdf = async (elementId, fileName) => {
+export const safeFileName = (name) => {
+  const cleanedName = String(name || "certificate")
+    .trim()
+    .replace(/\s+/g, "_")
+    .replace(/[^a-zA-Z0-9._-]/g, "")
+    .replace(/_+/g, "_");
+
+  return cleanedName || "certificate";
+};
+
+const createPdfFromElement = async (elementId) => {
   let exportWrapper;
 
   try {
@@ -56,7 +66,6 @@ const downloadCertificatePdf = async (elementId, fileName) => {
       windowHeight: EXPORT_HEIGHT
     });
 
-    // JPEG keeps the PDF compact while preserving readable certificate text.
     const imageData = canvas.toDataURL("image/jpeg", 0.78);
     const pdf = new jsPDF({
       orientation: "landscape",
@@ -72,15 +81,32 @@ const downloadCertificatePdf = async (elementId, fileName) => {
     const imageHeight = pageHeight - margin * 2;
 
     pdf.addImage(imageData, "JPEG", margin, margin, imageWidth, imageHeight, undefined, "FAST");
-    pdf.save(fileName || "certificate.pdf");
-    return true;
-  } catch (error) {
-    alert(error.message || "Unable to download certificate PDF. Please try again.");
-    return false;
+
+    return pdf;
   } finally {
     if (exportWrapper && exportWrapper.parentNode) {
       exportWrapper.parentNode.removeChild(exportWrapper);
     }
+  }
+};
+
+export const generateCertificatePdfBlob = async (elementId) => {
+  const pdf = await createPdfFromElement(elementId);
+
+  return pdf.output("blob");
+};
+
+const downloadCertificatePdf = async (elementId, fileName) => {
+  try {
+    const pdf = await createPdfFromElement(elementId);
+    const cleanName = safeFileName(fileName || "certificate.pdf");
+    const finalFileName = cleanName.toLowerCase().endsWith(".pdf") ? cleanName : `${cleanName}.pdf`;
+
+    pdf.save(finalFileName);
+    return true;
+  } catch (error) {
+    alert(error.message || "Unable to download certificate PDF. Please try again.");
+    return false;
   }
 };
 

@@ -1,8 +1,9 @@
+import JSZip from "jszip";
 import { useMemo, useState } from "react";
 import CertificatePreview from "../components/CertificatePreview.jsx";
 import templateData from "../data/templateData.js";
 import { bulkCreateCertificates } from "../services/certificateApi.js";
-import downloadCertificatePdf from "../utils/downloadCertificatePdf.js";
+import downloadCertificatePdf, { generateCertificatePdfBlob, safeFileName } from "../utils/downloadCertificatePdf.js";
 
 const inputClass =
   "h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-base outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-primary-100";
@@ -36,10 +37,10 @@ const initialCommonDetails = {
 };
 
 const stepItems = [
-  "Add Participants",
-  "Add Common Certificate Details",
-  "Generate Certificates",
-  "View / Download"
+  { title: "Add Participants", icon: "1" },
+  { title: "Edit and Review", icon: "2" },
+  { title: "Generate Certificates", icon: "3" },
+  { title: "ZIP / PDF Download", icon: "4" }
 ];
 
 function BulkGenerate() {
@@ -50,6 +51,14 @@ function BulkGenerate() {
   const [selectedCertificate, setSelectedCertificate] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [editingParticipantId, setEditingParticipantId] = useState("");
+  const [editParticipantDraft, setEditParticipantDraft] = useState({
+    participantName: "",
+    organizationName: ""
+  });
+  const [exportCertificate, setExportCertificate] = useState(null);
+  const [zipProgress, setZipProgress] = useState("");
+  const [isPreparingZip, setIsPreparingZip] = useState(false);
 
   const samplePreviewData = useMemo(() => {
     const firstParticipant = participants[0] || {
@@ -78,6 +87,12 @@ function BulkGenerate() {
     }));
   };
 
+  const resetGeneratedResults = () => {
+    setGeneratedCertificates([]);
+    setSelectedCertificate(null);
+    setSuccessMessage("");
+  };
+
   const handleManualParticipants = () => {
     const names = manualNames
       .split("\n")
@@ -85,7 +100,7 @@ function BulkGenerate() {
       .filter(Boolean);
 
     if (names.length === 0) {
-      alert("Please enter at least one participant name.");
+      alert("No participants added. Please enter at least one participant name.");
       return;
     }
 
@@ -96,15 +111,20 @@ function BulkGenerate() {
     }));
 
     setParticipants(newParticipants);
-    setGeneratedCertificates([]);
-    setSelectedCertificate(null);
-    setSuccessMessage("");
+    setEditingParticipantId("");
+    resetGeneratedResults();
   };
 
   const handleCsvUpload = (event) => {
     const file = event.target.files?.[0];
 
     if (!file) {
+      return;
+    }
+
+    if (!file.name.toLowerCase().endsWith(".csv")) {
+      alert("CSV invalid format. Please upload a .csv file.");
+      event.target.value = "";
       return;
     }
 
@@ -117,28 +137,36 @@ function BulkGenerate() {
         .map((row) => row.trim())
         .filter(Boolean);
 
+      if (rows.length === 0) {
+        alert("CSV invalid format. No participant rows were found.");
+        return;
+      }
+
       const dataRows = rows[0]?.toLowerCase().includes("participantname") ? rows.slice(1) : rows;
       const parsedParticipants = dataRows
         .map((row, index) => {
-          const [participantName, organizationName] = row.split(",").map((value) => value.trim());
+          const columns = row.split(",").map((value) => value.trim());
+
+          if (columns.length < 1 || columns.length > 2) {
+            return null;
+          }
 
           return {
             id: `${Date.now()}-${index}`,
-            participantName: participantName || "",
-            organizationName: organizationName || ""
+            participantName: columns[0] || "",
+            organizationName: columns[1] || ""
           };
         })
-        .filter((participant) => participant.participantName);
+        .filter((participant) => participant?.participantName);
 
       if (parsedParticipants.length === 0) {
-        alert("No valid participants found in CSV file.");
+        alert("CSV invalid format. Use participantName,organizationName columns.");
         return;
       }
 
       setParticipants(parsedParticipants);
-      setGeneratedCertificates([]);
-      setSelectedCertificate(null);
-      setSuccessMessage("");
+      setEditingParticipantId("");
+      resetGeneratedResults();
     };
 
     reader.onerror = () => {
@@ -148,13 +176,63 @@ function BulkGenerate() {
     reader.readAsText(file);
   };
 
+  const handleDownloadCsvTemplate = () => {
+    const csvContent = [
+      "participantName,organizationName",
+      "Prit Koradiya,PPSU",
+      "Rahul Patel,PPSU",
+      "Neha Sharma,PPSU"
+    ].join("\n");
+    const csvBlob = new Blob([csvContent], { type: "text/csv;charset=utf-8" });
+    const csvUrl = URL.createObjectURL(csvBlob);
+    const downloadLink = document.createElement("a");
+
+    downloadLink.href = csvUrl;
+    downloadLink.download = "bulk_certificate_template.csv";
+    downloadLink.click();
+    URL.revokeObjectURL(csvUrl);
+  };
+
   const handleRemoveParticipant = (participantId) => {
     setParticipants((currentParticipants) => currentParticipants.filter((participant) => participant.id !== participantId));
+    setEditingParticipantId("");
+    resetGeneratedResults();
+  };
+
+  const handleEditParticipant = (participant) => {
+    setEditingParticipantId(participant.id);
+    setEditParticipantDraft({
+      participantName: participant.participantName,
+      organizationName: participant.organizationName
+    });
+  };
+
+  const handleSaveParticipant = (participantId) => {
+    const participantName = editParticipantDraft.participantName.trim();
+
+    if (!participantName) {
+      alert("Participant name cannot be empty.");
+      return;
+    }
+
+    setParticipants((currentParticipants) =>
+      currentParticipants.map((participant) =>
+        participant.id === participantId
+          ? {
+              ...participant,
+              participantName,
+              organizationName: editParticipantDraft.organizationName.trim()
+            }
+          : participant
+      )
+    );
+    setEditingParticipantId("");
+    resetGeneratedResults();
   };
 
   const validateBulkForm = () => {
     if (participants.length === 0) {
-      alert("Please add participants first.");
+      alert("No participants added. Please add participants first.");
       return false;
     }
 
@@ -177,7 +255,7 @@ function BulkGenerate() {
       .map((field) => field.label);
 
     if (missingFields.length > 0) {
-      alert(`Please fill these required fields: ${missingFields.join(", ")}`);
+      alert(`Missing required common details: ${missingFields.join(", ")}`);
       return false;
     }
 
@@ -222,8 +300,8 @@ function BulkGenerate() {
   };
 
   const createPdfFileName = (certificate) => {
-    const participantName = certificate.participantName.trim().replace(/\s+/g, "_") || "Participant";
-    const certificateId = certificate.certificateId || "CERT-2026-001";
+    const participantName = safeFileName(certificate.participantName || "Participant");
+    const certificateId = safeFileName(certificate.certificateId || "CERT-2026-001");
 
     return `${participantName}_${certificateId}.pdf`;
   };
@@ -237,24 +315,82 @@ function BulkGenerate() {
     await downloadCertificatePdf("bulk-certificate-preview", createPdfFileName(selectedCertificate));
   };
 
+  const handleDownloadAllZip = async () => {
+    if (generatedCertificates.length === 0) {
+      alert("No generated certificates found. Please generate bulk certificates first.");
+      return;
+    }
+
+    const zip = new JSZip();
+    let failedCount = 0;
+
+    try {
+      setIsPreparingZip(true);
+      setZipProgress(`Preparing 0 of ${generatedCertificates.length} certificates...`);
+
+      for (let index = 0; index < generatedCertificates.length; index += 1) {
+        const certificate = generatedCertificates[index];
+        setZipProgress(`Preparing ${index + 1} of ${generatedCertificates.length} certificates...`);
+        setExportCertificate(certificate);
+        await new Promise((resolve) => setTimeout(resolve, 300));
+
+        try {
+          const pdfBlob = await generateCertificatePdfBlob("bulk-zip-export-preview");
+          zip.file(createPdfFileName(certificate), pdfBlob);
+        } catch (error) {
+          failedCount += 1;
+          console.error(`PDF generation failed for ${certificate.participantName}`, error);
+        }
+      }
+
+      setZipProgress("Creating ZIP file...");
+      const zipBlob = await zip.generateAsync({ type: "blob", compression: "DEFLATE" });
+
+      if (Object.keys(zip.files).length === 0) {
+        alert("ZIP generation failed. No certificate PDFs could be created.");
+        return;
+      }
+
+      const zipUrl = URL.createObjectURL(zipBlob);
+      const downloadLink = document.createElement("a");
+      const eventName = safeFileName(commonDetails.eventName || "Event");
+      const eventDate = safeFileName(commonDetails.eventDate || "Date");
+
+      downloadLink.href = zipUrl;
+      downloadLink.download = `bulk_certificates_${eventName}_${eventDate}.zip`;
+      downloadLink.click();
+      URL.revokeObjectURL(zipUrl);
+
+      if (failedCount > 0) {
+        alert("ZIP completed. Some certificates may have failed.");
+      }
+    } catch (error) {
+      alert(error.message || "ZIP generation failed. Please try again.");
+    } finally {
+      setExportCertificate(null);
+      setZipProgress("");
+      setIsPreparingZip(false);
+    }
+  };
+
   return (
     <section className="page-transition space-y-7">
       <div className="overflow-hidden rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-cyan-50 p-8 shadow-soft lg:p-10">
-        <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Step 7</p>
+        <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Step 8</p>
         <h2 className="mt-3 text-4xl font-black tracking-tight text-slate-950">Bulk Certificate Generation</h2>
         <p className="mt-3 max-w-4xl text-lg leading-8 text-slate-600">
-          Generate multiple certificates from student list using same event details and template.
+          Generate multiple certificates, review participant data, and download the complete batch as a ZIP file.
         </p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {stepItems.map((item, index) => (
-          <div key={item} className={`slide-up rounded-2xl border border-slate-200 bg-white p-5 shadow-soft delay-${Math.min(index + 1, 4)}00`}>
+          <div key={item.title} className={`slide-up rounded-2xl border border-slate-200 bg-white p-5 shadow-soft delay-${Math.min(index + 1, 4)}00`}>
             <div className="flex items-center gap-4">
               <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-lg font-black text-primary-700">
-                {index + 1}
+                {item.icon}
               </span>
-              <p className="text-base font-black text-slate-800">{item}</p>
+              <p className="text-base font-black text-slate-800">{item.title}</p>
             </div>
           </div>
         ))}
@@ -281,11 +417,20 @@ function BulkGenerate() {
           </div>
 
           <div className="slide-up delay-100 rounded-2xl border border-slate-200 bg-white p-6 shadow-soft">
-            <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Option B</p>
-            <h3 className="mt-2 text-2xl font-black text-slate-950">CSV Upload</h3>
-            <p className="mt-2 text-base leading-7 text-slate-600">
-              Format: participantName,organizationName
-            </p>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Option B</p>
+                <h3 className="mt-2 text-2xl font-black text-slate-950">CSV Upload</h3>
+                <p className="mt-2 text-base leading-7 text-slate-600">Format: participantName,organizationName</p>
+              </div>
+              <button
+                type="button"
+                onClick={handleDownloadCsvTemplate}
+                className="button-press soft-hover rounded-xl border border-primary-200 bg-primary-50 px-4 py-3 text-sm font-black text-primary-700"
+              >
+                Download CSV Template
+              </button>
+            </div>
             <input
               type="file"
               accept=".csv"
@@ -295,7 +440,8 @@ function BulkGenerate() {
             <div className="mt-4 rounded-xl bg-slate-50 p-4 text-sm font-semibold leading-6 text-slate-600">
               participantName,organizationName<br />
               Prit Koradiya,PPSU<br />
-              Rahul Patel,PPSU
+              Rahul Patel,PPSU<br />
+              Neha Sharma,PPSU
             </div>
           </div>
         </div>
@@ -319,22 +465,77 @@ function BulkGenerate() {
                 </tr>
               </thead>
               <tbody>
-                {participants.map((participant, index) => (
-                  <tr key={participant.id} className="border-b border-slate-100">
-                    <td className="px-3 py-4 font-bold text-slate-500">{index + 1}</td>
-                    <td className="px-3 py-4 font-black text-slate-900">{participant.participantName}</td>
-                    <td className="px-3 py-4 font-semibold text-slate-600">{participant.organizationName || commonDetails.organizationName || "Default organization"}</td>
-                    <td className="px-3 py-4">
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveParticipant(participant.id)}
-                        className="button-press soft-hover rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-sm font-black text-red-700"
-                      >
-                        Remove
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {participants.map((participant, index) => {
+                  const isEditing = editingParticipantId === participant.id;
+
+                  return (
+                    <tr key={participant.id} className="border-b border-slate-100 align-top">
+                      <td className="px-3 py-4 font-bold text-slate-500">{index + 1}</td>
+                      <td className="px-3 py-4">
+                        {isEditing ? (
+                          <input
+                            value={editParticipantDraft.participantName}
+                            onChange={(event) => setEditParticipantDraft((draft) => ({ ...draft, participantName: event.target.value }))}
+                            className={inputClass}
+                          />
+                        ) : (
+                          <span className="font-black text-slate-900">{participant.participantName}</span>
+                        )}
+                      </td>
+                      <td className="px-3 py-4">
+                        {isEditing ? (
+                          <input
+                            value={editParticipantDraft.organizationName}
+                            onChange={(event) => setEditParticipantDraft((draft) => ({ ...draft, organizationName: event.target.value }))}
+                            className={inputClass}
+                            placeholder="Default organization will be used"
+                          />
+                        ) : (
+                          <span className="font-semibold text-slate-600">{participant.organizationName || commonDetails.organizationName || "Default organization"}</span>
+                        )}
+                      </td>
+                      <td className="px-3 py-4">
+                        <div className="flex flex-wrap gap-2">
+                          {isEditing ? (
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => handleSaveParticipant(participant.id)}
+                                className="button-press soft-hover rounded-lg bg-emerald-600 px-3 py-2 text-sm font-black text-white"
+                              >
+                                Save
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setEditingParticipantId("")}
+                                className="button-press soft-hover rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-black text-slate-700"
+                              >
+                                Cancel
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => handleEditParticipant(participant)}
+                                className="button-press soft-hover rounded-lg border border-primary-200 bg-primary-50 px-3 py-2 text-sm font-black text-primary-700"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveParticipant(participant.id)}
+                                className="button-press soft-hover rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-sm font-black text-red-700"
+                              >
+                                Remove
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -424,16 +625,23 @@ function BulkGenerate() {
             </button>
             <button
               type="button"
-              onClick={() => alert("Download all certificates as ZIP will be added in next step.")}
-              className="button-press soft-hover rounded-xl border border-slate-200 bg-white px-5 py-3 text-base font-black text-slate-700 transition hover:bg-slate-50"
+              onClick={handleDownloadAllZip}
+              disabled={isPreparingZip || generatedCertificates.length === 0}
+              className="button-press soft-hover rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-3 text-base font-black text-emerald-700 transition hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              Download All PDFs
+              {isPreparingZip ? "Preparing ZIP..." : "Download All PDFs as ZIP"}
             </button>
           </div>
 
           {successMessage && (
             <div className="mt-5 rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-base font-black text-emerald-800">
               {successMessage}
+            </div>
+          )}
+
+          {zipProgress && (
+            <div className="mt-4 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-base font-black text-primary-700">
+              {zipProgress}
             </div>
           )}
         </form>
@@ -449,9 +657,14 @@ function BulkGenerate() {
 
       {generatedCertificates.length > 0 && (
         <div className="slide-up space-y-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-soft">
-          <div>
-            <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Generated Result</p>
-            <h3 className="mt-2 text-2xl font-black text-slate-950">Bulk generated certificates</h3>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Generated Result</p>
+              <h3 className="mt-2 text-2xl font-black text-slate-950">Bulk generated certificates</h3>
+            </div>
+            <span className="rounded-full bg-emerald-50 px-4 py-2 text-sm font-black text-emerald-700">
+              {generatedCertificates.length} ready
+            </span>
           </div>
 
           <div className="overflow-x-auto">
@@ -520,6 +733,12 @@ function BulkGenerate() {
           <CertificatePreview certificateData={selectedCertificate} previewId="bulk-certificate-preview" />
         </div>
       )}
+
+      <div className="fixed left-[-9999px] top-0 bg-white">
+        {exportCertificate && (
+          <CertificatePreview certificateData={exportCertificate} previewId="bulk-zip-export-preview" />
+        )}
+      </div>
     </section>
   );
 }

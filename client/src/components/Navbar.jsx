@@ -11,7 +11,7 @@ function Navbar() {
           </p>
         </div>
         <div className="shimmer rounded-full border border-blue-100 bg-gradient-to-r from-blue-50 via-white to-cyan-50 px-4 py-2 text-sm font-bold text-primary-700 shadow-sm sm:px-5">
-          Step 6B
+          Step 8
         </div>
       </div>
     </header>

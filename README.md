@@ -194,6 +194,16 @@ Expected response:
 - Individual PDF download for bulk certificates
 - Generation type Single/Bulk
 
+## Step 8 Completed Features
+
+- Download all bulk certificates as ZIP
+- JSZip integration
+- CSV template download
+- Editable participant table
+- Bulk PDF export progress
+- Generation type filter
+- Improved bulk generation UI
+
 ## GitHub Upload Instructions
 
 ```bash
@@ -207,7 +217,8 @@ git push -u origin main
 
 ## Next Planned Features
 
-- Download all bulk certificates as ZIP
-- Add CSV template download
-- Add edit participant before generation
-- Add different category/template per participant support
+- Save draft certificates
+- Edit generated certificate records
+- Delete generated certificate records
+- Add certificate view details page
+- Add better certificate management actions

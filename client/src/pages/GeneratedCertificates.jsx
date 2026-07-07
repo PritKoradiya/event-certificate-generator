@@ -11,6 +11,7 @@ function GeneratedCertificates() {
   const [errorMessage, setErrorMessage] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedGenerationType, setSelectedGenerationType] = useState("All");
 
   const categories = useMemo(() => {
     const certificateCategories = certificates
@@ -30,10 +31,12 @@ function GeneratedCertificates() {
         certificate.eventName?.toLowerCase().includes(normalizedSearchTerm) ||
         certificate.certificateCategory?.toLowerCase().includes(normalizedSearchTerm);
       const matchesCategory = selectedCategory === "All" || certificate.certificateCategory === selectedCategory;
+      const generationType = certificate.generationType || "Single";
+      const matchesGenerationType = selectedGenerationType === "All" || generationType === selectedGenerationType;
 
-      return matchesSearch && matchesCategory;
+      return matchesSearch && matchesCategory && matchesGenerationType;
     });
-  }, [certificates, searchTerm, selectedCategory]);
+  }, [certificates, searchTerm, selectedCategory, selectedGenerationType]);
 
   useEffect(() => {
     const fetchCertificates = async () => {
@@ -138,7 +141,7 @@ function GeneratedCertificates() {
       </div>
 
       <div className="slide-up rounded-2xl border border-slate-200 bg-white p-5 shadow-soft">
-        <div className="grid gap-3 md:grid-cols-[1fr_260px]">
+        <div className="grid gap-3 lg:grid-cols-[1fr_220px_180px]">
           <input
             type="search"
             value={searchTerm}
@@ -156,6 +159,15 @@ function GeneratedCertificates() {
                 {category}
               </option>
             ))}
+          </select>
+          <select
+            value={selectedGenerationType}
+            onChange={(event) => setSelectedGenerationType(event.target.value)}
+            className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-base outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-primary-100"
+          >
+            <option value="All">All</option>
+            <option value="Single">Single</option>
+            <option value="Bulk">Bulk</option>
           </select>
         </div>
         <p className="mt-4 text-base font-bold text-slate-600">
