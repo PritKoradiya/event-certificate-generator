@@ -10,9 +10,9 @@ import GeneratedCertificates from "./pages/GeneratedCertificates.jsx";
 
 function App() {
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
+    <div className="min-h-screen bg-slate-50 text-base text-slate-900">
       <Navbar />
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-6 md:flex-row">
+      <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-6 px-4 py-6 sm:px-5 lg:flex-row lg:px-6">
         <Sidebar />
         <main className="min-w-0 flex-1">
           <Routes>

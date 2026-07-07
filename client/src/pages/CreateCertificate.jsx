@@ -5,7 +5,7 @@ import { createCertificate } from "../services/certificateApi.js";
 import downloadCertificatePdf from "../utils/downloadCertificatePdf.js";
 
 const inputClass =
-  "w-full rounded-md border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-primary-100";
+  "h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-base outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-primary-100";
 
 const initialFormData = {
   participantName: "",
@@ -149,17 +149,17 @@ function CreateCertificate() {
     : formData;
 
   return (
-    <section className="page-transition space-y-6">
-      <div className="fade-in">
-        <p className="text-sm font-semibold uppercase tracking-wide text-primary-600">Create Certificate</p>
-        <h2 className="mt-2 text-2xl font-bold text-slate-950">Certificate details</h2>
-        <p className="mt-2 text-slate-600">Fill in the event and participant information to preview the certificate instantly.</p>
+    <section className="page-transition space-y-7">
+      <div className="fade-in rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-slate-50 p-7 shadow-soft">
+        <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Create Certificate</p>
+        <h2 className="mt-2 text-3xl font-black text-slate-950">Certificate details</h2>
+        <p className="mt-2 text-lg leading-8 text-slate-600">Fill in the event and participant information to preview the certificate instantly.</p>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,0.95fr)_minmax(420px,1.05fr)]">
-        <form className="slide-up grid gap-5 rounded-lg border border-slate-200 bg-white p-6 shadow-soft" onSubmit={(event) => event.preventDefault()}>
+      <div className="grid gap-6 lg:grid-cols-[480px_1fr]">
+        <form className="slide-up grid gap-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-soft lg:p-7" onSubmit={(event) => event.preventDefault()}>
           <div className="grid gap-5 md:grid-cols-2">
-            <label className="grid gap-2 text-sm font-semibold text-slate-700">
+            <label className="grid gap-2 text-base font-bold text-slate-700">
               Participant Name
               <input
                 className={inputClass}
@@ -170,7 +170,7 @@ function CreateCertificate() {
                 placeholder="Enter participant name"
               />
             </label>
-            <label className="grid gap-2 text-sm font-semibold text-slate-700">
+            <label className="grid gap-2 text-base font-bold text-slate-700">
               Organization Name
               <input
                 className={inputClass}
@@ -181,7 +181,7 @@ function CreateCertificate() {
                 placeholder="Enter organization name"
               />
             </label>
-            <label className="grid gap-2 text-sm font-semibold text-slate-700">
+            <label className="grid gap-2 text-base font-bold text-slate-700">
               Event Name
               <input
                 className={inputClass}
@@ -192,7 +192,7 @@ function CreateCertificate() {
                 placeholder="Enter event name"
               />
             </label>
-            <label className="grid gap-2 text-sm font-semibold text-slate-700">
+            <label className="grid gap-2 text-base font-bold text-slate-700">
               Certificate Category
               <select className={inputClass} name="category" value={formData.category} onChange={handleChange}>
                 <option value="">Select category</option>
@@ -203,7 +203,7 @@ function CreateCertificate() {
                 ))}
               </select>
             </label>
-            <label className="grid gap-2 text-sm font-semibold text-slate-700">
+            <label className="grid gap-2 text-base font-bold text-slate-700">
               Certificate Title
               <input
                 className={inputClass}
@@ -214,16 +214,16 @@ function CreateCertificate() {
                 placeholder="Certificate of Participation"
               />
             </label>
-            <label className="grid gap-2 text-sm font-semibold text-slate-700">
+            <label className="grid gap-2 text-base font-bold text-slate-700">
               Event Date
               <input className={inputClass} type="date" name="eventDate" value={formData.eventDate} onChange={handleChange} />
             </label>
           </div>
 
-          <label className="grid gap-2 text-sm font-semibold text-slate-700">
+          <label className="grid gap-2 text-base font-bold text-slate-700">
             Description / Details
             <textarea
-              className={`${inputClass} min-h-32 resize-y`}
+              className={`${inputClass} min-h-32 resize-y py-3`}
               name="description"
               value={formData.description}
               onChange={handleChange}
@@ -231,7 +231,7 @@ function CreateCertificate() {
             />
           </label>
 
-          <label className="grid gap-2 text-sm font-semibold text-slate-700">
+          <label className="grid gap-2 text-base font-bold text-slate-700">
             Authorized Signature Name
             <input
               className={inputClass}
@@ -243,7 +243,7 @@ function CreateCertificate() {
             />
           </label>
 
-          <label className="grid gap-2 text-sm font-semibold text-slate-700">
+          <label className="grid gap-2 text-base font-bold text-slate-700">
             Template Style
             <select className={inputClass} name="templateStyle" value={formData.templateStyle} onChange={handleChange}>
               <option value="">Select template style</option>
@@ -253,7 +253,7 @@ function CreateCertificate() {
                 </option>
               ))}
             </select>
-            <span className="rounded-md bg-blue-50 px-4 py-3 text-xs font-semibold leading-5 text-blue-700">
+            <span className="rounded-xl bg-blue-50 px-4 py-3 text-sm font-bold leading-6 text-blue-700">
               24+ certificate templates available. Select any design to preview instantly.
             </span>
           </label>
@@ -262,14 +262,14 @@ function CreateCertificate() {
             <button
               type="button"
               onClick={handleReset}
-              className="soft-hover rounded-md border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
+              className="button-press soft-hover rounded-xl border border-slate-200 bg-white px-5 py-3 text-base font-bold text-slate-700 transition hover:bg-slate-50"
             >
               Reset Form
             </button>
             <button
               type="button"
               onClick={handleSaveDraft}
-              className="soft-hover rounded-md border border-primary-200 bg-primary-50 px-5 py-3 text-sm font-bold text-primary-700 transition hover:bg-primary-100"
+              className="button-press soft-hover rounded-xl border border-primary-200 bg-primary-50 px-5 py-3 text-base font-bold text-primary-700 transition hover:bg-primary-100"
             >
               Save Draft
             </button>
@@ -277,7 +277,7 @@ function CreateCertificate() {
               type="button"
               onClick={handleGenerateCertificate}
               disabled={isGenerating}
-              className="soft-hover rounded-md bg-primary-600 px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-primary-700 disabled:cursor-not-allowed disabled:bg-primary-500 disabled:opacity-70"
+              className="button-press soft-hover rounded-xl bg-primary-600 px-5 py-3 text-base font-bold text-white shadow-sm transition hover:bg-primary-700 disabled:cursor-not-allowed disabled:bg-primary-500 disabled:opacity-70"
             >
               {isGenerating ? "Generating..." : "Generate Certificate"}
             </button>
@@ -285,7 +285,7 @@ function CreateCertificate() {
               <button
                 type="button"
                 onClick={handleDownloadPdf}
-                className="soft-hover rounded-md bg-emerald-600 px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-emerald-700"
+                className="button-press soft-hover rounded-xl bg-emerald-600 px-5 py-3 text-base font-bold text-white shadow-sm transition hover:bg-emerald-700"
               >
                 Download PDF
               </button>
@@ -293,13 +293,15 @@ function CreateCertificate() {
           </div>
         </form>
 
-        <div className="space-y-3">
-          <div className="slide-up rounded-lg border border-slate-200 bg-white px-5 py-4 shadow-soft">
-            <p className="text-sm font-semibold text-slate-700">
+        <div className="space-y-4">
+          <div className="slide-up rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-soft">
+            <p className="text-base font-bold text-slate-700">
               Selected Template: <span className="text-primary-700">{selectedTemplateName}</span>
             </p>
           </div>
-          <CertificatePreview certificateData={previewData} previewId="certificate-preview" />
+          <div className="slide-up delay-100 rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
+            <CertificatePreview certificateData={previewData} previewId="certificate-preview" />
+          </div>
         </div>
       </div>
     </section>

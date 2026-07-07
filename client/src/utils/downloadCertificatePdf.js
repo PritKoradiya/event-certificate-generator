@@ -1,31 +1,63 @@
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
+const EXPORT_WIDTH = 1123;
+const EXPORT_HEIGHT = 794;
+
 const downloadCertificatePdf = async (elementId, fileName) => {
-  let certificateElement;
+  let exportWrapper;
 
   try {
-    certificateElement = document.getElementById(elementId);
+    const certificateElement = document.getElementById(elementId);
 
     if (!certificateElement) {
       throw new Error("Certificate preview was not found. Please try again.");
     }
 
-    certificateElement.classList.add("pdf-export-mode");
-    await new Promise((resolve) => requestAnimationFrame(resolve));
+    const clonedCertificate = certificateElement.cloneNode(true);
+    exportWrapper = document.createElement("div");
 
-    const canvas = await html2canvas(certificateElement, {
-      scale: 1.5,
+    exportWrapper.className = "pdf-export-clone";
+    exportWrapper.style.position = "fixed";
+    exportWrapper.style.left = "-9999px";
+    exportWrapper.style.top = "0";
+    exportWrapper.style.width = `${EXPORT_WIDTH}px`;
+    exportWrapper.style.height = `${EXPORT_HEIGHT}px`;
+    exportWrapper.style.padding = "0";
+    exportWrapper.style.margin = "0";
+    exportWrapper.style.overflow = "visible";
+    exportWrapper.style.background = "#ffffff";
+
+    clonedCertificate.classList.add("pdf-export-clone");
+    clonedCertificate.style.width = `${EXPORT_WIDTH}px`;
+    clonedCertificate.style.height = `${EXPORT_HEIGHT}px`;
+    clonedCertificate.style.maxWidth = "none";
+    clonedCertificate.style.aspectRatio = "auto";
+    clonedCertificate.style.transform = "none";
+    clonedCertificate.style.opacity = "1";
+    clonedCertificate.style.filter = "none";
+    clonedCertificate.style.boxShadow = "none";
+    clonedCertificate.style.backgroundColor = "#ffffff";
+
+    exportWrapper.appendChild(clonedCertificate);
+    document.body.appendChild(exportWrapper);
+
+    await new Promise((resolve) => setTimeout(resolve, 200));
+
+    const canvas = await html2canvas(exportWrapper, {
       backgroundColor: "#ffffff",
+      scale: 1.5,
       useCORS: true,
       logging: false,
       removeContainer: true,
-      windowWidth: certificateElement.scrollWidth,
-      windowHeight: certificateElement.scrollHeight
+      scrollX: 0,
+      scrollY: 0,
+      windowWidth: EXPORT_WIDTH,
+      windowHeight: EXPORT_HEIGHT
     });
 
-    // Using JPEG compression to keep PDF size smaller.
-    const imageData = canvas.toDataURL("image/jpeg", 0.72);
+    // JPEG keeps the PDF compact while preserving readable certificate text.
+    const imageData = canvas.toDataURL("image/jpeg", 0.78);
     const pdf = new jsPDF({
       orientation: "landscape",
       unit: "mm",
@@ -33,37 +65,21 @@ const downloadCertificatePdf = async (elementId, fileName) => {
       compress: true
     });
 
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-    const margin = 8;
-    const availableWidth = pageWidth - margin * 2;
-    const availableHeight = pageHeight - margin * 2;
-    const imageRatio = canvas.width / canvas.height;
-    const pageRatio = availableWidth / availableHeight;
+    const pageWidth = 297;
+    const pageHeight = 210;
+    const margin = 5;
+    const imageWidth = pageWidth - margin * 2;
+    const imageHeight = pageHeight - margin * 2;
 
-    let imageWidth;
-    let imageHeight;
-
-    if (imageRatio > pageRatio) {
-      imageWidth = availableWidth;
-      imageHeight = imageWidth / imageRatio;
-    } else {
-      imageHeight = availableHeight;
-      imageWidth = imageHeight * imageRatio;
-    }
-
-    const xPosition = (pageWidth - imageWidth) / 2;
-    const yPosition = (pageHeight - imageHeight) / 2;
-
-    pdf.addImage(imageData, "JPEG", xPosition, yPosition, imageWidth, imageHeight, undefined, "FAST");
+    pdf.addImage(imageData, "JPEG", margin, margin, imageWidth, imageHeight, undefined, "FAST");
     pdf.save(fileName || "certificate.pdf");
     return true;
   } catch (error) {
-    alert(error.message || "Unable to download certificate PDF.");
+    alert(error.message || "Unable to download certificate PDF. Please try again.");
     return false;
   } finally {
-    if (certificateElement) {
-      certificateElement.classList.remove("pdf-export-mode");
+    if (exportWrapper && exportWrapper.parentNode) {
+      exportWrapper.parentNode.removeChild(exportWrapper);
     }
   }
 };

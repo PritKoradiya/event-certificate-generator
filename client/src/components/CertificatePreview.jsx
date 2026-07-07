@@ -33,77 +33,77 @@ function CertificatePreview({ certificateData, previewId = "certificate-preview"
   return (
     <section
       id={previewId}
-      className={`scale-in mx-auto aspect-[1.414/1] w-full max-w-5xl rounded-lg border p-3 shadow-soft sm:p-4 ${selectedTemplate.previewClass}`}
+      className={`certificate-preview-root scale-in mx-auto aspect-[1.414/1] w-full max-w-[950px] overflow-hidden rounded-xl border p-[1.4%] shadow-soft ${selectedTemplate.previewClass}`}
     >
-      <div className={`flex h-full flex-col rounded-lg border-2 bg-white/90 px-4 py-3 text-center sm:px-8 sm:py-5 ${selectedTemplate.borderClass}`}>
-        <div className="flex items-center gap-3">
+      <div className={`flex h-full flex-col rounded-lg border-2 bg-white px-[4.5%] py-[3%] text-center ${selectedTemplate.borderClass}`}>
+        <div className="flex shrink-0 items-center gap-3">
           <div className={`h-1 flex-1 rounded-full ${selectedTemplate.accentClass}`} />
-          <p className="max-w-[52%] truncate text-[10px] font-bold uppercase tracking-wide text-slate-500 sm:text-xs">
-            {selectedTemplate.name} · {displayValue(displayCategory, "Category")}
+          <p className="max-w-[58%] truncate text-[clamp(9px,1.2vw,13px)] font-bold uppercase tracking-wide text-slate-700">
+            {selectedTemplate.name} - {displayValue(displayCategory, "Category")}
           </p>
           <div className={`h-1 flex-1 rounded-full ${selectedTemplate.accentClass}`} />
         </div>
 
-        <div className="flex min-h-0 flex-1 flex-col justify-center py-2 sm:py-3">
-          <h3 className={`break-words text-lg font-bold leading-tight sm:text-3xl lg:text-4xl ${selectedTemplate.headingClass}`}>
+        <div className="flex min-h-0 flex-1 flex-col justify-center py-[2%]">
+          <h3 className={`break-words text-[clamp(20px,3.2vw,44px)] font-bold leading-tight ${selectedTemplate.headingClass}`}>
             {displayValue(certificateTitle, "Certificate of Participation")}
           </h3>
 
-          <div className={`mx-auto mt-2 h-1 w-20 rounded-full ${selectedTemplate.accentClass}`} />
+          <div className={`mx-auto mt-[1.3%] h-1 w-24 rounded-full ${selectedTemplate.accentClass}`} />
 
-          <p className="mt-2 text-[10px] font-medium uppercase tracking-wide text-slate-500 sm:text-xs">
+          <p className="mt-[1.5%] text-[clamp(10px,1.25vw,14px)] font-bold uppercase tracking-wide text-slate-600">
             This certificate is proudly presented to
           </p>
 
-          <p className={`mx-auto mt-1 max-w-4xl break-words border-b px-3 pb-1 text-2xl font-bold leading-tight sm:text-4xl lg:text-5xl ${selectedTemplate.headingClass} ${selectedTemplate.borderClass}`}>
+          <p className={`mx-auto mt-[0.8%] max-w-[88%] break-words border-b px-3 pb-[0.8%] text-[clamp(26px,4.6vw,62px)] font-black leading-tight ${selectedTemplate.headingClass} ${selectedTemplate.borderClass}`}>
             {displayValue(participantName, "Participant Name")}
           </p>
 
-          <p className="mt-2 text-xs leading-5 text-slate-600 sm:text-sm">
-            From <span className="break-words font-semibold text-slate-800">{displayValue(organizationName, "Organization Name")}</span>
+          <p className="mt-[1.4%] text-[clamp(11px,1.35vw,16px)] leading-snug text-slate-700">
+            From <span className="break-words font-bold text-slate-900">{displayValue(organizationName, "Organization Name")}</span>
           </p>
 
-          <p className="mx-auto mt-1 max-w-3xl break-words text-xs leading-5 text-slate-700 sm:text-sm">
+          <p className="mx-auto mt-[0.8%] max-w-[82%] break-words text-[clamp(12px,1.45vw,17px)] leading-snug text-slate-800">
             For successfully participating in{" "}
-            <span className="font-semibold text-slate-900">{displayValue(eventName, "Event Name")}</span>
+            <span className="font-bold text-slate-950">{displayValue(eventName, "Event Name")}</span>
           </p>
 
-          <div className="mx-auto mt-2 flex max-w-xl flex-wrap justify-center gap-2 text-[10px] sm:text-xs">
+          <div className="mx-auto mt-[1.6%] flex max-w-[80%] flex-wrap justify-center gap-2 text-[clamp(10px,1.15vw,13px)]">
             <span className={`rounded-full px-3 py-1 font-semibold ${selectedTemplate.badgeClass}`}>
               {displayValue(displayCategory, "Category")}
             </span>
-            <span className="rounded-full bg-white px-3 py-1 font-semibold text-slate-700 shadow-sm">
+            <span className="rounded-full bg-white px-3 py-1 font-semibold text-slate-800 shadow-sm">
               Event Date: {displayValue(eventDate, "Event Date")}
             </span>
           </div>
 
-          <p className="mx-auto mt-2 max-w-3xl break-words text-[11px] leading-5 text-slate-600 sm:text-sm">
+          <p className="mx-auto mt-[1.5%] max-w-[82%] break-words text-[clamp(11px,1.25vw,15px)] leading-snug text-slate-700">
             {displayValue(description, "Description and certificate details will appear here as you type.")}
           </p>
         </div>
 
-        <div className={`mx-auto h-px w-full max-w-3xl ${selectedTemplate.accentClass}`} />
+        <div className={`mx-auto h-px w-full max-w-[78%] shrink-0 ${selectedTemplate.accentClass}`} />
 
-        <div className="grid grid-cols-3 items-end gap-2 pt-2 text-[10px] text-slate-600 sm:pt-3 sm:text-xs">
+        <div className="grid shrink-0 grid-cols-3 items-end gap-3 pt-[1.8%] text-[clamp(9px,1.1vw,13px)] text-slate-700">
           <div className="min-w-0">
-            <p className={`signature-text truncate text-lg leading-none sm:text-2xl ${selectedTemplate.headingClass}`}>
+            <p className={`signature-text truncate text-[clamp(18px,2.6vw,34px)] leading-none ${selectedTemplate.headingClass}`}>
               {signatureName}
             </p>
-            <div className="mx-auto mt-1 w-full max-w-40 border-t border-slate-300 pt-1 font-semibold">
+            <div className="mx-auto mt-1 w-full max-w-44 border-t border-slate-400 pt-1 font-bold">
               Authorized Signature
             </div>
           </div>
 
           <div className="flex justify-center">
-            <div className={`flex h-14 w-14 items-center justify-center rounded-full border-2 bg-white px-2 text-center text-[9px] font-bold uppercase sm:h-20 sm:w-20 sm:text-[10px] ${selectedTemplate.borderClass} ${selectedTemplate.headingClass}`}>
+            <div className={`flex aspect-square w-[clamp(58px,8.2vw,92px)] items-center justify-center rounded-full border-2 bg-white px-2 text-center text-[clamp(8px,0.95vw,11px)] font-black uppercase ${selectedTemplate.borderClass} ${selectedTemplate.headingClass}`}>
               Official Seal
             </div>
           </div>
 
           <div className="min-w-0 text-right">
-            <p className="truncate font-semibold uppercase tracking-wide text-slate-500">Certificate ID</p>
-            <p className="truncate font-bold text-slate-700">{displayCertificateId}</p>
-            <p className="mt-1 truncate text-slate-500">Issue Date: {formattedIssueDate}</p>
+            <p className="truncate font-bold uppercase tracking-wide text-slate-600">Certificate ID</p>
+            <p className="truncate font-black text-slate-800">{displayCertificateId}</p>
+            <p className="mt-1 truncate font-semibold text-slate-600">Issue Date: {formattedIssueDate}</p>
           </div>
         </div>
       </div>

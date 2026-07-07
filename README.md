@@ -168,6 +168,19 @@ Expected response:
 - Categories page connected with template filter
 - Better responsive UI
 
+## Step 6B Completed Features
+
+- Full UI scaling improved for 100% browser zoom
+- Premium CSS and Tailwind animations added
+- Dashboard redesigned with larger cards and progress section
+- Create Certificate layout improved with larger form and preview area
+- Certificate preview updated with export-safe A4 landscape layout
+- PDF export fixed using hidden clone capture
+- PDF cropping issue fixed
+- PDF opacity/light output issue fixed
+- PDF size optimized with JPEG compression
+- Improved templates and categories UI
+
 ## GitHub Upload Instructions
 
 ```bash
