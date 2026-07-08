@@ -4,10 +4,12 @@ import ClassicOrnateTemplate from "./templates/ClassicOrnateTemplate.jsx";
 import DarkLuxuryTemplate from "./templates/DarkLuxuryTemplate.jsx";
 import FloralCreativeTemplate from "./templates/FloralCreativeTemplate.jsx";
 import GoldCornerTemplate from "./templates/GoldCornerTemplate.jsx";
+import ImageBackgroundTemplate from "./templates/ImageBackgroundTemplate.jsx";
 import MinimalElegantTemplate from "./templates/MinimalElegantTemplate.jsx";
 import ModernWaveTemplate from "./templates/ModernWaveTemplate.jsx";
 import PlayfulAwardTemplate from "./templates/PlayfulAwardTemplate.jsx";
 import VintageBorderTemplate from "./templates/VintageBorderTemplate.jsx";
+import templateData from "../data/templateData.js";
 
 const templateComponents = {
   "academic-seal": AcademicSealTemplate,
@@ -58,15 +60,26 @@ const templateAliases = {
 };
 
 function CertificatePreview({ certificateData = {}, previewId = "certificate-preview" }) {
-  const templateKey = certificateData.designKey || templateAliases[certificateData.templateStyle] || "blue-corporate";
+  const selectedTemplate = [...templateData].reverse().find((template) => template.name === certificateData.templateStyle);
+  const templateKey = certificateData.designKey || selectedTemplate?.designKey || templateAliases[certificateData.templateStyle] || "blue-corporate";
   const SelectedTemplate = templateComponents[templateKey] || BlueCorporateTemplate;
+  const templateProps = {
+    ...certificateData,
+    backgroundImage: certificateData.backgroundImage || selectedTemplate?.backgroundImage,
+    safeArea: certificateData.safeArea || selectedTemplate?.safeArea,
+    textTheme: certificateData.textTheme || selectedTemplate?.textTheme
+  };
 
   return (
     <section
       id={previewId}
       className="certificate-preview-root scale-in mx-auto aspect-[1.414/1] w-full max-w-[950px] overflow-hidden rounded-2xl bg-white shadow-soft"
     >
-      <SelectedTemplate {...certificateData} />
+      {selectedTemplate?.designType === "image-background" ? (
+        <ImageBackgroundTemplate {...templateProps} />
+      ) : (
+        <SelectedTemplate {...templateProps} />
+      )}
     </section>
   );
 }

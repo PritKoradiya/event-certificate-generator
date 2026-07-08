@@ -14,6 +14,23 @@ export const safeFileName = (name) => {
   return cleanedName || "certificate";
 };
 
+const waitForImagesToLoad = async (element) => {
+  const images = element.querySelectorAll("img");
+
+  await Promise.all(
+    [...images].map((image) => {
+      if (image.complete) {
+        return Promise.resolve();
+      }
+
+      return new Promise((resolve) => {
+        image.onload = resolve;
+        image.onerror = resolve;
+      });
+    })
+  );
+};
+
 const createPdfFromElement = async (elementId) => {
   let exportWrapper;
 
@@ -52,6 +69,7 @@ const createPdfFromElement = async (elementId) => {
     exportWrapper.appendChild(clonedCertificate);
     document.body.appendChild(exportWrapper);
 
+    await waitForImagesToLoad(clonedCertificate);
     await new Promise((resolve) => setTimeout(resolve, 200));
 
     const canvas = await html2canvas(exportWrapper, {

@@ -34,6 +34,7 @@ event-certificate-generator/
         Sidebar.jsx
         StatCard.jsx
       data/
+        backgroundTemplateData.js
         posterData.js
         templateData.js
       services/
@@ -48,6 +49,11 @@ event-certificate-generator/
       App.jsx
       main.jsx
       index.css
+    public/
+      certificate-backgrounds/
+        1.png
+        2.png
+        ...
     package.json
     vite.config.js
   server/
@@ -234,6 +240,15 @@ Expected response:
 - Template selector supports premium designs
 - Professional gallery-style mini previews for premium templates
 - PDF and ZIP export compatibility preserved with A4 landscape templates
+
+## Step 11 Completed Features
+
+- Image background certificate templates support
+- Local PNG background designs can be used from `client/public/certificate-backgrounds`
+- Dynamic text overlay on background templates
+- PDF export supports image templates
+- Template gallery shows image-based templates
+- For smaller PDF size, compress background images before placing them in the public folder
 
 ## GitHub Upload Instructions
 

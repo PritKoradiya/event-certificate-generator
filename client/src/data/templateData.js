@@ -1,4 +1,6 @@
-const templateData = [
+import backgroundTemplateData from "./backgroundTemplateData.js";
+
+const baseTemplateData = [
   {
     id: "classic-certificate",
     name: "Classic Certificate",
@@ -378,5 +380,7 @@ const templateData = [
     badgeClass: "bg-blue-100 text-blue-900"
   }
 ];
+
+const templateData = [...baseTemplateData, ...backgroundTemplateData];
 
 export default templateData;

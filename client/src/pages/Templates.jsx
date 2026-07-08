@@ -136,7 +136,34 @@ function PremiumCertificateMiniPreview({ template }) {
   );
 }
 
+function ImageBackgroundMiniPreview({ template }) {
+  const isLightText = template.textTheme === "light";
+
+  return (
+    <div className="relative aspect-[1.414/1] overflow-hidden rounded-xl border border-slate-200 bg-slate-100 shadow-sm">
+      <img
+        src={template.backgroundImage}
+        alt=""
+        className="absolute inset-0 h-full w-full object-cover"
+        draggable={false}
+      />
+      <div className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-[10px] font-black uppercase tracking-wide text-slate-700">
+        Image Template
+      </div>
+      <div className={`relative z-10 flex h-full flex-col items-center justify-center px-[12%] text-center ${isLightText ? "text-white" : "text-slate-950"}`}>
+        <p className="text-lg font-black uppercase leading-tight">Certificate</p>
+        <div className={`mt-2 h-1 w-20 rounded-full ${isLightText ? "bg-amber-200" : "bg-blue-800"}`} />
+        <p className="mt-3 max-w-full truncate font-serif text-2xl font-black">Participant Name</p>
+      </div>
+    </div>
+  );
+}
+
 function CertificateMiniPreview({ template }) {
+  if (template.designType === "image-background") {
+    return <ImageBackgroundMiniPreview template={template} />;
+  }
+
   if (template.designKey) {
     return <PremiumCertificateMiniPreview template={template} />;
   }
