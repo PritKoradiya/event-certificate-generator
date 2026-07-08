@@ -177,7 +177,7 @@ function CreateCertificate() {
         <p className="mt-2 text-lg leading-8 text-slate-600">Enter event and participant details to generate a certificate preview.</p>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[480px_1fr]">
+      <div className="grid gap-6 lg:grid-cols-[520px_1fr]">
         <form className="slide-up grid gap-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-soft lg:p-7" onSubmit={(event) => event.preventDefault()}>
           <div className="grid gap-5 md:grid-cols-2">
             <label className="grid gap-2 text-base font-bold text-slate-700">
@@ -275,7 +275,7 @@ function CreateCertificate() {
               ))}
             </select>
             <span className="rounded-xl bg-blue-50 px-4 py-3 text-sm font-bold leading-6 text-blue-700">
-              24+ certificate templates available. Select any design to preview instantly.
+              {templateData.length}+ certificate templates available. Select any design to preview instantly.
             </span>
           </label>
 
@@ -321,7 +321,7 @@ function CreateCertificate() {
               Selected Template: <span className="text-primary-700">{selectedTemplateName}</span>
             </p>
           </div>
-          <div className="slide-up delay-100 rounded-2xl border border-slate-200 bg-white p-4 shadow-soft">
+          <div className="slide-up delay-100 rounded-3xl border border-slate-200 bg-white p-5 shadow-soft">
             <CertificatePreview certificateData={previewData} previewId="certificate-preview" />
           </div>
         </div>

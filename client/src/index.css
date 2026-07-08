@@ -172,6 +172,41 @@ button {
   font-family: "Brush Script MT", "Segoe Script", cursive;
 }
 
+.certificate-preview-root {
+  contain: layout paint;
+}
+
+.certificate-preview-root * {
+  box-sizing: border-box;
+}
+
+.certificate-title-safe {
+  font-size: clamp(1.8rem, 3vw, 3.4rem);
+  line-height: 1.05;
+}
+
+.certificate-name-safe {
+  font-size: clamp(2rem, 4vw, 4.5rem);
+  line-height: 1;
+  word-break: break-word;
+}
+
+.certificate-body-safe {
+  font-size: clamp(0.8rem, 1.1vw, 1rem);
+}
+
+.certificate-footer-safe {
+  font-size: clamp(0.7rem, 0.9vw, 0.85rem);
+}
+
+.certificate-description-safe {
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
 .pdf-export-clone,
 .pdf-export-clone * {
   animation: none !important;
@@ -191,4 +226,20 @@ button {
 .pdf-export-clone .certificate-preview-root {
   border-radius: 0.5rem !important;
   color: #111827 !important;
+}
+
+.pdf-export-clone .certificate-title-safe {
+  font-size: 46px !important;
+}
+
+.pdf-export-clone .certificate-name-safe {
+  font-size: 58px !important;
+}
+
+.pdf-export-clone .certificate-body-safe {
+  font-size: 18px !important;
+}
+
+.pdf-export-clone .certificate-footer-safe {
+  font-size: 14px !important;
 }
