@@ -41,9 +41,9 @@ function Categories() {
     <section className="page-transition space-y-7">
       <div className="overflow-hidden rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-cyan-50 p-8 shadow-soft lg:p-10">
         <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Categories</p>
-        <h2 className="mt-3 text-4xl font-black tracking-tight text-slate-950">Event Certificate Categories</h2>
+        <h2 className="mt-3 text-4xl font-black tracking-tight text-slate-950">Event Categories</h2>
         <p className="mt-3 max-w-3xl text-lg leading-8 text-slate-600">
-          Explore categories for seminars, conferences, FDPs, workshops, competitions, and college celebrations.
+          Organize certificates by event type such as seminars, conferences, workshops, FDPs, and hackathons.
         </p>
 
         <div className="mt-7 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">

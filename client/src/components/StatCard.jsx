@@ -3,7 +3,7 @@ function StatCard({ title, value, description, icon = "S", delayClass = "" }) {
     <div className={`card-hover slide-up rounded-2xl border border-slate-200 bg-white p-6 shadow-soft ${delayClass}`}>
       <div className="flex items-start justify-between gap-4">
         <p className="text-base font-bold text-slate-500">{title}</p>
-        <span className="pulse-soft flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-lg font-black text-primary-700">
+        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-xl font-black text-primary-700">
           {icon}
         </span>
       </div>

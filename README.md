@@ -204,6 +204,17 @@ Expected response:
 - Generation type filter
 - Improved bulk generation UI
 
+## Step 9 Completed Features
+
+- Save draft certificates
+- View generated certificate details
+- Edit generated certificate records
+- Delete certificate records
+- Status filter Draft/Generated
+- Generation type filter Single/Bulk
+- Improved generated certificate management UI
+- Download PDF still supported after edit
+
 ## GitHub Upload Instructions
 
 ```bash
@@ -217,8 +228,8 @@ git push -u origin main
 
 ## Next Planned Features
 
-- Save draft certificates
-- Edit generated certificate records
-- Delete generated certificate records
-- Add certificate view details page
-- Add better certificate management actions
+- Add certificate verification QR code
+- Add public verification page
+- Verify certificate using certificate ID
+- Add QR code on certificate preview
+- Improve authenticity of generated certificates

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import CertificatePreview from "../components/CertificatePreview.jsx";
 import templateData from "../data/templateData.js";
-import { createCertificate } from "../services/certificateApi.js";
+import { createCertificate, saveDraftCertificate } from "../services/certificateApi.js";
 import downloadCertificatePdf from "../utils/downloadCertificatePdf.js";
 
 const inputClass =
@@ -39,6 +39,7 @@ const certificateCategories = [
 function CreateCertificate() {
   const [formData, setFormData] = useState(initialFormData);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isSavingDraft, setIsSavingDraft] = useState(false);
   const [generatedCertificate, setGeneratedCertificate] = useState(null);
 
   useEffect(() => {
@@ -66,8 +67,28 @@ function CreateCertificate() {
     setGeneratedCertificate(null);
   };
 
-  const handleSaveDraft = () => {
-    alert("Save draft feature will be added in next step.");
+  const handleSaveDraft = async () => {
+    try {
+      setIsSavingDraft(true);
+
+      await saveDraftCertificate({
+        participantName: formData.participantName,
+        organizationName: formData.organizationName,
+        eventName: formData.eventName,
+        certificateCategory: formData.category,
+        certificateTitle: formData.certificateTitle,
+        eventDate: formData.eventDate,
+        description: formData.description,
+        templateStyle: formData.templateStyle,
+        authorizedSignatureName: formData.authorizedSignatureName || "Authorized Person"
+      });
+
+      alert("Draft saved successfully.");
+    } catch (error) {
+      alert(error.message || "Unable to save draft. Please try again.");
+    } finally {
+      setIsSavingDraft(false);
+    }
   };
 
   const validateForm = () => {
@@ -151,9 +172,9 @@ function CreateCertificate() {
   return (
     <section className="page-transition space-y-7">
       <div className="fade-in rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-slate-50 p-7 shadow-soft">
-        <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Create Certificate</p>
-        <h2 className="mt-2 text-3xl font-black text-slate-950">Certificate details</h2>
-        <p className="mt-2 text-lg leading-8 text-slate-600">Fill in the event and participant information to preview the certificate instantly.</p>
+        <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Certificate Builder</p>
+        <h2 className="mt-2 text-4xl font-black tracking-tight text-slate-950">Create Certificate</h2>
+        <p className="mt-2 text-lg leading-8 text-slate-600">Enter event and participant details to generate a certificate preview.</p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[480px_1fr]">
@@ -269,9 +290,10 @@ function CreateCertificate() {
             <button
               type="button"
               onClick={handleSaveDraft}
-              className="button-press soft-hover rounded-xl border border-primary-200 bg-primary-50 px-5 py-3 text-base font-bold text-primary-700 transition hover:bg-primary-100"
+              disabled={isSavingDraft}
+              className="button-press soft-hover rounded-xl border border-primary-200 bg-primary-50 px-5 py-3 text-base font-bold text-primary-700 transition hover:bg-primary-100 disabled:cursor-not-allowed disabled:opacity-70"
             >
-              Save Draft
+              {isSavingDraft ? "Saving Draft..." : "Save Draft"}
             </button>
             <button
               type="button"

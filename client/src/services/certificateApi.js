@@ -34,6 +34,18 @@ export const bulkCreateCertificates = async (payload) => {
   return handleResponse(response);
 };
 
+export const saveDraftCertificate = async (certificateData) => {
+  const response = await fetch(`${API_BASE_URL}/certificates/draft`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(certificateData)
+  });
+
+  return handleResponse(response);
+};
+
 export const getCertificates = async () => {
   const response = await fetch(`${API_BASE_URL}/certificates`);
 
@@ -42,6 +54,26 @@ export const getCertificates = async () => {
 
 export const getCertificateById = async (id) => {
   const response = await fetch(`${API_BASE_URL}/certificates/${id}`);
+
+  return handleResponse(response);
+};
+
+export const updateCertificate = async (id, certificateData) => {
+  const response = await fetch(`${API_BASE_URL}/certificates/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(certificateData)
+  });
+
+  return handleResponse(response);
+};
+
+export const deleteCertificate = async (id) => {
+  const response = await fetch(`${API_BASE_URL}/certificates/${id}`, {
+    method: "DELETE"
+  });
 
   return handleResponse(response);
 };

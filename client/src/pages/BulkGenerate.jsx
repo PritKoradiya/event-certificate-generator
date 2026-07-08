@@ -37,10 +37,10 @@ const initialCommonDetails = {
 };
 
 const stepItems = [
-  { title: "Add Participants", icon: "1" },
-  { title: "Edit and Review", icon: "2" },
-  { title: "Generate Certificates", icon: "3" },
-  { title: "ZIP / PDF Download", icon: "4" }
+  { title: "Add Participants", icon: "🧾" },
+  { title: "Add Event Details", icon: "📝" },
+  { title: "Generate Certificates", icon: "📄" },
+  { title: "Export Results", icon: "⬇️" }
 ];
 
 function BulkGenerate() {
@@ -376,10 +376,10 @@ function BulkGenerate() {
   return (
     <section className="page-transition space-y-7">
       <div className="overflow-hidden rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-cyan-50 p-8 shadow-soft lg:p-10">
-        <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Step 8</p>
-        <h2 className="mt-3 text-4xl font-black tracking-tight text-slate-950">Bulk Certificate Generation</h2>
+        <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Bulk Tools</p>
+        <h2 className="mt-3 text-4xl font-black tracking-tight text-slate-950">Bulk Certificate Generator</h2>
         <p className="mt-3 max-w-4xl text-lg leading-8 text-slate-600">
-          Generate multiple certificates, review participant data, and download the complete batch as a ZIP file.
+          Generate multiple certificates from a participant list or CSV file.
         </p>
       </div>
 

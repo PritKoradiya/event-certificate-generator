@@ -94,7 +94,7 @@ function Templates() {
   };
 
   const handleUsePoster = () => {
-    alert("Poster generation feature will be added in upcoming steps.");
+    alert("Poster generation is planned for a future release.");
   };
 
   const itemLabel = activeTab === "certificate" ? "certificate templates" : "poster designs";
@@ -103,8 +103,8 @@ function Templates() {
     <section className="page-transition space-y-7">
       <div className="rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-slate-50 p-8 shadow-soft">
         <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Templates</p>
-        <h2 className="mt-3 text-4xl font-black tracking-tight text-slate-950">Design gallery</h2>
-        <p className="mt-3 text-lg leading-8 text-slate-600">Choose certificate templates now, and preview poster designs for upcoming steps.</p>
+        <h2 className="mt-3 text-4xl font-black tracking-tight text-slate-950">Template Gallery</h2>
+        <p className="mt-3 text-lg leading-8 text-slate-600">Choose from certificate templates and event poster designs.</p>
       </div>
 
       <div className="sticky top-24 z-20 rounded-2xl border border-slate-200 bg-white/95 p-5 shadow-soft backdrop-blur-xl">

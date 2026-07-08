@@ -58,6 +58,7 @@ export const createCertificate = async (req, res) => {
       ...req.body,
       authorizedSignatureName: req.body.authorizedSignatureName || "Authorized Person",
       generationType: "Single",
+      status: "Generated",
       certificateId
     });
 
@@ -70,6 +71,45 @@ export const createCertificate = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Failed to generate certificate",
+      error: error.message
+    });
+  }
+};
+
+export const saveDraftCertificate = async (req, res) => {
+  try {
+    if (!isDatabaseConnected()) {
+      return res.status(503).json({
+        success: false,
+        message: "Database is not connected. Please set MONGO_URI and restart the server."
+      });
+    }
+
+    const certificateId = req.body.certificateId || await generateCertificateId();
+    const certificate = await Certificate.create({
+      participantName: req.body.participantName || "",
+      organizationName: req.body.organizationName || "",
+      eventName: req.body.eventName || "",
+      certificateCategory: req.body.certificateCategory || "",
+      certificateTitle: req.body.certificateTitle || "",
+      eventDate: req.body.eventDate || "",
+      description: req.body.description || "",
+      templateStyle: req.body.templateStyle || "",
+      authorizedSignatureName: req.body.authorizedSignatureName || "Authorized Person",
+      certificateId,
+      status: "Draft",
+      generationType: "Single"
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "Certificate draft saved successfully",
+      data: certificate
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to save certificate draft",
       error: error.message
     });
   }
@@ -208,6 +248,80 @@ export const getCertificateById = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Failed to fetch certificate",
+      error: error.message
+    });
+  }
+};
+
+export const updateCertificate = async (req, res) => {
+  try {
+    if (!isDatabaseConnected()) {
+      return res.status(503).json({
+        success: false,
+        message: "Database is not connected. Please set MONGO_URI and restart the server."
+      });
+    }
+
+    const existingCertificate = await Certificate.findById(req.params.id);
+
+    if (!existingCertificate) {
+      return res.status(404).json({
+        success: false,
+        message: "Certificate not found"
+      });
+    }
+
+    const updateData = {
+      ...req.body,
+      certificateId: existingCertificate.certificateId || req.body.certificateId || await generateCertificateId(),
+      status: req.body.status || existingCertificate.status
+    };
+
+    const updatedCertificate = await Certificate.findByIdAndUpdate(req.params.id, updateData, {
+      new: true,
+      runValidators: true
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Certificate updated successfully",
+      data: updatedCertificate
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to update certificate",
+      error: error.message
+    });
+  }
+};
+
+export const deleteCertificate = async (req, res) => {
+  try {
+    if (!isDatabaseConnected()) {
+      return res.status(503).json({
+        success: false,
+        message: "Database is not connected. Please set MONGO_URI and restart the server."
+      });
+    }
+
+    const deletedCertificate = await Certificate.findByIdAndDelete(req.params.id);
+
+    if (!deletedCertificate) {
+      return res.status(404).json({
+        success: false,
+        message: "Certificate not found"
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Certificate deleted successfully"
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to delete certificate",
       error: error.message
     });
   }
