@@ -19,10 +19,9 @@ const categories = [
   { name: "Technical", badge: "X", explanation: "Technical festivals, demos, exhibitions, and club events.", example: "Project Exhibition Day" }
 ];
 
-const stats = ["14 Categories", "24 Certificate Templates", "12 Poster Designs", "PDF Export Ready"];
-
 function Categories() {
   const navigate = useNavigate();
+  const stats = [`${categories.length} Categories`, `${templateData.length} Certificate Templates`, `${posterData.length} Poster Designs`, "PDF Export Ready"];
 
   const countTemplatesByCategory = (categoryName) => {
     return templateData.filter((template) => template.category === categoryName).length;

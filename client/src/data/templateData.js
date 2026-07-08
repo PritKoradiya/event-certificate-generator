@@ -286,6 +286,96 @@ const templateData = [
     borderClass: "border-indigo-300",
     badgeClass: "bg-indigo-100 text-indigo-800",
     headingClass: "text-indigo-950"
+  },
+  {
+    id: "classic-ornate-certificate",
+    name: "Classic Ornate Certificate",
+    category: "Academic",
+    description: "An original cream and navy ornate certificate with formal serif styling.",
+    type: "certificate",
+    designKey: "classic-ornate",
+    badgeClass: "bg-indigo-100 text-indigo-900"
+  },
+  {
+    id: "modern-wave-certificate",
+    name: "Modern Wave Certificate",
+    category: "Conference",
+    description: "A clean corporate certificate with teal and gold CSS wave accents.",
+    type: "certificate",
+    designKey: "modern-wave",
+    badgeClass: "bg-teal-100 text-teal-800"
+  },
+  {
+    id: "vintage-border-certificate",
+    name: "Vintage Border Certificate",
+    category: "Academic",
+    description: "A parchment-inspired premium certificate with subtle CSS texture.",
+    type: "certificate",
+    designKey: "vintage-border",
+    badgeClass: "bg-stone-100 text-stone-800"
+  },
+  {
+    id: "gold-corner-certificate",
+    name: "Gold Corner Certificate",
+    category: "Appreciation",
+    description: "A white award certificate with gold corner ornaments and a medal seal.",
+    type: "certificate",
+    designKey: "gold-corner",
+    badgeClass: "bg-amber-100 text-amber-800"
+  },
+  {
+    id: "dark-luxury-certificate",
+    name: "Dark Luxury Certificate",
+    category: "Competition",
+    description: "A dark charcoal achievement certificate with readable gold accents.",
+    type: "certificate",
+    designKey: "dark-luxury",
+    badgeClass: "bg-slate-900 text-amber-200"
+  },
+  {
+    id: "floral-creative-certificate",
+    name: "Floral Creative Certificate",
+    category: "Cultural",
+    description: "A fresh event certificate with original SVG floral corner decorations.",
+    type: "certificate",
+    designKey: "floral-creative",
+    badgeClass: "bg-orange-100 text-orange-800"
+  },
+  {
+    id: "playful-award-certificate",
+    name: "Playful Award Certificate",
+    category: "Competition",
+    description: "A bright student-friendly award design with geometric CSS shapes.",
+    type: "certificate",
+    designKey: "playful-award",
+    badgeClass: "bg-orange-100 text-orange-800"
+  },
+  {
+    id: "blue-corporate-certificate",
+    name: "Blue Corporate Certificate",
+    category: "Training",
+    description: "A polished blue and white certificate for training and professional events.",
+    type: "certificate",
+    designKey: "blue-corporate",
+    badgeClass: "bg-blue-100 text-blue-800"
+  },
+  {
+    id: "minimal-elegant-certificate",
+    name: "Minimal Elegant Certificate",
+    category: "Seminar",
+    description: "A pure white minimalist certificate with restrained gray line work.",
+    type: "certificate",
+    designKey: "minimal-elegant",
+    badgeClass: "bg-slate-100 text-slate-700"
+  },
+  {
+    id: "academic-seal-certificate",
+    name: "Academic Seal Certificate",
+    category: "Academic",
+    description: "A formal university-style certificate with deep blue border and seal.",
+    type: "certificate",
+    designKey: "academic-seal",
+    badgeClass: "bg-blue-100 text-blue-900"
   }
 ];
 
