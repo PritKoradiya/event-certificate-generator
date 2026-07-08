@@ -25,3 +25,4 @@ pnpm-debug.log*
 .idea/
 
 coverage/
+client/public/certificate-backgrounds/
