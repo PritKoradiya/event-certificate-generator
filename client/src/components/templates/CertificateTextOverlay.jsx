@@ -88,14 +88,14 @@ function CertificateTextOverlay({
 
       <p
         className={`certificate-body-safe absolute truncate font-bold uppercase tracking-[0.2em] ${theme.muted}`}
-        style={{ top: "32%", left: "10%", right: "10%" }}
+        style={{ top: "31%", left: "10%", right: "10%" }}
       >
         This certificate is proudly presented to
       </p>
 
       <h2
         className={`certificate-name-safe absolute font-serif ${theme.accent}`}
-        style={{ top: "38%", left: "11%", right: "11%" }}
+        style={{ top: "39%", left: "11%", right: "11%" }}
       >
         {displayParticipantName}
       </h2>
@@ -128,7 +128,7 @@ function CertificateTextOverlay({
       </p>
 
       <footer
-        className={`certificate-footer-safe absolute bottom-[8%] left-[10%] right-[10%] grid grid-cols-3 items-center gap-5 border-t pt-4 ${theme.footerLine} ${theme.main}`}
+        className={`certificate-footer-safe absolute bottom-[7%] left-[11%] right-[11%] grid grid-cols-3 items-center gap-5 border-t pt-4 ${theme.footerLine} ${theme.main}`}
       >
         <div className="min-w-0 text-left">
           <p className={`signature-font truncate text-[clamp(1rem,1.7vw,1.45rem)] leading-none ${theme.accent}`}>

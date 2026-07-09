@@ -171,100 +171,64 @@ function CreateCertificate() {
 
   return (
     <section className="page-transition space-y-7">
-      <div className="fade-in rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-slate-50 p-7 shadow-soft">
-        <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Certificate Builder</p>
+      <div className="fade-in rounded-3xl border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-slate-50 p-7 shadow-soft lg:p-9">
+        <p className="text-sm font-bold uppercase tracking-wide text-primary-600">CERTIFICATE BUILDER</p>
         <h2 className="mt-2 text-4xl font-black tracking-tight text-slate-950">Create Certificate</h2>
-        <p className="mt-2 text-lg leading-8 text-slate-600">Enter event and participant details to generate a certificate preview.</p>
+        <p className="mt-2 max-w-4xl text-lg leading-8 text-slate-600">
+          Enter event and participant details, choose a template, preview, and export your certificate.
+        </p>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[520px_1fr]">
-        <form className="slide-up grid gap-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-soft lg:p-7" onSubmit={(event) => event.preventDefault()}>
-          <div className="grid gap-5 md:grid-cols-2">
-            <label className="grid gap-2 text-base font-bold text-slate-700">
-              Participant Name
-              <input
-                className={inputClass}
-                type="text"
-                name="participantName"
-                value={formData.participantName}
-                onChange={handleChange}
-                placeholder="Enter participant name"
-              />
-            </label>
-            <label className="grid gap-2 text-base font-bold text-slate-700">
-              Organization Name
-              <input
-                className={inputClass}
-                type="text"
-                name="organizationName"
-                value={formData.organizationName}
-                onChange={handleChange}
-                placeholder="Enter organization name"
-              />
-            </label>
-            <label className="grid gap-2 text-base font-bold text-slate-700">
-              Event Name
-              <input
-                className={inputClass}
-                type="text"
-                name="eventName"
-                value={formData.eventName}
-                onChange={handleChange}
-                placeholder="Enter event name"
-              />
-            </label>
-            <label className="grid gap-2 text-base font-bold text-slate-700">
-              Certificate Category
-              <select className={inputClass} name="category" value={formData.category} onChange={handleChange}>
-                <option value="">Select category</option>
-                {certificateCategories.map((category) => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="grid gap-2 text-base font-bold text-slate-700">
-              Certificate Title
-              <input
-                className={inputClass}
-                type="text"
-                name="certificateTitle"
-                value={formData.certificateTitle}
-                onChange={handleChange}
-                placeholder="Certificate of Participation"
-              />
-            </label>
-            <label className="grid gap-2 text-base font-bold text-slate-700">
-              Event Date
-              <input className={inputClass} type="date" name="eventDate" value={formData.eventDate} onChange={handleChange} />
-            </label>
-          </div>
+      <form className="slide-up rounded-3xl border border-blue-100 bg-white p-6 shadow-xl lg:p-8" onSubmit={(event) => event.preventDefault()}>
+        <div>
+          <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Certificate Details</p>
+          <h3 className="mt-1 text-2xl font-black text-slate-950">Certificate Details</h3>
+          <p className="mt-1 text-base leading-7 text-slate-600">
+            Fill participant, event, template, and signature information.
+          </p>
+        </div>
 
+        <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
           <label className="grid gap-2 text-base font-bold text-slate-700">
-            Description / Details
-            <textarea
-              className={`${inputClass} min-h-32 resize-y py-3`}
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              placeholder="Enter certificate description or event details"
-            />
+            Participant Name
+            <input className={inputClass} type="text" name="participantName" value={formData.participantName} onChange={handleChange} placeholder="Enter participant name" />
           </label>
-
+          <label className="grid gap-2 text-base font-bold text-slate-700">
+            Organization Name
+            <input className={inputClass} type="text" name="organizationName" value={formData.organizationName} onChange={handleChange} placeholder="Enter organization name" />
+          </label>
+          <label className="grid gap-2 text-base font-bold text-slate-700">
+            Event Name
+            <input className={inputClass} type="text" name="eventName" value={formData.eventName} onChange={handleChange} placeholder="Enter event name" />
+          </label>
+          <label className="grid gap-2 text-base font-bold text-slate-700">
+            Certificate Category
+            <select className={inputClass} name="category" value={formData.category} onChange={handleChange}>
+              <option value="">Select category</option>
+              {certificateCategories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="grid gap-2 text-base font-bold text-slate-700">
+            Certificate Title
+            <input className={inputClass} type="text" name="certificateTitle" value={formData.certificateTitle} onChange={handleChange} placeholder="Certificate of Participation" />
+          </label>
+          <label className="grid gap-2 text-base font-bold text-slate-700">
+            Event Date
+            <input className={inputClass} type="date" name="eventDate" value={formData.eventDate} onChange={handleChange} />
+          </label>
+          <label className="grid gap-2 text-base font-bold text-slate-700 md:col-span-2 xl:col-span-3">
+            Description / Details
+            <textarea className={`${inputClass} min-h-32 resize-y py-3`} name="description" value={formData.description} onChange={handleChange} placeholder="Enter certificate description or event details" />
+          </label>
           <label className="grid gap-2 text-base font-bold text-slate-700">
             Authorized Signature Name
-            <input
-              className={inputClass}
-              type="text"
-              name="authorizedSignatureName"
-              value={formData.authorizedSignatureName}
-              onChange={handleChange}
-              placeholder="Enter authorized person name"
-            />
+            <input className={inputClass} type="text" name="authorizedSignatureName" value={formData.authorizedSignatureName} onChange={handleChange} placeholder="Enter authorized person name" />
           </label>
-
-          <label className="grid gap-2 text-base font-bold text-slate-700">
+          <label className="grid gap-2 text-base font-bold text-slate-700 md:col-span-2">
             Template Style
             <select className={inputClass} name="templateStyle" value={formData.templateStyle} onChange={handleChange}>
               <option value="">Select template style</option>
@@ -274,58 +238,47 @@ function CreateCertificate() {
                 </option>
               ))}
             </select>
-            <span className="rounded-xl bg-blue-50 px-4 py-3 text-sm font-bold leading-6 text-blue-700">
-              {templateData.length}+ certificate templates available. Select any design to preview instantly.
-            </span>
           </label>
-
-          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-            <button
-              type="button"
-              onClick={handleReset}
-              className="button-press soft-hover rounded-xl border border-slate-200 bg-white px-5 py-3 text-base font-bold text-slate-700 transition hover:bg-slate-50"
-            >
-              Reset Form
-            </button>
-            <button
-              type="button"
-              onClick={handleSaveDraft}
-              disabled={isSavingDraft}
-              className="button-press soft-hover rounded-xl border border-primary-200 bg-primary-50 px-5 py-3 text-base font-bold text-primary-700 transition hover:bg-primary-100 disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              {isSavingDraft ? "Saving Draft..." : "Save Draft"}
-            </button>
-            <button
-              type="button"
-              onClick={handleGenerateCertificate}
-              disabled={isGenerating}
-              className="button-press soft-hover rounded-xl bg-primary-600 px-5 py-3 text-base font-bold text-white shadow-sm transition hover:bg-primary-700 disabled:cursor-not-allowed disabled:bg-primary-500 disabled:opacity-70"
-            >
-              {isGenerating ? "Generating..." : "Generate Certificate"}
-            </button>
-            {generatedCertificate && (
-              <button
-                type="button"
-                onClick={handleDownloadPdf}
-                className="button-press soft-hover rounded-xl bg-emerald-600 px-5 py-3 text-base font-bold text-white shadow-sm transition hover:bg-emerald-700"
-              >
-                Download PDF
-              </button>
-            )}
-          </div>
-        </form>
-
-        <div className="space-y-4">
-          <div className="slide-up rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-soft">
-            <p className="text-base font-bold text-slate-700">
-              Selected Template: <span className="text-primary-700">{selectedTemplateName}</span>
-            </p>
-          </div>
-          <div className="slide-up delay-100 rounded-3xl border border-slate-200 bg-white p-5 shadow-soft">
-            <CertificatePreview certificateData={previewData} previewId="certificate-preview" />
+          <div className="rounded-2xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm font-bold leading-6 text-blue-700 md:col-span-2 xl:col-span-3">
+            {templateData.length}+ certificate templates available. Select any design to preview instantly.
           </div>
         </div>
-      </div>
+
+        <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap lg:justify-end">
+          <button type="button" onClick={handleReset} className="button-press soft-hover w-full rounded-xl border border-slate-200 bg-white px-5 py-3 text-base font-bold text-slate-700 transition hover:bg-slate-50 sm:w-auto">
+            Reset Form
+          </button>
+          <button type="button" onClick={handleSaveDraft} disabled={isSavingDraft} className="button-press soft-hover w-full rounded-xl border border-primary-200 bg-primary-50 px-5 py-3 text-base font-bold text-primary-700 transition hover:bg-primary-100 disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto">
+            {isSavingDraft ? "Saving Draft..." : "Save Draft"}
+          </button>
+          <button type="button" onClick={handleGenerateCertificate} disabled={isGenerating} className="button-press soft-hover w-full rounded-xl bg-primary-600 px-5 py-3 text-base font-bold text-white shadow-sm transition hover:bg-primary-700 disabled:cursor-not-allowed disabled:bg-primary-500 disabled:opacity-70 sm:w-auto">
+            {isGenerating ? "Generating..." : "Generate Certificate"}
+          </button>
+          {generatedCertificate && (
+            <button type="button" onClick={handleDownloadPdf} className="button-press soft-hover w-full rounded-xl bg-emerald-600 px-5 py-3 text-base font-bold text-white shadow-sm transition hover:bg-emerald-700 sm:w-auto">
+              Download PDF
+            </button>
+          )}
+        </div>
+      </form>
+
+      <section className="slide-up delay-100 rounded-3xl border border-blue-100 bg-white p-6 shadow-xl">
+        <div className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+          <div>
+            <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Certificate Preview</p>
+            <h3 className="mt-1 text-2xl font-black text-slate-950">Certificate Preview</h3>
+            <p className="mt-1 text-base leading-7 text-slate-600">Preview updates instantly based on your details.</p>
+            <p className="mt-1 text-sm font-bold text-slate-500">This preview will be used for PDF export.</p>
+          </div>
+          <span className="w-fit rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-sm font-black text-primary-700">
+            Selected Template: {selectedTemplateName}
+          </span>
+        </div>
+
+        <div className="mx-auto w-full max-w-[1200px]">
+          <CertificatePreview certificateData={previewData} previewId="certificate-preview" />
+        </div>
+      </section>
     </section>
   );
 }

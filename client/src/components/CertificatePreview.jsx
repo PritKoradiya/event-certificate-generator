@@ -73,7 +73,7 @@ function CertificatePreview({ certificateData = {}, previewId = "certificate-pre
   return (
     <section
       id={previewId}
-      className="certificate-preview-root relative mx-auto aspect-[1.414/1] w-full max-w-[980px] overflow-hidden rounded-2xl bg-white"
+      className="certificate-preview-root relative mx-auto aspect-[1.414/1] w-full max-w-[1150px] overflow-hidden rounded-2xl bg-white"
     >
       {selectedTemplate?.designType === "image-background" ? (
         <ImageBackgroundTemplate {...templateProps} />
