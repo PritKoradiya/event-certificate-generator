@@ -8,7 +8,11 @@ const formatIssueDate = (createdAt) => {
   });
 };
 
-const valueOrFallback = (value, fallback) => value || fallback;
+const valueOrFallback = (value, fallback) => {
+  const trimmedValue = typeof value === "string" ? value.trim() : value;
+
+  return trimmedValue || fallback;
+};
 
 const CornerOrnaments = ({ color = "#1e3a8a", softColor = "#dbeafe" }) => (
   <div className="pointer-events-none absolute inset-0 z-0 opacity-75">
@@ -93,7 +97,7 @@ function TemplateFrame({ data, config }) {
   const displayEventName = valueOrFallback(data.eventName, "Event Name");
   const displayTitle = valueOrFallback(data.certificateTitle, "Certificate of Participation");
   const displayCategory = valueOrFallback(data.certificateCategory || data.category, "Category");
-  const displayDescription = valueOrFallback(data.description, "Description and certificate details will appear here as you type.");
+  const displayDescription = valueOrFallback(data.description, "For successfully participating in the event.");
   const displaySignature = valueOrFallback(data.authorizedSignatureName, "Authorized Person");
   const certificateId = valueOrFallback(data.certificateId, "CERT-2026-001");
   const issueDate = formatIssueDate(data.createdAt);
@@ -104,15 +108,15 @@ function TemplateFrame({ data, config }) {
 
   return (
     <div
-      className={`relative flex h-full w-full flex-col justify-between overflow-hidden rounded-2xl border p-[clamp(12px,3vw,32px)] ${config.outerClass}`}
+      className={`relative h-full w-full overflow-hidden rounded-2xl border p-[clamp(12px,2.4vw,28px)] ${config.outerClass}`}
       style={{ background: config.background, borderColor: config.borderColor }}
     >
       {renderDecoration(config.decoration, config)}
       <div
-        className={`relative z-10 flex h-full min-h-0 flex-col justify-between overflow-hidden border px-[clamp(16px,4vw,40px)] py-[clamp(12px,2.6vw,28px)] text-center ${config.innerClass}`}
+        className={`relative z-10 grid h-full min-h-0 grid-rows-[18%_58%_24%] overflow-hidden border px-[clamp(18px,4vw,44px)] py-[clamp(14px,2.8vw,30px)] text-center ${config.innerClass}`}
         style={{ background: config.panelBg, borderColor: config.borderColor }}
       >
-        <header className="flex h-[12%] min-h-[clamp(36px,6vw,58px)] shrink-0 items-center gap-4">
+        <header className="flex min-h-0 items-center gap-4 overflow-hidden">
           <div className="h-px flex-1" style={{ background: config.lineColor }} />
           <p className={`max-w-[62%] truncate text-[clamp(9px,1vw,12px)] font-black uppercase tracking-[0.22em] ${mutedColor}`}>
             {displayCategory}
@@ -120,43 +124,43 @@ function TemplateFrame({ data, config }) {
           <div className="h-px flex-1" style={{ background: config.lineColor }} />
         </header>
 
-        <main className="relative z-10 mx-auto flex min-h-0 w-full max-w-[85%] flex-1 flex-col items-center justify-center overflow-hidden py-2 text-center">
+        <main className="relative z-10 mx-auto flex min-h-0 w-full max-w-[85%] flex-col items-center justify-center overflow-hidden py-1 text-center">
           <p className={`certificate-body-safe max-w-full truncate font-bold uppercase tracking-[0.28em] ${mutedColor}`}>
             {config.kicker}
           </p>
           <h3 className={`certificate-title-safe mt-1 max-w-full break-words font-black ${config.headingFont} ${textColor}`}>
             {displayTitle}
           </h3>
-          <div className="mx-auto mt-3 h-[3px] w-[18%] min-w-24 rounded-full" style={{ background: config.lineColor }} />
+          <div className="mx-auto mt-2 h-[3px] w-[18%] min-w-24 rounded-full" style={{ background: config.lineColor }} />
 
-          <p className={`certificate-body-safe mt-4 max-w-full truncate font-bold uppercase tracking-wide ${mutedColor}`}>
+          <p className={`certificate-body-safe mt-3 max-w-full truncate font-bold uppercase tracking-wide ${mutedColor}`}>
             This certificate is proudly presented to
           </p>
-          <p className={`certificate-name-safe mx-auto mt-2 max-w-full break-words border-b px-4 pb-2 font-black ${config.nameFont}`} style={{ color: config.nameColor, borderColor: config.lineColor }}>
+          <p className={`certificate-name-safe mx-auto mt-1 max-w-full break-words border-b px-4 pb-1 font-black ${config.nameFont}`} style={{ color: config.nameColor, borderColor: config.lineColor }}>
             {displayParticipantName}
           </p>
 
-          <p className={`certificate-body-safe mt-4 max-w-full break-words leading-snug ${bodyColor}`}>
+          <p className={`certificate-body-safe mt-3 max-w-full break-words ${bodyColor}`}>
             From <span className="font-black">{displayOrganizationName}</span>
           </p>
-          <p className={`certificate-body-safe mx-auto mt-2 max-w-full break-words leading-snug ${bodyColor}`}>
+          <p className={`certificate-body-safe mx-auto mt-1 max-w-full break-words ${bodyColor}`}>
             For successfully participating in <span className="font-black">{displayEventName}</span>
           </p>
 
-          <div className="certificate-body-safe mx-auto mt-3 flex max-w-full flex-wrap justify-center gap-2">
+          <div className="certificate-body-safe mx-auto mt-2 flex max-w-full flex-wrap justify-center gap-2">
             <span className={`rounded-full px-3 py-1 font-bold ${dark ? "bg-white/10 text-white" : "bg-white text-slate-800"}`}>
               Event Date: {valueOrFallback(data.eventDate, "Event Date")}
             </span>
           </div>
 
-          <p className={`certificate-description-safe certificate-body-safe mx-auto mt-3 max-w-full break-words leading-snug ${bodyColor}`}>
+          <p className={`certificate-description-safe certificate-body-safe mx-auto mt-2 break-words ${bodyColor}`}>
             {displayDescription}
           </p>
         </main>
 
-        <footer className={`certificate-footer-safe relative z-10 mt-[clamp(8px,1.6vw,16px)] grid h-[18%] min-h-[clamp(58px,9vw,86px)] shrink-0 grid-cols-3 items-end gap-4 border-t pt-[clamp(8px,1.6vw,16px)] ${bodyColor}`} style={{ borderColor: config.lineColor }}>
+        <footer className={`certificate-footer-safe relative z-10 grid min-h-0 grid-cols-3 items-center gap-4 overflow-hidden border-t pt-[clamp(8px,1.4vw,14px)] ${bodyColor}`} style={{ borderColor: config.lineColor }}>
           <div className="min-w-0">
-            <p className="signature-text truncate text-[clamp(18px,2.1vw,28px)] leading-none" style={{ color: config.nameColor }}>
+            <p className="signature-text truncate text-[clamp(16px,1.8vw,24px)] leading-none" style={{ color: config.nameColor }}>
               {displaySignature}
             </p>
             <div className="mx-auto mt-2 w-full max-w-44 border-t pt-1 font-black" style={{ borderColor: config.lineColor }}>

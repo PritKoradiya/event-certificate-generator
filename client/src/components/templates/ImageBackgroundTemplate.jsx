@@ -47,11 +47,11 @@ function ImageBackgroundTemplate({
   const mutedText = isLightText ? "text-amber-100" : "text-slate-600";
   const accentColor = isLightText ? "#f8d675" : "#2563eb";
   const lineColor = isLightText ? "rgba(248, 214, 117, 0.8)" : "rgba(71, 85, 105, 0.75)";
-  const paddingX = safeArea?.paddingX || "13%";
-  const paddingY = safeArea?.paddingY || "8%";
+  const paddingX = safeArea?.paddingX || "11%";
+  const paddingY = safeArea?.paddingY || "7%";
 
   return (
-    <div className="relative h-full w-full aspect-[1.414/1] overflow-hidden rounded-2xl bg-white">
+    <div className="relative h-full w-full overflow-hidden rounded-2xl bg-white">
       <img
         src={backgroundImage}
         alt="Certificate background"
@@ -60,10 +60,10 @@ function ImageBackgroundTemplate({
       />
 
       <div
-        className={`relative z-10 flex h-full flex-col justify-between text-center ${mainText}`}
+        className={`relative z-10 grid h-full min-h-0 grid-rows-[18%_58%_24%] text-center ${mainText}`}
         style={{ padding: `${paddingY} ${paddingX}` }}
       >
-        <header className="shrink-0 space-y-2">
+        <header className="flex min-h-0 flex-col items-center justify-center space-y-2 overflow-hidden">
           <p className={`truncate text-xs font-bold uppercase tracking-[0.35em] ${mutedText}`}>
             {displayCategory}
           </p>
@@ -72,7 +72,7 @@ function ImageBackgroundTemplate({
           </h1>
         </header>
 
-        <main className="mx-auto flex min-h-0 max-w-[82%] flex-1 flex-col items-center justify-center space-y-3 py-3">
+        <main className="mx-auto flex min-h-0 max-w-[82%] flex-col items-center justify-center space-y-2 overflow-hidden py-1">
           <p className={`certificate-bg-body max-w-full truncate font-semibold uppercase tracking-[0.22em] ${mutedText}`}>
             This certificate is proudly presented to
           </p>
@@ -100,7 +100,7 @@ function ImageBackgroundTemplate({
           </p>
         </main>
 
-        <footer className={`certificate-bg-footer grid shrink-0 grid-cols-3 items-end gap-4 pt-3 ${bodyText}`}>
+        <footer className={`certificate-bg-footer grid min-h-0 grid-cols-3 items-center gap-4 overflow-hidden border-t pt-3 ${bodyText}`} style={{ borderColor: lineColor }}>
           <div className="min-w-0 text-left">
             <p className="signature-text mb-1 truncate text-[clamp(1rem,1.7vw,1.45rem)] font-semibold leading-none" style={{ color: accentColor }}>
               {displaySignature}
