@@ -1,18 +1,4 @@
-const formatIssueDate = (createdAt) => {
-  const issueDate = createdAt ? new Date(createdAt) : new Date();
-
-  return issueDate.toLocaleDateString("en-IN", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric"
-  });
-};
-
-const valueOrFallback = (value, fallback) => {
-  const trimmedValue = typeof value === "string" ? value.trim() : value;
-
-  return trimmedValue || fallback;
-};
+import CertificateTextOverlay from "./CertificateTextOverlay.jsx";
 
 const CornerOrnaments = ({ color = "#1e3a8a", softColor = "#dbeafe" }) => (
   <div className="pointer-events-none absolute inset-0 z-0 opacity-75">
@@ -68,20 +54,6 @@ const GeometricDecor = () => (
   </div>
 );
 
-const Seal = ({ dark = false, accent = "#d97706", label = "Official Seal" }) => (
-  <div
-    className="flex aspect-square w-[clamp(52px,7vw,82px)] shrink-0 items-center justify-center rounded-full border-2 px-2 text-center text-[clamp(7px,0.82vw,10px)] font-black uppercase leading-tight"
-    style={{
-      borderColor: accent,
-      color: dark ? "#f8e4a2" : accent,
-      background: dark ? "rgba(248, 228, 162, 0.08)" : "rgba(255, 255, 255, 0.9)",
-      boxShadow: `inset 0 0 0 6px ${dark ? "rgba(248, 228, 162, 0.08)" : "rgba(217, 119, 6, 0.1)"}`
-    }}
-  >
-    {label}
-  </div>
-);
-
 const renderDecoration = (key, colors) => {
   if (key === "ornate") return <CornerOrnaments color={colors.accent} softColor={colors.soft} />;
   if (key === "wave") return <WaveDecor primary={colors.accent} secondary={colors.secondary} />;
@@ -92,93 +64,19 @@ const renderDecoration = (key, colors) => {
 };
 
 function TemplateFrame({ data, config }) {
-  const displayParticipantName = valueOrFallback(data.participantName, "Participant Name");
-  const displayOrganizationName = valueOrFallback(data.organizationName, "Organization Name");
-  const displayEventName = valueOrFallback(data.eventName, "Event Name");
-  const displayTitle = valueOrFallback(data.certificateTitle, "Certificate of Participation");
-  const displayCategory = valueOrFallback(data.certificateCategory || data.category, "Category");
-  const displayDescription = valueOrFallback(data.description, "For successfully participating in the event.");
-  const displaySignature = valueOrFallback(data.authorizedSignatureName, "Authorized Person");
-  const certificateId = valueOrFallback(data.certificateId, "CERT-2026-001");
-  const issueDate = formatIssueDate(data.createdAt);
-  const dark = config.dark;
-  const textColor = dark ? "text-white" : "text-slate-900";
-  const mutedColor = dark ? "text-amber-100/85" : "text-slate-600";
-  const bodyColor = dark ? "text-slate-100" : "text-slate-700";
+  const overlayTheme = config.textTheme || (config.dark ? "gold" : "dark");
 
   return (
     <div
-      className={`relative h-full w-full overflow-hidden rounded-2xl border p-[clamp(12px,2.4vw,28px)] ${config.outerClass}`}
+      className={`relative h-full w-full overflow-hidden rounded-2xl border ${config.outerClass}`}
       style={{ background: config.background, borderColor: config.borderColor }}
     >
       {renderDecoration(config.decoration, config)}
       <div
-        className={`relative z-10 grid h-full min-h-0 grid-rows-[18%_58%_24%] overflow-hidden border px-[clamp(18px,4vw,44px)] py-[clamp(14px,2.8vw,30px)] text-center ${config.innerClass}`}
+        className={`absolute inset-[4.5%] z-10 overflow-hidden border ${config.innerClass}`}
         style={{ background: config.panelBg, borderColor: config.borderColor }}
-      >
-        <header className="flex min-h-0 items-center gap-4 overflow-hidden">
-          <div className="h-px flex-1" style={{ background: config.lineColor }} />
-          <p className={`max-w-[62%] truncate text-[clamp(9px,1vw,12px)] font-black uppercase tracking-[0.22em] ${mutedColor}`}>
-            {displayCategory}
-          </p>
-          <div className="h-px flex-1" style={{ background: config.lineColor }} />
-        </header>
-
-        <main className="relative z-10 mx-auto flex min-h-0 w-full max-w-[85%] flex-col items-center justify-center overflow-hidden py-1 text-center">
-          <p className={`certificate-body-safe max-w-full truncate font-bold uppercase tracking-[0.28em] ${mutedColor}`}>
-            {config.kicker}
-          </p>
-          <h3 className={`certificate-title-safe mt-1 max-w-full break-words font-black ${config.headingFont} ${textColor}`}>
-            {displayTitle}
-          </h3>
-          <div className="mx-auto mt-2 h-[3px] w-[18%] min-w-24 rounded-full" style={{ background: config.lineColor }} />
-
-          <p className={`certificate-body-safe mt-3 max-w-full truncate font-bold uppercase tracking-wide ${mutedColor}`}>
-            This certificate is proudly presented to
-          </p>
-          <p className={`certificate-name-safe mx-auto mt-1 max-w-full break-words border-b px-4 pb-1 font-black ${config.nameFont}`} style={{ color: config.nameColor, borderColor: config.lineColor }}>
-            {displayParticipantName}
-          </p>
-
-          <p className={`certificate-body-safe mt-3 max-w-full break-words ${bodyColor}`}>
-            From <span className="font-black">{displayOrganizationName}</span>
-          </p>
-          <p className={`certificate-body-safe mx-auto mt-1 max-w-full break-words ${bodyColor}`}>
-            For successfully participating in <span className="font-black">{displayEventName}</span>
-          </p>
-
-          <div className="certificate-body-safe mx-auto mt-2 flex max-w-full flex-wrap justify-center gap-2">
-            <span className={`rounded-full px-3 py-1 font-bold ${dark ? "bg-white/10 text-white" : "bg-white text-slate-800"}`}>
-              Event Date: {valueOrFallback(data.eventDate, "Event Date")}
-            </span>
-          </div>
-
-          <p className={`certificate-description-safe certificate-body-safe mx-auto mt-2 break-words ${bodyColor}`}>
-            {displayDescription}
-          </p>
-        </main>
-
-        <footer className={`certificate-footer-safe relative z-10 grid min-h-0 grid-cols-3 items-center gap-4 overflow-hidden border-t pt-[clamp(8px,1.4vw,14px)] ${bodyColor}`} style={{ borderColor: config.lineColor }}>
-          <div className="min-w-0">
-            <p className="signature-text truncate text-[clamp(16px,1.8vw,24px)] leading-none" style={{ color: config.nameColor }}>
-              {displaySignature}
-            </p>
-            <div className="mx-auto mt-2 w-full max-w-44 border-t pt-1 font-black" style={{ borderColor: config.lineColor }}>
-              Authorized Signature
-            </div>
-          </div>
-
-          <div className="flex justify-center">
-            <Seal dark={dark} accent={config.sealColor} label={config.sealLabel} />
-          </div>
-
-          <div className="min-w-0 text-right">
-            <p className={`truncate font-black uppercase tracking-wide ${mutedColor}`}>Certificate ID</p>
-            <p className={`truncate font-black ${textColor}`}>{certificateId}</p>
-            <p className={`mt-1 truncate font-semibold ${mutedColor}`}>Issue Date: {issueDate}</p>
-          </div>
-        </footer>
-      </div>
+      />
+      <CertificateTextOverlay {...data} textTheme={overlayTheme} />
     </div>
   );
 }

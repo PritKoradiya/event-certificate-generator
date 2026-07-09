@@ -1,8 +1,8 @@
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
-const EXPORT_WIDTH = 1400;
-const EXPORT_HEIGHT = 990;
+const EXPORT_WIDTH = 1600;
+const EXPORT_HEIGHT = 1131;
 
 export const safeFileName = (name) => {
   const cleanedName = String(name || "certificate")
@@ -51,7 +51,7 @@ const createPdfFromElement = async (elementId) => {
     exportWrapper.style.height = `${EXPORT_HEIGHT}px`;
     exportWrapper.style.padding = "0";
     exportWrapper.style.margin = "0";
-    exportWrapper.style.overflow = "visible";
+    exportWrapper.style.overflow = "hidden";
     exportWrapper.style.background = "#ffffff";
     exportWrapper.style.zIndex = "-1";
 
