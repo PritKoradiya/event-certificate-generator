@@ -268,3 +268,10 @@ git push -u origin main
 - Verify certificate using certificate ID
 - Add QR code on certificate preview
 - Improve authenticity of generated certificates
+## Project Ownership
+
+This project is designed and developed by **Pritkumar Koradiya**.
+
+Unauthorized copying, redistribution, or reuse of this project without proper credit is not allowed.
+
+© 2026 Pritkumar Koradiya. All Rights Reserved.

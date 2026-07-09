@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import Footer from "./components/Footer.jsx";
 import Navbar from "./components/Navbar.jsx";
 import Sidebar from "./components/Sidebar.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
@@ -15,15 +16,18 @@ function App() {
       <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-6 px-4 py-6 sm:px-5 lg:flex-row lg:px-6">
         <Sidebar />
         <main className="min-w-0 flex-1">
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/create-certificate" element={<CreateCertificate />} />
-            <Route path="/templates" element={<Templates />} />
-            <Route path="/categories" element={<Categories />} />
-            <Route path="/bulk-generate" element={<BulkGenerate />} />
-            <Route path="/generated-certificates" element={<GeneratedCertificates />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+          <div className="min-w-0">
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/create-certificate" element={<CreateCertificate />} />
+              <Route path="/templates" element={<Templates />} />
+              <Route path="/categories" element={<Categories />} />
+              <Route path="/bulk-generate" element={<BulkGenerate />} />
+              <Route path="/generated-certificates" element={<GeneratedCertificates />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </div>
+          <Footer />
         </main>
       </div>
     </div>

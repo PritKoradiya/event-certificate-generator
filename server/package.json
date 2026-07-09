@@ -1,6 +1,7 @@
 {
   "name": "event-certificate-generator-server",
   "version": "1.0.0",
+  "author": "Pritkumar Koradiya",
   "private": true,
   "type": "module",
   "scripts": {

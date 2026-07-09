@@ -80,6 +80,36 @@ button {
   }
 }
 
+@keyframes footerFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes gradientMove {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 200% 50%;
+  }
+}
+
+@keyframes softGlow {
+  0%,
+  100% {
+    text-shadow: 0 0 0 rgba(37, 99, 235, 0);
+  }
+  50% {
+    text-shadow: 0 0 14px rgba(37, 99, 235, 0.32);
+  }
+}
+
 .fade-in {
   animation: fadeIn 0.35s ease both;
 }
@@ -107,6 +137,46 @@ button {
 .shimmer {
   background-size: 200% 100%;
   animation: shimmer 5s linear infinite;
+}
+
+.footer-fade-up {
+  animation: footerFadeUp 0.55s ease both;
+}
+
+.footer-gradient-line {
+  animation: gradientMove 6s linear infinite;
+  background: linear-gradient(90deg, #dbeafe, #2563eb, #38bdf8, #dbeafe);
+  background-size: 220% 100%;
+}
+
+.footer-developer-name:hover {
+  animation: softGlow 1.4s ease-in-out infinite;
+  color: #1d4ed8;
+}
+
+.footer-link {
+  position: relative;
+}
+
+.footer-link::after {
+  background: #2563eb;
+  bottom: -3px;
+  content: "";
+  height: 2px;
+  left: 0;
+  position: absolute;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.2s ease;
+  width: 100%;
+}
+
+.footer-link:hover {
+  transform: translateX(3px);
+}
+
+.footer-link:hover::after {
+  transform: scaleX(1);
 }
 
 .delay-100 {
