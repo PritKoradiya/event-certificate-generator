@@ -205,7 +205,7 @@ function CreateEventReport() {
       const result = await createEventReport(data);
       const report = result.data;
       setGeneratedReport(report);
-      alert(result.message || "Event report generated and saved successfully.");
+      alert("Report generated successfully. PDF download will start automatically.");
       
       const fileName = `Event_Report_${report.eventName}_${report.reportId}.pdf`;
       setTimeout(() => downloadEventReportPdf(fileName), 500);
@@ -428,7 +428,7 @@ function CreateEventReport() {
                 </span>
               </div>
               <p className="text-xs text-slate-500 mt-2">
-                Supported formats: JPG, PNG, WEBP. First 2 photos will be featured.
+                Supported formats: JPG, PNG, WEBP. First two photos will appear prominently in the report PDF.
               </p>
             </div>
           </div>

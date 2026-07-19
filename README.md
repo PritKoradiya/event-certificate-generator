@@ -300,6 +300,18 @@ Expected response:
 - Saved report PDF download from the Event Reports list page
 - Asset URL resolver for local file blobs and backend stored images
 
+## Step ER-3B Completed Features
+
+- Event report records management page improved with search and status/date filters
+- Interactive details view card for selected event reports
+- Complete edit event report capabilities with modal form matching the builder layout
+- Support for removing existing photos and uploading new ones during edit (up to 4 total photos)
+- Dynamic and reliable deletion of event report records
+- Polished event report PDF preview spacing, margins, exact headings, and fixed image cropping sizes
+- High-quality export with `waitForImages` loading check and shadows/borders stripping before capturing
+- Redesigned main dashboard with report metrics quick stats
+
+
 
 ## GitHub Upload Instructions
 

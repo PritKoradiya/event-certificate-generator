@@ -21,10 +21,28 @@ const stats = [
     description: "Fully structured event reports with outline, objectives, and outcomes."
   },
   {
-    title: "Generated Records",
+    title: "Event Reports",
+    value: "Structured",
+    icon: "📝",
+    description: "Create standard A4 reports with detailed field inputs."
+  },
+  {
+    title: "Photo Reports",
+    value: "Supported",
+    icon: "📸",
+    description: "Upload up to 4 event photos with centered bold captions."
+  },
+  {
+    title: "PDF Export",
+    value: "Portrait A4",
+    icon: "📄",
+    description: "Generate print-ready event reports dynamically."
+  },
+  {
+    title: "Report Records",
     value: "Manage",
-    icon: "🏆",
-    description: "View, edit, delete, and export certificates and event reports."
+    icon: "📁",
+    description: "View, edit, delete, and download generated report PDFs."
   },
   {
     title: "Bulk Generation",
