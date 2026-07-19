@@ -57,16 +57,21 @@ export default function EventReportPreview({ data = {} }) {
 
     if (lines.length === 0) {
       return (
-        <ul className="list-disc pl-6 space-y-1 text-slate-400 italic font-serif">
+        <ul className="list-disc pl-6 space-y-1 text-slate-400 italic font-serif text-sm">
           <li>{placeholder}</li>
         </ul>
       );
     }
 
+    // Auto-scale list font size down to fit within Page 1 if there are many items
+    const listClass = lines.length > 5
+      ? "list-disc pl-6 space-y-0.5 text-slate-900 font-serif text-xs"
+      : "list-disc pl-6 space-y-1 text-slate-900 font-serif text-sm sm:text-base";
+
     return (
-      <ul className="list-disc pl-6 space-y-1 text-slate-900 font-serif">
+      <ul className={listClass}>
         {lines.map((line, idx) => (
-          <li key={idx} className="leading-relaxed text-sm sm:text-base text-justify">
+          <li key={idx} className="leading-relaxed text-justify">
             {line}
           </li>
         ))}
@@ -85,59 +90,59 @@ export default function EventReportPreview({ data = {} }) {
         <span className="absolute top-4 right-6 text-xs font-sans text-slate-400 select-none print:hidden">Page 1 of 2</span>
 
         <div className="flex-1 flex flex-col">
-          <h1 className="text-xl sm:text-2xl font-bold tracking-wider text-center uppercase mb-6 text-slate-950 border-b border-slate-950 pb-2">
+          <h1 className="text-xl sm:text-2xl font-bold tracking-wider text-center uppercase mb-6 text-slate-955 border-b border-slate-950 pb-2">
             EVENT REPORT
           </h1>
 
-          <div className="grid grid-cols-[180px_1fr] gap-x-4 gap-y-2.5 text-xs sm:text-sm border-b border-slate-200 pb-4 mb-4">
-            <div className="font-bold text-slate-800">Date:</div>
-            <div className="text-slate-950">{reportDate || <span className="text-slate-400 italic">[Report Date]</span>}</div>
+          <div className="grid grid-cols-[200px_1fr] gap-x-4 gap-y-2 border-b border-slate-200 pb-4 mb-4 text-sm sm:text-base">
+            <div className="font-bold">Date:</div>
+            <div>{reportDate || <span className="text-slate-400 italic">[Report Date]</span>}</div>
 
-            <div className="font-bold text-slate-800">Date of event:</div>
-            <div className="text-slate-950">{dateOfEvent || <span className="text-slate-400 italic">[Date of Event]</span>}</div>
+            <div className="font-bold">Date of event:</div>
+            <div>{dateOfEvent || <span className="text-slate-400 italic">[Date of Event]</span>}</div>
 
-            <div className="font-bold text-slate-800">Time:</div>
-            <div className="text-slate-950">{time || <span className="text-slate-400 italic">[Time]</span>}</div>
+            <div className="font-bold">Time:</div>
+            <div>{time || <span className="text-slate-400 italic">[Time]</span>}</div>
 
-            <div className="font-bold text-slate-800">Resource Person:</div>
-            <div className="text-slate-950">{resourcePerson || <span className="text-slate-400 italic">[Resource Person Details]</span>}</div>
+            <div className="font-bold">Resource Person:</div>
+            <div className="break-words">{resourcePerson || <span className="text-slate-400 italic">[Resource Person Details]</span>}</div>
 
-            <div className="font-bold text-slate-800">Name of the Event</div>
-            <div className="text-slate-950 font-semibold">{eventName || <span className="text-slate-400 italic">[Name of the Event]</span>}</div>
+            <div className="font-bold">Name of the Event</div>
+            <div className="break-words">{eventName || <span className="text-slate-400 italic">[Name of the Event]</span>}</div>
 
-            <div className="font-bold text-slate-800">No of participants</div>
-            <div className="text-slate-950">{noOfParticipants || <span className="text-slate-400 italic">[No. of Participants]</span>}</div>
+            <div className="font-bold">No of participants</div>
+            <div>{noOfParticipants || <span className="text-slate-400 italic">[No. of Participants]</span>}</div>
 
-            <div className="font-bold text-slate-800">Attendee:</div>
-            <div className="text-slate-950">{attendee || <span className="text-slate-400 italic">[Target Audience / Attendees]</span>}</div>
+            <div className="font-bold">Attendee:</div>
+            <div>{attendee || <span className="text-slate-400 italic">[Target Audience / Attendees]</span>}</div>
 
-            <div className="font-bold text-slate-800">Venue:</div>
-            <div className="text-slate-950">{venue || <span className="text-slate-400 italic">[Venue]</span>}</div>
+            <div className="font-bold">Venue:</div>
+            <div>{venue || <span className="text-slate-400 italic">[Venue]</span>}</div>
           </div>
 
-          <div className="space-y-4 flex-1 text-xs sm:text-sm">
+          <div className="space-y-4 flex-1 text-sm sm:text-base">
             <div>
-              <h2 className="font-bold text-slate-950 mb-1 border-b border-slate-200 pb-0.5 uppercase tracking-wide">
+              <h2 className="font-bold mb-1 border-b border-slate-200 pb-0.5">
                 Event Outline:
               </h2>
               {eventOutline && eventOutline.trim() ? (
-                <p className="whitespace-pre-line text-slate-900 leading-relaxed text-justify font-serif">
+                <p className="whitespace-pre-line text-justify leading-relaxed">
                   {eventOutline}
                 </p>
               ) : (
-                <p className="text-slate-400 italic font-serif">[Enter event outline and details here...]</p>
+                <p className="text-slate-400 italic">[Enter event outline and details here...]</p>
               )}
             </div>
 
             <div>
-              <h2 className="font-bold text-slate-950 mb-1 border-b border-slate-200 pb-0.5 uppercase tracking-wide">
+              <h2 className="font-bold mb-1 border-b border-slate-200 pb-0.5">
                 Objective of the Event:
               </h2>
               {renderBulletList(objectives, "[Enter event objectives, one per line...]")}
             </div>
 
             <div>
-              <h2 className="font-bold text-slate-950 mb-1 border-b border-slate-200 pb-0.5 uppercase tracking-wide">
+              <h2 className="font-bold mb-1 border-b border-slate-200 pb-0.5">
                 Outcome of the Event:
               </h2>
               {renderBulletList(outcomes, "[Enter event outcomes, one per line...]")}
@@ -160,9 +165,9 @@ export default function EventReportPreview({ data = {} }) {
               PHOTOS
             </h1>
 
-            <div className="flex flex-col gap-5 my-4">
-              {/* Photo 1 Slot */}
-              <div className="w-full h-[260px] sm:h-[300px] bg-slate-50 border border-slate-300 rounded-lg flex items-center justify-center overflow-hidden">
+            <div className="flex flex-col gap-6 my-4 items-center">
+              {/* Photo 1 Slot (70% width) */}
+              <div className="w-[70%] h-[240px] sm:h-[260px] bg-slate-50 border border-slate-300 rounded-lg flex items-center justify-center overflow-hidden">
                 {photo1 ? (
                   <img src={photo1} className="w-full h-full object-cover" alt="Event Photo 1" />
                 ) : (
@@ -173,8 +178,8 @@ export default function EventReportPreview({ data = {} }) {
                 )}
               </div>
 
-              {/* Photo 2 Slot */}
-              <div className="w-full h-[260px] sm:h-[300px] bg-slate-50 border border-slate-300 rounded-lg flex items-center justify-center overflow-hidden">
+              {/* Photo 2 Slot (70% width) */}
+              <div className="w-[70%] h-[240px] sm:h-[260px] bg-slate-50 border border-slate-300 rounded-lg flex items-center justify-center overflow-hidden">
                 {photo2 ? (
                   <img src={photo2} className="w-full h-full object-cover" alt="Event Photo 2" />
                 ) : (
@@ -186,7 +191,7 @@ export default function EventReportPreview({ data = {} }) {
               </div>
             </div>
 
-            <p className="text-center font-bold text-slate-950 text-sm sm:text-base mb-6 font-serif leading-relaxed px-4">
+            <p className="text-center font-bold text-slate-950 text-sm sm:text-base mt-4 mb-4 px-6 leading-relaxed">
               {displayCaption}
             </p>
           </div>

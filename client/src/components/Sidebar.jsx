@@ -40,9 +40,14 @@ function Sidebar() {
         <p className="mt-1 text-sm font-semibold text-slate-500">Event document tools</p>
       </div>
       <nav className="grid gap-4">
-        {/* Main Dashboard */}
+        {/* Main Section */}
         <div>
-          {renderLink({ name: "Dashboard", path: "/", icon: "🏠" })}
+          <p className="mb-2 px-4 text-xs font-bold uppercase tracking-wider text-slate-400">
+            Main
+          </p>
+          <div className="grid gap-1">
+            {renderLink({ name: "Dashboard", path: "/", icon: "🏠" })}
+          </div>
         </div>
 
         {/* Certificate Tools Section */}

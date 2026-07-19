@@ -314,7 +314,7 @@ function EventReports() {
         <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Report Explorer</p>
         <h2 className="mt-2 text-4xl font-black tracking-tight text-slate-950 font-sans">Event Report Records</h2>
         <p className="mt-2 max-w-4xl text-lg leading-8 text-slate-600 font-sans">
-          View, edit, delete, and export structured event reports.
+          View, edit, delete, and export saved event reports.
         </p>
       </div>
 

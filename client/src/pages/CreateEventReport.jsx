@@ -239,9 +239,8 @@ function CreateEventReport() {
         className="slide-up rounded-3xl border border-blue-100 bg-white p-6 shadow-xl lg:p-8 space-y-8"
         onSubmit={(event) => event.preventDefault()}
       >
-        {/* Section 1: Basic Details */}
+        {/* Basic Details Section */}
         <div>
-          <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Step 1</p>
           <h3 className="mt-1 text-2xl font-black text-slate-950">Basic Details</h3>
           <p className="mt-1 text-base leading-7 text-slate-600">
             Fill in the primary administrative information for the event.
@@ -344,9 +343,8 @@ function CreateEventReport() {
           </div>
         </div>
 
-        {/* Section 2: Report Content */}
+        {/* Report Content Section */}
         <div className="border-t border-slate-100 pt-8">
-          <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Step 2</p>
           <h3 className="mt-1 text-2xl font-black text-slate-950">Report Content</h3>
           <p className="mt-1 text-base leading-7 text-slate-600">
             Provide the descriptive outlines, objectives, and outcomes. Use new lines to create lists.
@@ -388,9 +386,8 @@ function CreateEventReport() {
           </div>
         </div>
 
-        {/* Section 3: Photos */}
+        {/* Photos Section */}
         <div className="border-t border-slate-100 pt-8">
-          <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Step 3</p>
           <h3 className="mt-1 text-2xl font-black text-slate-950">Photos & Caption</h3>
           <p className="mt-1 text-base leading-7 text-slate-600">
             Add up to 4 photos for the event report and provide a caption.
@@ -465,9 +462,8 @@ function CreateEventReport() {
           )}
         </div>
 
-        {/* Section 4: Signatures */}
+        {/* Signatures Section */}
         <div className="border-t border-slate-100 pt-8">
-          <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Step 4</p>
           <h3 className="mt-1 text-2xl font-black text-slate-950">Signatures</h3>
           <p className="mt-1 text-base leading-7 text-slate-600">
             Define names of the authority figures for the report.
@@ -543,7 +539,7 @@ function CreateEventReport() {
           <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Event Report Preview</p>
           <h3 className="mt-1 text-2xl font-black text-slate-950 font-sans">Live Document View</h3>
           <p className="mt-1 text-base leading-7 text-slate-600 font-sans">
-            Scroll down to review the live draft output.
+            Scroll down to review the live draft output. Report PDF follows the academic event report format provided by the mentor.
           </p>
         </div>
 

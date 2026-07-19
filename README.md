@@ -319,6 +319,15 @@ Expected response:
 - High-quality export with `waitForImages` loading check and shadows/borders stripping before capturing
 - Redesigned main dashboard with report metrics quick stats
 
+## Step ER-4B Completed Features
+
+- Redesigned and unified landing dashboard with platform hero section and module cards for both generators
+- Created dashboard API service dynamically integrated with the MERN backend stats endpoint, with robust fallback states
+- Grouped sidebar navigation links into Main, Certificate Tools, and Report Tools, following premium design principles
+- Polished event report PDF format margins, spacing, text wrapping, exact labels, and auto font scaling for bullet lists
+- Polished Page 2 photo width to 70%, with fixed cropping constraints and correct vertical alignment
+- Updated footer branding to reflect the combined "Event Certificate & Report Generator" platform
+- Cleaned up developer-oriented words from the application user interface (removed Step labels)
 
 
 ## GitHub Upload Instructions

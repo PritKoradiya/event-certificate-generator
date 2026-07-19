@@ -1,62 +1,7 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import StatCard from "../components/StatCard.jsx";
-
-const stats = [
-  {
-    title: "Certificate Templates",
-    value: "24+",
-    icon: "🎨",
-    description: "Ready-to-use designs for academic and professional events."
-  },
-  {
-    title: "Poster Designs",
-    value: "12+",
-    icon: "🖼️",
-    description: "Event poster layouts prepared for poster generation."
-  },
-  {
-    title: "Report Formats",
-    value: "A4 Standard",
-    icon: "📋",
-    description: "Fully structured event reports with outline, objectives, and outcomes."
-  },
-  {
-    title: "Event Reports",
-    value: "Structured",
-    icon: "📝",
-    description: "Create standard A4 reports with detailed field inputs."
-  },
-  {
-    title: "Photo Reports",
-    value: "Supported",
-    icon: "📸",
-    description: "Upload up to 4 event photos with centered bold captions."
-  },
-  {
-    title: "PDF Export",
-    value: "Portrait A4",
-    icon: "📄",
-    description: "Generate print-ready event reports dynamically."
-  },
-  {
-    title: "Report Records",
-    value: "Manage",
-    icon: "📁",
-    description: "View, edit, delete, and download generated report PDFs."
-  },
-  {
-    title: "Bulk Generation",
-    value: "Available",
-    icon: "📄",
-    description: "Generate multiple certificates from manual list or CSV upload."
-  },
-  {
-    title: "Export Tools",
-    value: "PDF + ZIP",
-    icon: "⬇️",
-    description: "Download single documents or complete batches easily."
-  }
-];
+import { getDashboardStats } from "../services/dashboardApi.js";
 
 const overviewItems = [
   "24+ certificate templates",
@@ -65,38 +10,90 @@ const overviewItems = [
   "PDF and ZIP export ready"
 ];
 
-const quickActions = [
-  { title: "Create Certificate", text: "Build and preview a single certificate.", path: "/create-certificate", icon: "📝" },
-  { title: "Create Event Report", text: "Build structured event reports with outlines and lists.", path: "/create-event-report", icon: "📋" },
-  { title: "Manage Certificates", text: "Review saved certificates and exports.", path: "/generated-certificates", icon: "🏆" },
-  { title: "Manage Event Reports", text: "Review saved reports and draft documents.", path: "/event-reports", icon: "📁" }
-];
-
-const capabilities = [
-  "Live certificate preview",
-  "Live report document preview",
-  "Template based design selection",
-  "Authorized signature support",
-  "PDF export",
-  "Bulk CSV generation",
-  "ZIP download",
-  "Draft management",
-  "Edit and delete records"
-];
-
 function Dashboard() {
+  const [statsData, setStatsData] = useState({
+    certificates: { total: 0, generated: 0, draft: 0, single: 0, bulk: 0 },
+    eventReports: { total: 0, generated: 0, draft: 0 },
+    platform: { certificateTemplates: 24, posterDesigns: 12 }
+  });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const result = await getDashboardStats();
+        if (result.success && result.data) {
+          setStatsData(result.data);
+        }
+      } catch (error) {
+        console.error("Failed to load dashboard stats, using fallbacks:", error);
+      }
+    };
+    fetchStats();
+  }, []);
+
+  const statsList = [
+    {
+      title: "Total Certificates",
+      value: String(statsData.certificates.total),
+      icon: "🏆",
+      description: "Total single and bulk certificates created."
+    },
+    {
+      title: "Generated Certificates",
+      value: String(statsData.certificates.generated),
+      icon: "🏅",
+      description: "Saved and printed certificates."
+    },
+    {
+      title: "Draft Certificates",
+      value: String(statsData.certificates.draft),
+      icon: "💾",
+      description: "Certificate configurations saved as drafts."
+    },
+    {
+      title: "Bulk Certificates",
+      value: String(statsData.certificates.bulk),
+      icon: "📄",
+      description: "Certificates generated from bulk datasets."
+    },
+    {
+      title: "Event Reports",
+      value: String(statsData.eventReports.total),
+      icon: "📋",
+      description: "Total reports created for events."
+    },
+    {
+      title: "Report Drafts",
+      value: String(statsData.eventReports.draft),
+      icon: "📁",
+      description: "Event report configurations saved as drafts."
+    },
+    {
+      title: "Certificate Templates",
+      value: String(statsData.platform.certificateTemplates || 24),
+      icon: "🎨",
+      description: "Ready-to-use template styles."
+    },
+    {
+      title: "Poster Designs",
+      value: String(statsData.platform.posterDesigns || 12),
+      icon: "🖼️",
+      description: "Poster styles prepared for generation."
+    }
+  ];
+
   return (
     <section className="page-transition space-y-7">
-      {/* Welcome Banner */}
+      {/* Welcome Banner / Hero Section */}
       <div className="overflow-hidden rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-cyan-50 p-8 shadow-soft lg:p-10">
         <div className="grid gap-8 xl:grid-cols-[1.35fr_0.85fr] xl:items-center">
           <div>
-            <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Dashboard</p>
+            <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Workspace</p>
             <h2 className="mt-3 max-w-4xl text-4xl font-black tracking-tight text-slate-950 lg:text-5xl">
-              Event Document Studio
+              Event Certificate & Report Management Platform
             </h2>
             <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">
-              Create, manage, export, and organize event certificates and structured reports with professional templates, bulk generation, and live previews.
+              Create certificates, generate structured event reports, manage records, and export professional PDFs from one workspace.
             </p>
           </div>
 
@@ -116,45 +113,48 @@ function Dashboard() {
 
       {/* Module Overview Section */}
       <section className="space-y-4">
-        <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Studio Modules</p>
+        <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Platform Modules</p>
         <div className="grid gap-6 md:grid-cols-2">
-          {/* Card 1 */}
-          <div className="rounded-3xl border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-blue-50/10 p-6 shadow-md transition hover:shadow-lg flex flex-col justify-between">
+          {/* Module Card 1: Event Certificate Generator */}
+          <div className="rounded-3xl border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-blue-50/10 p-7 shadow-md transition hover:shadow-lg flex flex-col justify-between">
             <div>
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600 text-white text-2xl shadow-sm">
                 🏆
               </div>
               <h3 className="mt-5 text-2xl font-black text-slate-950">Event Certificate Generator</h3>
               <p className="mt-2 text-base leading-7 text-slate-600">
-                Create certificates, templates, bulk certificates, PDF and ZIP export.
+                Create certificates with templates, bulk generation, PDF export, ZIP download, and record management.
               </p>
             </div>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link to="/create-certificate" className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 font-bold rounded-xl text-sm transition">
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link to="/create-certificate" className="px-5 py-2.5 bg-blue-600 text-white hover:bg-blue-750 font-bold rounded-xl text-sm transition shadow-sm">
                 Create Certificate
               </Link>
-              <Link to="/generated-certificates" className="px-4 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 font-bold rounded-xl text-sm transition">
+              <Link to="/generated-certificates" className="px-5 py-2.5 bg-slate-100 text-slate-700 hover:bg-slate-200 font-bold rounded-xl text-sm transition">
                 Manage Certificates
+              </Link>
+              <Link to="/templates" className="px-5 py-2.5 bg-slate-100 text-slate-700 hover:bg-slate-200 font-bold rounded-xl text-sm transition">
+                Browse Templates
               </Link>
             </div>
           </div>
 
-          {/* Card 2 */}
-          <div className="rounded-3xl border border-blue-100 bg-gradient-to-br from-cyan-50 via-white to-cyan-50/10 p-6 shadow-md transition hover:shadow-lg flex flex-col justify-between">
+          {/* Module Card 2: Event Report Generator */}
+          <div className="rounded-3xl border border-blue-100 bg-gradient-to-br from-cyan-50 via-white to-cyan-50/10 p-7 shadow-md transition hover:shadow-lg flex flex-col justify-between">
             <div>
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-600 text-white text-2xl shadow-sm">
                 📋
               </div>
               <h3 className="mt-5 text-2xl font-black text-slate-950">Event Report Generator</h3>
               <p className="mt-2 text-base leading-7 text-slate-600">
-                Generate structured event reports with event details, objectives, outcomes, photos, and PDF export.
+                Generate event reports with event details, objectives, outcomes, photos, and PDF export in academic format.
               </p>
             </div>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link to="/create-event-report" className="px-4 py-2 bg-cyan-600 text-white hover:bg-cyan-700 font-bold rounded-xl text-sm transition">
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link to="/create-event-report" className="px-5 py-2.5 bg-cyan-600 text-white hover:bg-cyan-750 font-bold rounded-xl text-sm transition shadow-sm">
                 Create Event Report
               </Link>
-              <Link to="/event-reports" className="px-4 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 font-bold rounded-xl text-sm transition">
+              <Link to="/event-reports" className="px-5 py-2.5 bg-slate-100 text-slate-700 hover:bg-slate-200 font-bold rounded-xl text-sm transition">
                 Manage Event Reports
               </Link>
             </div>
@@ -162,48 +162,15 @@ function Dashboard() {
         </div>
       </section>
 
-      {/* Stat Cards */}
-      <div className="grid gap-5 md:grid-cols-2 2xl:grid-cols-3">
-        {stats.map((stat, index) => (
-          <StatCard key={stat.title} {...stat} delayClass={`delay-${Math.min(index + 1, 4)}00`} />
-        ))}
-      </div>
-
-      {/* Quick Actions & Capabilities */}
-      <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
-        <section className="slide-up rounded-2xl border border-slate-200 bg-white p-7 shadow-soft">
-          <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Quick Actions</p>
-          <div className="mt-5 grid gap-4 sm:grid-cols-2">
-            {quickActions.map((action) => (
-              <Link
-                key={action.path}
-                to={action.path}
-                className="card-hover rounded-2xl border border-slate-200 bg-slate-50 p-5 shadow-sm transition hover:border-blue-200 hover:bg-blue-50"
-              >
-                <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-white text-xl shadow-sm">
-                  {action.icon}
-                </span>
-                <h3 className="mt-4 text-xl font-black text-slate-950">{action.title}</h3>
-                <p className="mt-2 text-base leading-7 text-slate-600">{action.text}</p>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        <section className="slide-up delay-100 rounded-2xl border border-slate-200 bg-white p-7 shadow-soft">
-          <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Platform Capabilities</p>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            {capabilities.map((capability) => (
-              <div key={capability} className="soft-hover flex items-center gap-3 rounded-xl border border-slate-100 bg-white px-4 py-4 shadow-sm">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-primary-700">
-                  ✓
-                </span>
-                <p className="text-base font-bold text-slate-700">{capability}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-      </div>
+      {/* Dynamic Statistics Cards Grid */}
+      <section className="space-y-4">
+        <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Workspace Statistics</p>
+        <div className="grid gap-5 md:grid-cols-2 2xl:grid-cols-4">
+          {statsList.map((stat, index) => (
+            <StatCard key={stat.title} {...stat} delayClass={`delay-${Math.min(index + 1, 4)}00`} />
+          ))}
+        </div>
+      </section>
     </section>
   );
 }

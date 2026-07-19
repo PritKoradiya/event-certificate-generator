@@ -1,5 +1,5 @@
 export const brandingData = {
-  appName: "Event Certificate Generator",
+  appName: "Event Certificate & Report Generator",
   tagline: "Smart certificate and event document management platform.",
   developerName: "Pritkumar Koradiya",
   role: "Full Stack MERN Developer",
