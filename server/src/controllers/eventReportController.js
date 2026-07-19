@@ -1,5 +1,12 @@
+import { unlink } from "fs/promises";
+import path from "path";
+import { fileURLToPath } from "url";
 import mongoose from "mongoose";
 import EventReport from "../models/EventReport.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const reportUploadsDirectory = path.join(__dirname, "../../uploads/event-reports");
 
 const isDatabaseConnected = () => mongoose.connection.readyState === 1;
 
@@ -51,6 +58,56 @@ const getUploadedPhotoPaths = (files = []) => {
   return files.map((file) => `/uploads/event-reports/${file.filename}`);
 };
 
+const removeEmptyArrayItems = (values) => {
+  return values.map((value) => String(value).trim()).filter(Boolean);
+};
+
+const parseArrayField = (value) => {
+  if (Array.isArray(value)) {
+    return removeEmptyArrayItems(value);
+  }
+
+  if (typeof value !== "string" || !value.trim()) {
+    return [];
+  }
+
+  try {
+    const parsedValue = JSON.parse(value);
+
+    if (Array.isArray(parsedValue)) {
+      return removeEmptyArrayItems(parsedValue);
+    }
+  } catch {
+    // A regular multiline string is handled below.
+  }
+
+  return removeEmptyArrayItems(value.split(/\r?\n/));
+};
+
+const deleteUploadedFile = async (photoPath) => {
+  if (typeof photoPath !== "string" || !photoPath.startsWith("/uploads/event-reports/")) {
+    return;
+  }
+
+  const fileName = path.basename(photoPath);
+  const localFilePath = path.join(reportUploadsDirectory, fileName);
+
+  try {
+    await unlink(localFilePath);
+  } catch (error) {
+    if (error.code !== "ENOENT") {
+      console.error(`Unable to delete uploaded report photo: ${localFilePath}`, error.message);
+    }
+  }
+};
+
+const buildReportPhotos = (files, bodyPhotos) => {
+  const uploadedPhotos = getUploadedPhotoPaths(files);
+  const savedPhotoPaths = parseArrayField(bodyPhotos);
+
+  return [...new Set([...uploadedPhotos, ...savedPhotoPaths])].slice(0, 4);
+};
+
 export const createEventReport = async (req, res) => {
   try {
     if (!isDatabaseConnected()) {
@@ -67,10 +124,11 @@ export const createEventReport = async (req, res) => {
     }
 
     const reportId = await generateReportId();
-    const photos = req.files?.length > 0 ? getUploadedPhotoPaths(req.files) : req.body.photos;
     const eventReport = await EventReport.create({
       ...req.body,
-      photos,
+      eventObjectives: parseArrayField(req.body.eventObjectives),
+      eventOutcomes: parseArrayField(req.body.eventOutcomes),
+      photos: buildReportPhotos(req.files, req.body.photos),
       reportId,
       status: "Generated"
     });
@@ -96,10 +154,11 @@ export const saveDraftEventReport = async (req, res) => {
     }
 
     const reportId = await generateReportId();
-    const photos = req.files?.length > 0 ? getUploadedPhotoPaths(req.files) : req.body.photos;
     const eventReport = await EventReport.create({
       ...req.body,
-      photos,
+      eventObjectives: parseArrayField(req.body.eventObjectives),
+      eventOutcomes: parseArrayField(req.body.eventOutcomes),
+      photos: buildReportPhotos(req.files, req.body.photos),
       reportId,
       status: "Draft"
     });
@@ -183,19 +242,44 @@ export const updateEventReport = async (req, res) => {
       });
     }
 
+    const existingPhotos = Array.isArray(existingEventReport.photos)
+      ? existingEventReport.photos
+      : [];
+    const removePhotos = parseArrayField(req.body.removePhotos);
+    const removePhotosSet = new Set(removePhotos);
+    const selectedPhotosToDelete = existingPhotos.filter((photo) => removePhotosSet.has(photo));
+    const remainingPhotos = existingPhotos.filter((photo) => !removePhotosSet.has(photo));
+    const uploadedPhotos = getUploadedPhotoPaths(req.files);
+    const combinedPhotos = [...remainingPhotos, ...uploadedPhotos];
+    const photos = combinedPhotos.slice(0, 4);
+    const extraPhotos = combinedPhotos.slice(4);
+
+    const { eventObjectives, eventOutcomes, ...normalFields } = req.body;
+    delete normalFields.photos;
+    delete normalFields.removePhotos;
+    delete normalFields.reportId;
+
     const updateData = {
-      ...req.body,
+      ...normalFields,
+      photos,
       reportId: existingEventReport.reportId
     };
 
-    if (req.files?.length > 0) {
-      updateData.photos = getUploadedPhotoPaths(req.files);
+    if (eventObjectives !== undefined) {
+      updateData.eventObjectives = parseArrayField(eventObjectives);
+    }
+
+    if (eventOutcomes !== undefined) {
+      updateData.eventOutcomes = parseArrayField(eventOutcomes);
     }
 
     const updatedEventReport = await EventReport.findByIdAndUpdate(req.params.id, updateData, {
       new: true,
       runValidators: true
     });
+
+    const photosToDelete = [...new Set([...selectedPhotosToDelete, ...extraPhotos])];
+    await Promise.all(photosToDelete.map(deleteUploadedFile));
 
     return res.status(200).json({
       success: true,
@@ -217,14 +301,21 @@ export const deleteEventReport = async (req, res) => {
       return databaseUnavailableResponse(res);
     }
 
-    const deletedEventReport = await EventReport.findByIdAndDelete(req.params.id);
+    const existingEventReport = await EventReport.findById(req.params.id);
 
-    if (!deletedEventReport) {
+    if (!existingEventReport) {
       return res.status(404).json({
         success: false,
         message: "Event report not found"
       });
     }
+
+    const reportPhotos = Array.isArray(existingEventReport.photos)
+      ? existingEventReport.photos
+      : [];
+
+    await Promise.all(reportPhotos.map(deleteUploadedFile));
+    await EventReport.findByIdAndDelete(req.params.id);
 
     return res.status(200).json({
       success: true,

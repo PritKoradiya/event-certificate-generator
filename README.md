@@ -273,6 +273,14 @@ Expected response:
 - Uploaded photos saved in MongoDB as local URL paths
 - Maximum 4 photos supported per event report request
 
+## Step ER-3A Completed Features
+
+- Improved report update API
+- Remove old photos support
+- Delete report photos from server storage
+- Safe objectives/outcomes parsing
+- Better FormData support
+
 ## Event Report Generator Frontend Setup
 
 - Create Event Report page
