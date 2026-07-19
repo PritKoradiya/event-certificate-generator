@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import EventReportPreview from "../components/EventReportPreview.jsx";
 import { createEventReport, saveDraftEventReport } from "../services/eventReportApi.js";
+import { downloadEventReportPdf } from "../utils/downloadEventReportPdf.js";
 
 const inputClass =
   "h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-base outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-primary-100";
@@ -27,9 +28,26 @@ const initialFormData = {
 
 function CreateEventReport() {
   const [formData, setFormData] = useState(initialFormData);
+  const [selectedPhotos, setSelectedPhotos] = useState([]); // Array of { file, preview }
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSavingDraft, setIsSavingDraft] = useState(false);
   const [generatedReport, setGeneratedReport] = useState(null);
+
+  // Store photo references for unmount cleanup
+  const photosRef = useRef(selectedPhotos);
+  useEffect(() => {
+    photosRef.current = selectedPhotos;
+  }, [selectedPhotos]);
+
+  useEffect(() => {
+    return () => {
+      photosRef.current.forEach((photo) => {
+        if (photo.preview.startsWith("blob:")) {
+          URL.revokeObjectURL(photo.preview);
+        }
+      });
+    };
+  }, []);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -37,10 +55,57 @@ function CreateEventReport() {
       ...currentData,
       [name]: value
     }));
+    // If they change any field, reset generatedReport so preview goes back to live
+    if (generatedReport) {
+      setGeneratedReport(null);
+    }
+  };
+
+  const handlePhotoChange = (event) => {
+    const files = Array.from(event.target.files || []);
+    if (files.length === 0) return;
+
+    if (selectedPhotos.length + files.length > 4) {
+      alert("You can upload a maximum of 4 photos.");
+      return;
+    }
+
+    const newPhotos = files.map((file) => ({
+      file,
+      preview: URL.createObjectURL(file)
+    }));
+
+    setSelectedPhotos((prev) => [...prev, ...newPhotos]);
+    if (generatedReport) {
+      setGeneratedReport(null);
+    }
+
+    // Reset input value to allow uploading the same file again
+    event.target.value = "";
+  };
+
+  const handleRemovePhoto = (index) => {
+    setSelectedPhotos((prev) => {
+      const updated = [...prev];
+      if (updated[index].preview.startsWith("blob:")) {
+        URL.revokeObjectURL(updated[index].preview);
+      }
+      updated.splice(index, 1);
+      return updated;
+    });
+    if (generatedReport) {
+      setGeneratedReport(null);
+    }
   };
 
   const handleReset = () => {
     if (window.confirm("Are you sure you want to clear the form?")) {
+      selectedPhotos.forEach((photo) => {
+        if (photo.preview.startsWith("blob:")) {
+          URL.revokeObjectURL(photo.preview);
+        }
+      });
+      setSelectedPhotos([]);
       setFormData(initialFormData);
       setGeneratedReport(null);
     }
@@ -75,10 +140,52 @@ function CreateEventReport() {
     return true;
   };
 
+  const buildReportFormData = () => {
+    const data = new FormData();
+    data.append("reportDate", formData.reportDate);
+    data.append("eventDate", formData.dateOfEvent);
+    data.append("eventTime", formData.time);
+    data.append("resourcePerson", formData.resourcePerson);
+    data.append("eventName", formData.eventName);
+    data.append("numberOfParticipants", formData.noOfParticipants);
+    data.append("attendee", formData.attendee);
+    data.append("venue", formData.venue);
+    data.append("eventOutline", formData.eventOutline);
+    data.append("photoCaption", formData.photoCaption);
+    data.append("eventCoordinatorName", formData.eventCoordinator);
+    data.append("deanName", formData.deanName);
+
+    // Objectives list
+    const objectivesArray = formData.objectives
+      .split("\n")
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0);
+    objectivesArray.forEach((obj) => {
+      data.append("eventObjectives", obj);
+    });
+
+    // Outcomes list
+    const outcomesArray = formData.outcomes
+      .split("\n")
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0);
+    outcomesArray.forEach((out) => {
+      data.append("eventOutcomes", out);
+    });
+
+    // Photos files
+    selectedPhotos.forEach((photoObj) => {
+      data.append("photos", photoObj.file);
+    });
+
+    return data;
+  };
+
   const handleSaveDraft = async () => {
     try {
       setIsSavingDraft(true);
-      const result = await saveDraftEventReport(formData);
+      const data = buildReportFormData();
+      const result = await saveDraftEventReport(data);
       alert(result.message || "Draft event report saved successfully.");
     } catch (error) {
       alert(error.message || "Unable to save draft. Please try again.");
@@ -94,13 +201,25 @@ function CreateEventReport() {
 
     try {
       setIsGenerating(true);
-      const result = await createEventReport(formData);
-      setGeneratedReport(result.data);
+      const data = buildReportFormData();
+      const result = await createEventReport(data);
+      const report = result.data;
+      setGeneratedReport(report);
       alert(result.message || "Event report generated and saved successfully.");
+      
+      const fileName = `Event_Report_${report.eventName}_${report.reportId}.pdf`;
+      setTimeout(() => downloadEventReportPdf(fileName), 500);
     } catch (error) {
       alert(error.message || "Unable to generate event report. Please try again.");
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  const handleManualDownload = () => {
+    if (generatedReport) {
+      const fileName = `Event_Report_${generatedReport.eventName}_${generatedReport.reportId}.pdf`;
+      downloadEventReportPdf(fileName);
     }
   };
 
@@ -274,10 +393,10 @@ function CreateEventReport() {
           <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Step 3</p>
           <h3 className="mt-1 text-2xl font-black text-slate-950">Photos & Caption</h3>
           <p className="mt-1 text-base leading-7 text-slate-600">
-            Add a description caption for event photographs.
+            Add up to 4 photos for the event report and provide a caption.
           </p>
 
-          <div className="mt-6 grid gap-5 md:grid-cols-2">
+          <div className="mt-6 grid gap-6 md:grid-cols-2">
             <label className="grid gap-2 text-base font-bold text-slate-700">
               Photo Caption
               <input
@@ -290,18 +409,60 @@ function CreateEventReport() {
               />
             </label>
 
-            <div className="rounded-2xl border border-blue-100 bg-blue-50/50 p-5">
-              <label className="block text-sm font-bold text-slate-700 mb-2">Photo Upload (Placeholder)</label>
-              <input
-                type="file"
-                disabled
-                className="h-12 w-full rounded-xl border border-slate-200 bg-slate-100/50 px-4 py-2 text-base cursor-not-allowed mb-2"
-              />
-              <p className="text-sm font-semibold text-blue-600 flex items-center gap-1.5">
-                <span>ℹ️</span> Photo upload and PDF export will be added in next step.
+            <div className="rounded-2xl border-2 border-dashed border-blue-200 bg-blue-50/20 p-5 transition hover:bg-blue-50/45">
+              <label className="block text-sm font-bold text-slate-700 mb-2">Upload Photos</label>
+              <div className="flex items-center gap-3">
+                <label className="cursor-pointer rounded-xl bg-primary-600 hover:bg-primary-700 px-4 py-2.5 text-sm font-bold text-white transition shadow-sm inline-block">
+                  Choose files
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    name="photos"
+                    onChange={handlePhotoChange}
+                    className="hidden"
+                  />
+                </label>
+                <span className="text-xs text-slate-500">
+                  {selectedPhotos.length}/4 selected
+                </span>
+              </div>
+              <p className="text-xs text-slate-500 mt-2">
+                Supported formats: JPG, PNG, WEBP. First 2 photos will be featured.
               </p>
             </div>
           </div>
+
+          {/* Premium Thumbnails Display */}
+          {selectedPhotos.length > 0 && (
+            <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-4">
+              {selectedPhotos.map((photo, index) => (
+                <div
+                  key={index}
+                  className="relative group rounded-xl overflow-hidden border border-slate-200 aspect-square bg-slate-50 shadow-soft"
+                >
+                  <img
+                    src={photo.preview}
+                    className="w-full h-full object-cover"
+                    alt={`Preview ${index + 1}`}
+                  />
+                  <div className="absolute inset-0 bg-black/45 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                    <button
+                      type="button"
+                      onClick={() => handleRemovePhoto(index)}
+                      className="rounded-full bg-rose-600 p-2 text-white hover:bg-rose-750 transition transform scale-90 group-hover:scale-100 duration-150"
+                      title="Remove Photo"
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                  <span className="absolute bottom-2 left-2 bg-black/60 text-white text-[10px] font-bold px-2 py-0.5 rounded font-sans uppercase">
+                    Photo {index + 1}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Section 4: Signatures */}
@@ -364,6 +525,15 @@ function CreateEventReport() {
           >
             {isGenerating ? "Generating..." : "Generate Report"}
           </button>
+          {generatedReport && (
+            <button
+              type="button"
+              onClick={handleManualDownload}
+              className="button-press soft-hover w-full rounded-xl bg-emerald-600 px-5 py-3 text-base font-bold text-white shadow-sm transition hover:bg-emerald-700 sm:w-auto"
+            >
+              Download Report PDF
+            </button>
+          )}
         </div>
       </form>
 
@@ -378,7 +548,16 @@ function CreateEventReport() {
         </div>
 
         <div className="mx-auto w-full flex justify-center">
-          <EventReportPreview data={formData} />
+          <EventReportPreview
+            data={
+              generatedReport
+                ? generatedReport
+                : {
+                    ...formData,
+                    photos: selectedPhotos.map((p) => p.preview)
+                  }
+            }
+          />
         </div>
       </section>
     </section>
@@ -386,3 +565,4 @@ function CreateEventReport() {
 }
 
 export default CreateEventReport;
+

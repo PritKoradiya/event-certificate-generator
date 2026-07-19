@@ -11,24 +11,32 @@ const handleResponse = async (response) => {
 };
 
 export const createEventReport = async (reportData) => {
+  const isFormData = reportData instanceof FormData;
+  const headers = {};
+  if (!isFormData) {
+    headers["Content-Type"] = "application/json";
+  }
+
   const response = await fetch(`${API_BASE_URL}/event-reports`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(reportData)
+    headers,
+    body: isFormData ? reportData : JSON.stringify(reportData)
   });
 
   return handleResponse(response);
 };
 
 export const saveDraftEventReport = async (reportData) => {
+  const isFormData = reportData instanceof FormData;
+  const headers = {};
+  if (!isFormData) {
+    headers["Content-Type"] = "application/json";
+  }
+
   const response = await fetch(`${API_BASE_URL}/event-reports/draft`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(reportData)
+    headers,
+    body: isFormData ? reportData : JSON.stringify(reportData)
   });
 
   return handleResponse(response);
@@ -47,12 +55,16 @@ export const getEventReportById = async (id) => {
 };
 
 export const updateEventReport = async (id, reportData) => {
+  const isFormData = reportData instanceof FormData;
+  const headers = {};
+  if (!isFormData) {
+    headers["Content-Type"] = "application/json";
+  }
+
   const response = await fetch(`${API_BASE_URL}/event-reports/${id}`, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(reportData)
+    headers,
+    body: isFormData ? reportData : JSON.stringify(reportData)
   });
 
   return handleResponse(response);
@@ -65,3 +77,4 @@ export const deleteEventReport = async (id) => {
 
   return handleResponse(response);
 };
+

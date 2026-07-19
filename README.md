@@ -282,11 +282,16 @@ Expected response:
 - API service added
 - Dashboard module cards added
 
-### Next Planned
+## Step ER-2B Completed Features
 
-- Exact PDF export matching mentor format
-- Report PDF download
-- Report management actions
+- Event report photo upload frontend (up to 4 photos)
+- Live photo preview with premium thumbnail slots & remove option
+- Two-page event report preview matching mentor PDF layout exactly
+- A4 portrait PDF export using html2canvas and jsPDF
+- Auto PDF download upon successful report generation
+- Saved report PDF download from the Event Reports list page
+- Asset URL resolver for local file blobs and backend stored images
+
 
 ## GitHub Upload Instructions
 

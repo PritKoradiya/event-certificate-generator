@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import EventReportPreview from "../components/EventReportPreview.jsx";
 import { getEventReports, deleteEventReport } from "../services/eventReportApi.js";
+import { downloadEventReportPdf } from "../utils/downloadEventReportPdf.js";
 
 function EventReports() {
   const [reports, setReports] = useState([]);
@@ -47,7 +48,19 @@ function EventReports() {
   };
 
   const handleDownloadPdf = (report) => {
-    alert("PDF download will be added in next step.");
+    const reportId = report.reportId || report._id || report.id;
+    const fileName = `Event_Report_${report.eventName}_${reportId}.pdf`;
+    
+    // If this report is already selected, it is rendered in the DOM, so download it immediately
+    if (selectedReport && (selectedReport._id === report._id || selectedReport.id === report.id)) {
+      downloadEventReportPdf(fileName);
+    } else {
+      // If it's not selected, select it first so it mounts/updates, then download
+      setSelectedReport(report);
+      setTimeout(() => {
+        downloadEventReportPdf(fileName);
+      }, 500);
+    }
   };
 
   const handleDelete = async (id) => {
@@ -150,7 +163,7 @@ function EventReports() {
                           {report.eventName}
                         </td>
                         <td className="p-4 sm:p-5 text-slate-600 whitespace-nowrap">
-                          {report.dateOfEvent}
+                          {report.dateOfEvent || report.eventDate}
                         </td>
                         <td className="p-4 sm:p-5 text-slate-600 min-w-[150px]">
                           {report.resourcePerson}
@@ -164,7 +177,7 @@ function EventReports() {
                         <td className="p-4 sm:p-5 whitespace-nowrap">
                           <span
                             className={`inline-flex rounded-full px-2.5 py-1 text-xs font-bold uppercase tracking-wider ${
-                              report.status === "draft"
+                              report.status === "draft" || report.status === "Draft"
                                 ? "bg-amber-100 text-amber-800"
                                 : "bg-emerald-100 text-emerald-800"
                             }`}
@@ -228,9 +241,17 @@ function EventReports() {
                     Detailed layout display for the selected record.
                   </p>
                 </div>
-                <span className="w-fit rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-sm font-black text-primary-700 self-start">
-                  Status: {selectedReport.status?.toUpperCase()}
-                </span>
+                <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+                  <button
+                    onClick={() => handleDownloadPdf(selectedReport)}
+                    className="button-press soft-hover px-4 py-2 bg-emerald-600 hover:bg-emerald-750 text-white font-bold text-sm shadow-sm transition rounded-xl"
+                  >
+                    Download Report PDF
+                  </button>
+                  <span className="w-fit rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-sm font-black text-primary-700">
+                    Status: {selectedReport.status?.toUpperCase()}
+                  </span>
+                </div>
               </div>
 
               <div className="mx-auto w-full flex justify-center">
