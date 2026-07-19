@@ -47,6 +47,10 @@ const databaseUnavailableResponse = (res) => {
   });
 };
 
+const getUploadedPhotoPaths = (files = []) => {
+  return files.map((file) => `/uploads/event-reports/${file.filename}`);
+};
+
 export const createEventReport = async (req, res) => {
   try {
     if (!isDatabaseConnected()) {
@@ -63,8 +67,10 @@ export const createEventReport = async (req, res) => {
     }
 
     const reportId = await generateReportId();
+    const photos = req.files?.length > 0 ? getUploadedPhotoPaths(req.files) : req.body.photos;
     const eventReport = await EventReport.create({
       ...req.body,
+      photos,
       reportId,
       status: "Generated"
     });
@@ -90,8 +96,10 @@ export const saveDraftEventReport = async (req, res) => {
     }
 
     const reportId = await generateReportId();
+    const photos = req.files?.length > 0 ? getUploadedPhotoPaths(req.files) : req.body.photos;
     const eventReport = await EventReport.create({
       ...req.body,
+      photos,
       reportId,
       status: "Draft"
     });
@@ -179,6 +187,10 @@ export const updateEventReport = async (req, res) => {
       ...req.body,
       reportId: existingEventReport.reportId
     };
+
+    if (req.files?.length > 0) {
+      updateData.photos = getUploadedPhotoPaths(req.files);
+    }
 
     const updatedEventReport = await EventReport.findByIdAndUpdate(req.params.id, updateData, {
       new: true,

@@ -267,7 +267,11 @@ Expected response:
 - Get reports API
 - Update report API
 - Delete report API
-- Photo field prepared for next step
+- Event report photo upload support
+- Multer image upload
+- Static uploads folder available at `/uploads`
+- Uploaded photos saved in MongoDB as local URL paths
+- Maximum 4 photos supported per event report request
 
 ## Event Report Generator Frontend Setup
 
@@ -280,7 +284,6 @@ Expected response:
 
 ### Next Planned
 
-- Photo upload
 - Exact PDF export matching mentor format
 - Report PDF download
 - Report management actions

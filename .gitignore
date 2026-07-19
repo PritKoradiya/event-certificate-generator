@@ -12,6 +12,11 @@ client/.env.local
 
 server/node_modules/
 server/.env
+server/uploads/*
+!server/uploads/.gitkeep
+!server/uploads/event-reports/
+server/uploads/event-reports/*
+!server/uploads/event-reports/.gitkeep
 
 .DS_Store
 Thumbs.db
