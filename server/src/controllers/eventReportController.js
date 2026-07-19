@@ -141,8 +141,7 @@ export const createEventReport = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Failed to create event report",
-      error: error.message
+      message: "Failed to create event report"
     });
   }
 };
@@ -171,8 +170,7 @@ export const saveDraftEventReport = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Failed to save event report draft",
-      error: error.message
+      message: "Failed to save event report draft"
     });
   }
 };
@@ -193,8 +191,7 @@ export const getEventReports = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Failed to fetch event reports",
-      error: error.message
+      message: "Failed to fetch event reports"
     });
   }
 };
@@ -216,13 +213,13 @@ export const getEventReportById = async (req, res) => {
 
     return res.status(200).json({
       success: true,
+      message: "Event report fetched successfully",
       data: eventReport
     });
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Failed to fetch event report",
-      error: error.message
+      message: "Failed to fetch event report"
     });
   }
 };
@@ -289,8 +286,7 @@ export const updateEventReport = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Failed to update event report",
-      error: error.message
+      message: "Failed to update event report"
     });
   }
 };
@@ -324,8 +320,7 @@ export const deleteEventReport = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Failed to delete event report",
-      error: error.message
+      message: "Failed to delete event report"
     });
   }
 };

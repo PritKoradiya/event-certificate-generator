@@ -111,7 +111,8 @@ Expected response:
 ```json
 {
   "success": true,
-  "message": "Event Certificate Generator API is running"
+  "message": "Event Certificate and Report Generator API is running",
+  "modules": ["Certificate Generator", "Event Report Generator"]
 }
 ```
 
@@ -280,6 +281,13 @@ Expected response:
 - Delete report photos from server storage
 - Safe objectives/outcomes parsing
 - Better FormData support
+
+## Step ER-4A Completed Features
+
+- Dashboard stats API added
+- Combined certificate and report stats
+- Backend response cleanup
+- Health API module info added
 
 ## Event Report Generator Frontend Setup
 

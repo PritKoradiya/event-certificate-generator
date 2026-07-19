@@ -4,6 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import multer from "multer";
 import certificateRoutes from "./routes/certificateRoutes.js";
+import dashboardRoutes from "./routes/dashboardRoutes.js";
 import eventReportRoutes from "./routes/eventReportRoutes.js";
 import healthRoutes from "./routes/healthRoutes.js";
 
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 app.use("/api/health", healthRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/certificates", certificateRoutes);
 app.use("/api/event-reports", eventReportRoutes);
 

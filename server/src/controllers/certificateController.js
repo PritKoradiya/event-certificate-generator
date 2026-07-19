@@ -70,8 +70,7 @@ export const createCertificate = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Failed to generate certificate",
-      error: error.message
+      message: "Failed to generate certificate"
     });
   }
 };
@@ -109,8 +108,7 @@ export const saveDraftCertificate = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Failed to save certificate draft",
-      error: error.message
+      message: "Failed to save certificate draft"
     });
   }
 };
@@ -191,8 +189,7 @@ export const bulkCreateCertificates = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Failed to generate bulk certificates",
-      error: error.message
+      message: "Failed to generate bulk certificates"
     });
   }
 };
@@ -216,8 +213,7 @@ export const getCertificates = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Failed to fetch certificates",
-      error: error.message
+      message: "Failed to fetch certificates"
     });
   }
 };
@@ -242,13 +238,13 @@ export const getCertificateById = async (req, res) => {
 
     return res.status(200).json({
       success: true,
+      message: "Certificate fetched successfully",
       data: certificate
     });
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Failed to fetch certificate",
-      error: error.message
+      message: "Failed to fetch certificate"
     });
   }
 };
@@ -290,8 +286,7 @@ export const updateCertificate = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Failed to update certificate",
-      error: error.message
+      message: "Failed to update certificate"
     });
   }
 };
@@ -321,8 +316,7 @@ export const deleteCertificate = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Failed to delete certificate",
-      error: error.message
+      message: "Failed to delete certificate"
     });
   }
 };
