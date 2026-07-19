@@ -1,6 +1,11 @@
-# Event Certificate Generator Tool
+# Event Certificate and Report Generator Tool
 
-A full-stack MERN project base for generating certificates for college events. This first step includes the clean project structure, frontend routing, placeholder dashboard pages, and a basic backend API setup.
+A full-stack MERN project for generating certificates and reports for college events.
+
+The project has two main sections:
+
+1. Event Certificate Generator
+2. Event Report Generator
 
 ## Tech Stack
 
@@ -62,11 +67,14 @@ event-certificate-generator/
         db.js
       models/
         Certificate.js
+        EventReport.js
       routes/
         certificateRoutes.js
+        eventReportRoutes.js
         healthRoutes.js
       controllers/
         certificateController.js
+        eventReportController.js
         healthController.js
       app.js
       server.js
@@ -249,6 +257,33 @@ Expected response:
 - PDF export supports image templates
 - Template gallery shows image-based templates
 - For smaller PDF size, compress background images before placing them in the public folder
+
+## Event Report Generator Backend Setup
+
+- Event report model created
+- Event report routes added
+- Create report API
+- Save draft API
+- Get reports API
+- Update report API
+- Delete report API
+- Photo field prepared for next step
+
+## Event Report Generator Frontend Setup
+
+- Create Event Report page
+- Event report form
+- Live report preview
+- Event Reports listing page
+- API service added
+- Dashboard module cards added
+
+### Next Planned
+
+- Photo upload
+- Exact PDF export matching mentor format
+- Report PDF download
+- Report management actions
 
 ## GitHub Upload Instructions
 

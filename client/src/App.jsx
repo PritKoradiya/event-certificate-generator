@@ -8,6 +8,8 @@ import Templates from "./pages/Templates.jsx";
 import Categories from "./pages/Categories.jsx";
 import BulkGenerate from "./pages/BulkGenerate.jsx";
 import GeneratedCertificates from "./pages/GeneratedCertificates.jsx";
+import CreateEventReport from "./pages/CreateEventReport.jsx";
+import EventReports from "./pages/EventReports.jsx";
 
 function App() {
   return (
@@ -24,6 +26,8 @@ function App() {
               <Route path="/categories" element={<Categories />} />
               <Route path="/bulk-generate" element={<BulkGenerate />} />
               <Route path="/generated-certificates" element={<GeneratedCertificates />} />
+              <Route path="/create-event-report" element={<CreateEventReport />} />
+              <Route path="/event-reports" element={<EventReports />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </div>
