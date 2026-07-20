@@ -37,7 +37,7 @@ function Sidebar() {
     <aside className="fade-in w-full shrink-0 rounded-2xl border border-blue-100 bg-white/95 p-4 shadow-soft lg:sticky lg:top-28 lg:w-[286px] lg:self-start">
       <div className="mb-5 rounded-2xl bg-gradient-to-br from-blue-50 via-white to-cyan-50 p-5">
         <p className="text-xl font-black text-slate-950">Document Studio</p>
-        <p className="mt-1 text-sm font-semibold text-slate-500">Event document tools</p>
+        <p className="mt-1 text-sm font-semibold text-slate-500">Certificate & Report Tools</p>
       </div>
       <nav className="grid gap-4">
         {/* Main Section */}

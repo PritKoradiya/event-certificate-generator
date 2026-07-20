@@ -373,6 +373,17 @@ button {
   line-height: 1 !important;
 }
 
+
+.pdf-export-clone .certificate-bg-title {
+  font-size: 42px !important;
+  line-height: 1.05 !important;
+}
+
+.pdf-export-clone .certificate-bg-name {
+  font-size: 56px !important;
+  line-height: 1 !important;
+}
+
 .pdf-export-clone .certificate-bg-body {
   font-size: 16px !important;
   line-height: 1.35 !important;
@@ -381,4 +392,75 @@ button {
 .pdf-export-clone .certificate-bg-footer {
   font-size: 13px !important;
   line-height: 1.25 !important;
+}
+
+/* Custom Redesign Animations */
+@keyframes heroFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes floatBlob {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.15);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+@keyframes cardSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes softPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.95;
+  }
+  50% {
+    transform: scale(1.025);
+    opacity: 1;
+  }
+}
+
+.animate-hero-fade-in {
+  animation: heroFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-float-blob {
+  animation: floatBlob 15s infinite ease-in-out;
+}
+
+.animate-card-slide-up {
+  animation: cardSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-soft-pulse {
+  animation: softPulse 4s infinite ease-in-out;
+}
+
+.hover-lift {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.15);
 }
