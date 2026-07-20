@@ -300,7 +300,7 @@ function GeneratedCertificates() {
           <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-slate-100 text-3xl font-black text-slate-500">
             0
           </div>
-          <h2 className="mt-5 text-3xl font-black text-slate-950">No certificates saved yet.</h2>
+          <h2 className="mt-5 text-3xl font-black text-slate-950">No certificates found.</h2>
           <p className="mx-auto mt-3 max-w-xl text-lg leading-8 text-slate-600">
             Drafts and generated certificate records will appear here.
           </p>

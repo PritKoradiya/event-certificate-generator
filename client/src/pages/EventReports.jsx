@@ -375,12 +375,12 @@ function EventReports() {
             <p className="text-base font-bold text-slate-500">Loading event reports...</p>
           </div>
         </div>
-      ) : filteredReports.length === 0 ? (
+      ) : reports.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-slate-300 bg-white p-16 text-center shadow-soft">
           <span className="text-5xl mb-4">📋</span>
-          <h3 className="text-xl font-black text-slate-950 font-sans">No Records Found</h3>
+          <h3 className="text-xl font-black text-slate-950 font-sans">No event reports found.</h3>
           <p className="mt-2 max-w-md text-base leading-6 text-slate-600 font-sans">
-            No event reports match your search query or status criteria.
+            Drafts and generated academic event reports will appear here.
           </p>
           <Link
             to="/create-event-report"
@@ -388,6 +388,14 @@ function EventReports() {
           >
             Create Event Report
           </Link>
+        </div>
+      ) : filteredReports.length === 0 ? (
+        <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-slate-300 bg-white p-16 text-center shadow-soft">
+          <span className="text-5xl mb-4">📋</span>
+          <h3 className="text-xl font-black text-slate-950 font-sans">No event reports found.</h3>
+          <p className="mt-2 max-w-md text-base leading-6 text-slate-600 font-sans">
+            No event reports match your search query or status criteria.
+          </p>
         </div>
       ) : (
         <div className="space-y-7">

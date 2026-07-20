@@ -326,7 +326,7 @@ function Templates() {
 
       {filteredItems.length === 0 && (
         <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center shadow-soft">
-          <p className="text-base font-bold text-slate-600">No designs matched your filters.</p>
+          <p className="text-base font-bold text-slate-600">No templates match your filter.</p>
         </div>
       )}
     </section>

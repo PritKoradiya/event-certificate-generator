@@ -16,6 +16,7 @@ function Dashboard() {
     eventReports: { total: 0, generated: 0, draft: 0 },
     platform: { certificateTemplates: 24, posterDesigns: 12 }
   });
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -23,9 +24,12 @@ function Dashboard() {
         const result = await getDashboardStats();
         if (result.success && result.data) {
           setStatsData(result.data);
+        } else {
+          setErrorMessage("Unable to load dashboard stats. Showing default overview.");
         }
       } catch (error) {
         console.error("Failed to load dashboard stats, using fallbacks:", error);
+        setErrorMessage("Unable to load dashboard stats. Showing default overview.");
       }
     };
     fetchStats();
@@ -84,6 +88,12 @@ function Dashboard() {
 
   return (
     <section className="page-transition space-y-7">
+      {errorMessage && (
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-base font-semibold text-amber-800 shadow-soft animate-fade-in flex items-center gap-3">
+          <span>⚠️</span>
+          <span>{errorMessage}</span>
+        </div>
+      )}
       {/* Welcome Banner / Hero Section */}
       <div className="overflow-hidden rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-cyan-50 p-8 shadow-soft lg:p-10">
         <div className="grid gap-8 xl:grid-cols-[1.35fr_0.85fr] xl:items-center">
@@ -93,7 +103,7 @@ function Dashboard() {
               Event Certificate & Report Management Platform
             </h2>
             <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">
-              Create certificates, generate structured event reports, manage records, and export professional PDFs from one workspace.
+              Create certificates, generate event reports, manage records, and export professional PDFs.
             </p>
           </div>
 

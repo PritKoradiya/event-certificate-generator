@@ -68,12 +68,14 @@ function Footer() {
         </div>
 
         <div className="mt-8 border-t border-blue-100 pt-5 text-sm font-semibold text-slate-500">
-          <p>
-            &copy; {brandingData.copyrightYear} {brandingData.developerName}.{" "}
-            {brandingData.rightsText}
+          <p className="text-base font-black text-slate-900">
+            {brandingData.appName}
           </p>
           <p className="mt-1">
-            Designed and Developed by {brandingData.developerName}.
+            Developed by {brandingData.developerName}
+          </p>
+          <p className="mt-1">
+            &copy; {brandingData.copyrightYear} {brandingData.developerName}. {brandingData.rightsText}
           </p>
           <p className="mt-1 text-slate-600">{brandingData.protectionText}</p>
         </div>
