@@ -1,140 +1,134 @@
 # Event Certificate & Report Generator
 
-A MERN stack platform for generating event certificates and structured academic event reports with live preview, templates, photo support, PDF export, ZIP export, and record management.
+A full-stack MERN platform for generating professional event certificates and structured academic event reports with live preview, template selection, photo support, PDF export, ZIP export, and record management.
 
-## Modules
+This project includes two major modules:
+
+1. Event Certificate Generator  
+2. Event Report Generator  
+
+The Event Report Generator follows the academic event report structure provided in the mentor format, including event details, outline, objectives, outcomes, photos, coordinator, and dean section. :contentReference[oaicite:0]{index=0}
+
+---
+
+## Developed By
+
+**Pritkumar Koradiya**  
+Full Stack MERN Developer
+
+© 2026 Pritkumar Koradiya. All Rights Reserved.  
+Unauthorized copying, redistribution, or reuse of this project without proper credit is not allowed.
+
+---
+
+## Project Modules
 
 ### 1. Event Certificate Generator
-Features:
+
+The Certificate Generator allows users to create and manage professional certificates for different events such as seminars, conferences, FDPs, expert talks, workshops, webinars, hackathons, competitions, and more.
+
+#### Features
+
 - Single certificate generation
 - 24+ certificate templates
-- Image background templates
+- Image background certificate templates
 - Live certificate preview
-- PDF download
+- Template selection
+- Category-based certificate generation
+- Authorized signature name support
+- Certificate PDF download
 - Bulk certificate generation
+- Manual participant list input
 - CSV participant upload
-- ZIP download
-- Draft, edit, delete, and manage records
-- Authorized signature support
+- Download all certificates as ZIP
+- Save draft certificates
+- View generated certificates
+- Edit certificate records
+- Delete certificate records
+- Manage single and bulk certificates
+
+---
 
 ### 2. Event Report Generator
-Features:
-- Structured event report form
+
+The Event Report Generator allows users to create structured academic event reports using event details, objectives, outcomes, photos, and signature details.
+
+#### Features
+
+- Create structured event report
 - Mentor-format report preview
-- Event details, outline, objectives, outcomes
-- Photo upload
+- Event details form
+- Event outline section
+- Objectives section
+- Outcomes section
+- Photo upload support
 - Two-page report preview
 - A4 portrait PDF export
-- Save draft
-- View, edit, delete report records
+- Save draft report
+- View event reports
+- Edit event reports
+- Delete event reports
+- Download report PDF
+- Professional report management page
+
+---
 
 ## Tech Stack
 
 ### Frontend
-- **React.js**: Library for building user interfaces
-- **Vite**: Next-generation frontend tooling
-- **Tailwind CSS**: Utility-first CSS framework
-- **React Router**: Client-side routing
-- **html2canvas**: Screenshot/canvas capture utility
-- **jsPDF**: Client-side PDF generation
-- **JSZip**: ZIP archive creation and downloading
+
+- React.js
+- Vite
+- Tailwind CSS
+- React Router DOM
+- html2canvas
+- jsPDF
+- JSZip
 
 ### Backend
-- **Node.js**: JavaScript runtime environment
-- **Express.js**: Minimal and flexible Node.js web application framework
-- **MongoDB**: NoSQL database for document storage
-- **Mongoose**: Elegant MongoDB object modeling for Node.js
-- **Multer**: Middleware for handling `multipart/form-data` file uploads
+
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose
+- Multer
+- dotenv
+- CORS
+
+---
 
 ## Folder Structure
 
-The project is split into two primary folders:
-
-*   **`client/`**: The frontend React application. Contains the UI components, pages, templates, utilities, style sheets, and configuration files.
-*   **`server/`**: The backend Express API. Contains the database configuration, Mongoose models, Express routes, controllers, file upload setup, and business logic.
-
-## Environment Variables
-
-### Backend (`server/.env`)
-Create a `.env` file in the `server` directory and define the following variables:
-```env
-PORT=5000
-MONGO_URI=your_mongodb_connection_string
-CLIENT_URL=http://localhost:5173
-NODE_ENV=development
-```
-
-### Frontend (`client/.env`)
-Create a `.env` file in the `client` directory and define the following variables:
-```env
-VITE_API_URL=http://localhost:5000/api
-```
-
-## How to Run Locally
-
-### Backend Setup
-1. Navigate to the server folder:
-   ```bash
-   cd server
-   ```
-2. Install the server dependencies:
-   ```bash
-   npm install
-   ```
-3. Start the backend development server:
-   ```bash
-   npm run dev
-   ```
-
-### Frontend Setup
-1. Navigate to the client folder:
-   ```bash
-   cd client
-   ```
-2. Install the client dependencies:
-   ```bash
-   npm install
-   ```
-3. Start the frontend development server:
-   ```bash
-   npm run dev
-   ```
-
-## Build Frontend
-
-To compile the React project into highly optimized static production files, run:
-```bash
-cd client
-npm run build
-```
-
-## Screenshots
-
-<!-- Screenshots will be added after final deployment. -->
-- **Dashboard**: *[Screenshot to be added after deployment]*
-- **Create Certificate**: *[Screenshot to be added after deployment]*
-- **Certificate Preview**: *[Screenshot to be added after deployment]*
-- **Bulk Generate**: *[Screenshot to be added after deployment]*
-- **Create Event Report**: *[Screenshot to be added after deployment]*
-- **Event Report PDF Preview**: *[Screenshot to be added after deployment]*
-
-## Final Testing Checklist
-
-- [ ] Dashboard loads successfully
-- [ ] Certificate generation works
-- [ ] Certificate PDF download works
-- [ ] Bulk ZIP download works
-- [ ] Event report generation works
-- [ ] Event report photo upload works
-- [ ] Event report PDF download works
-- [ ] View/edit/delete records work
-- [ ] Frontend build succeeds
-- [ ] Backend server starts successfully
-
-## Project Ownership
-
-This project is designed and developed by **Pritkumar Koradiya**.
-
-Unauthorized copying, redistribution, or reuse of this project without proper credit is not allowed.
-
-© 2026 Pritkumar Koradiya. All Rights Reserved.
+```txt
+event-certificate-generator/
+│
+├── client/
+│   ├── public/
+│   │   └── certificate-backgrounds/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── data/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   ├── utils/
+│   │   ├── App.jsx
+│   │   ├── main.jsx
+│   │   └── index.css
+│   └── package.json
+│
+├── server/
+│   ├── src/
+│   │   ├── config/
+│   │   ├── controllers/
+│   │   ├── middleware/
+│   │   ├── models/
+│   │   ├── routes/
+│   │   ├── app.js
+│   │   └── server.js
+│   ├── uploads/
+│   │   └── event-reports/
+│   └── package.json
+│
+├── README.md
+├── LICENSE
+└── .gitignore
