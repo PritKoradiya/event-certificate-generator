@@ -93,6 +93,11 @@ npm run dev
 
 ## How to Run Backend
 
+1. Open a terminal in the backend folder.
+2. Install the backend dependencies.
+3. Copy `.env.example` to `.env` and add your MongoDB connection string.
+4. Start the development server.
+
 ```bash
 cd server
 npm install
@@ -100,10 +105,39 @@ copy .env.example .env
 npm run dev
 ```
 
-The backend health check route is:
+For production, start the backend with:
+
+```bash
+cd server
+npm start
+```
+
+### Backend Environment Variables
+
+```env
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+CLIENT_URL=http://localhost:5173
+NODE_ENV=development
+```
+
+- `PORT`: Port used by the Express server.
+- `MONGO_URI`: MongoDB connection string.
+- `CLIENT_URL`: Frontend URL allowed by CORS. Set this to the deployed frontend URL in production.
+- `NODE_ENV`: Use `development` locally and `production` when deployed.
+
+### Backend API
+
+The local API base URL is:
 
 ```text
-GET /api/health
+http://localhost:5000/api
+```
+
+The health check endpoint is:
+
+```text
+GET http://localhost:5000/api/health
 ```
 
 Expected response:
@@ -112,9 +146,44 @@ Expected response:
 {
   "success": true,
   "message": "Event Certificate and Report Generator API is running",
-  "modules": ["Certificate Generator", "Event Report Generator"]
+  "modules": ["Certificate Generator", "Event Report Generator"],
+  "environment": "development"
 }
 ```
+
+### Certificate APIs Summary
+
+- `POST /api/certificates` - Generate and save one certificate.
+- `POST /api/certificates/draft` - Save a certificate draft.
+- `POST /api/certificates/bulk` - Generate and save certificates in bulk.
+- `GET /api/certificates` - Get all certificates.
+- `GET /api/certificates/:id` - Get one certificate.
+- `PUT /api/certificates/:id` - Update one certificate.
+- `DELETE /api/certificates/:id` - Delete one certificate.
+
+### Event Report APIs Summary
+
+- `POST /api/event-reports` - Create an event report. Send photos as `multipart/form-data` using the `photos` field.
+- `POST /api/event-reports/draft` - Save an event report draft with optional photos.
+- `GET /api/event-reports` - Get all event reports.
+- `GET /api/event-reports/:id` - Get one event report.
+- `PUT /api/event-reports/:id` - Update one event report and its photos.
+- `DELETE /api/event-reports/:id` - Delete one event report and its saved photos.
+
+Uploaded report photos are stored in `server/uploads/event-reports`. The upload folders remain in Git through `.gitkeep`, but uploaded images are ignored. A saved photo can be opened through a URL such as:
+
+```text
+http://localhost:5000/uploads/event-reports/filename.png
+```
+
+### Backend Checklist
+
+- [ ] MongoDB connected
+- [ ] Health API working
+- [ ] Certificate API working
+- [ ] Event Report API working
+- [ ] Photo upload working
+- [ ] Static upload files accessible
 
 ## Step 1 Completed Features
 

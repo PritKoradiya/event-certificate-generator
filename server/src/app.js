@@ -12,9 +12,21 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+const allowedOrigins = [process.env.CLIENT_URL, "http://localhost:5173"].filter(Boolean);
 
 // Basic middleware setup for API requests.
-app.use(cors());
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    const corsError = new Error("This origin is not allowed by CORS.");
+    corsError.status = 403;
+    return callback(corsError);
+  },
+  credentials: true
+}));
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
@@ -27,11 +39,25 @@ app.get("/", (req, res) => {
   res.send("Event Certificate and Report Generator API");
 });
 
+app.use("/api", (req, res) => {
+  return res.status(404).json({
+    success: false,
+    message: "API route not found"
+  });
+});
+
 app.use((error, req, res, next) => {
   if (error instanceof multer.MulterError && error.code === "LIMIT_FILE_SIZE") {
     return res.status(400).json({
       success: false,
       message: "Image size must be less than 5MB."
+    });
+  }
+
+  if (error instanceof multer.MulterError) {
+    return res.status(400).json({
+      success: false,
+      message: error.message
     });
   }
 
@@ -42,7 +68,15 @@ app.use((error, req, res, next) => {
     });
   }
 
-  return next(error);
+  const statusCode = error.status || 500;
+  const message = process.env.NODE_ENV === "production" && statusCode === 500
+    ? "Internal server error"
+    : error.message || "Internal server error";
+
+  return res.status(statusCode).json({
+    success: false,
+    message
+  });
 });
 
 export default app;
