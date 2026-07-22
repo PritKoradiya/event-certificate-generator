@@ -10,7 +10,27 @@ const posterData = [
     accentClass: "bg-indigo-500 text-white",
     headingClass: "from-blue-300 via-indigo-200 to-white",
     badgeClass: "bg-indigo-100 text-indigo-800 border-indigo-200",
-    previewClass: "border-indigo-200 bg-indigo-50"
+    previewClass: "border-indigo-200 bg-indigo-50",
+    theme: {
+      backgroundStart: "#0a1128",
+      backgroundEnd: "#121a36",
+      backgroundMid: "#0f172a",
+      primaryText: "#ffffff",
+      secondaryText: "#94a3b8",
+      accent: "#4f46e5",
+      accentSecondary: "#38bdf8",
+      headingGradientStart: "#93c5fd",
+      headingGradientEnd: "#ffffff",
+      cardBackground: "#1e293b",
+      cardBackgroundOpacity: 0.8,
+      border: "rgba(255, 255, 255, 0.15)",
+      ctaBackground: "#10b981",
+      ctaText: "#ffffff",
+      badgeBackground: "#312e81",
+      badgeText: "#c7d2fe"
+    },
+    layoutVariant: "classic",
+    imageMode: "standard"
   },
   {
     id: "conference-poster",
@@ -23,7 +43,27 @@ const posterData = [
     accentClass: "bg-sky-500 text-white",
     headingClass: "from-sky-300 via-blue-200 to-white",
     badgeClass: "bg-sky-100 text-sky-800 border-sky-200",
-    previewClass: "border-sky-300 bg-sky-50"
+    previewClass: "border-sky-300 bg-sky-50",
+    theme: {
+      backgroundStart: "#030712",
+      backgroundEnd: "#0c1938",
+      backgroundMid: "#071026",
+      primaryText: "#ffffff",
+      secondaryText: "#a5f3fc",
+      accent: "#0284c7",
+      accentSecondary: "#38bdf8",
+      headingGradientStart: "#7dd3fc",
+      headingGradientEnd: "#ffffff",
+      cardBackground: "#0f172a",
+      cardBackgroundOpacity: 0.85,
+      border: "rgba(56, 189, 248, 0.25)",
+      ctaBackground: "#0ea5e9",
+      ctaText: "#ffffff",
+      badgeBackground: "#075985",
+      badgeText: "#e0f2fe"
+    },
+    layoutVariant: "formal",
+    imageMode: "standard"
   },
   {
     id: "fdp-poster",
@@ -36,7 +76,27 @@ const posterData = [
     accentClass: "bg-emerald-500 text-white",
     headingClass: "from-emerald-300 via-teal-200 to-white",
     badgeClass: "bg-emerald-100 text-emerald-800 border-emerald-200",
-    previewClass: "border-emerald-300 bg-emerald-50"
+    previewClass: "border-emerald-300 bg-emerald-50",
+    theme: {
+      backgroundStart: "#022c22",
+      backgroundEnd: "#064e3b",
+      backgroundMid: "#0f172a",
+      primaryText: "#ffffff",
+      secondaryText: "#a7f3d0",
+      accent: "#059669",
+      accentSecondary: "#34d399",
+      headingGradientStart: "#6ee7b7",
+      headingGradientEnd: "#ffffff",
+      cardBackground: "#064e3b",
+      cardBackgroundOpacity: 0.75,
+      border: "rgba(52, 211, 153, 0.25)",
+      ctaBackground: "#10b981",
+      ctaText: "#022c22",
+      badgeBackground: "#065f46",
+      badgeText: "#d1fae5"
+    },
+    layoutVariant: "academic",
+    imageMode: "standard"
   },
   {
     id: "expert-talk-poster",
@@ -49,7 +109,27 @@ const posterData = [
     accentClass: "bg-purple-500 text-white",
     headingClass: "from-purple-300 via-pink-200 to-white",
     badgeClass: "bg-purple-100 text-purple-800 border-purple-200",
-    previewClass: "border-purple-300 bg-purple-50"
+    previewClass: "border-purple-300 bg-purple-50",
+    theme: {
+      backgroundStart: "#2e1065",
+      backgroundEnd: "#0f172a",
+      backgroundMid: "#3b0764",
+      primaryText: "#ffffff",
+      secondaryText: "#e9d5ff",
+      accent: "#9333ea",
+      accentSecondary: "#c084fc",
+      headingGradientStart: "#f0abfc",
+      headingGradientEnd: "#ffffff",
+      cardBackground: "#3b0764",
+      cardBackgroundOpacity: 0.75,
+      border: "rgba(192, 132, 252, 0.25)",
+      ctaBackground: "#a855f7",
+      ctaText: "#ffffff",
+      badgeBackground: "#581c87",
+      badgeText: "#f3e8ff"
+    },
+    layoutVariant: "spotlight",
+    imageMode: "standard"
   },
   {
     id: "workshop-poster",
@@ -62,7 +142,27 @@ const posterData = [
     accentClass: "bg-cyan-500 text-white",
     headingClass: "from-cyan-300 via-blue-200 to-white",
     badgeClass: "bg-cyan-100 text-cyan-800 border-cyan-200",
-    previewClass: "border-cyan-300 bg-cyan-50"
+    previewClass: "border-cyan-300 bg-cyan-50",
+    theme: {
+      backgroundStart: "#083344",
+      backgroundEnd: "#0f172a",
+      backgroundMid: "#164e63",
+      primaryText: "#ffffff",
+      secondaryText: "#bae6fd",
+      accent: "#0891b2",
+      accentSecondary: "#22d3ee",
+      headingGradientStart: "#67e8f9",
+      headingGradientEnd: "#ffffff",
+      cardBackground: "#0e7490",
+      cardBackgroundOpacity: 0.7,
+      border: "rgba(34, 211, 238, 0.25)",
+      ctaBackground: "#06b6d4",
+      ctaText: "#ffffff",
+      badgeBackground: "#155e75",
+      badgeText: "#cffaff"
+    },
+    layoutVariant: "hands-on",
+    imageMode: "standard"
   },
   {
     id: "webinar-poster",
@@ -75,7 +175,27 @@ const posterData = [
     accentClass: "bg-violet-500 text-white",
     headingClass: "from-violet-300 via-purple-200 to-white",
     badgeClass: "bg-violet-100 text-violet-800 border-violet-200",
-    previewClass: "border-violet-300 bg-violet-50"
+    previewClass: "border-violet-300 bg-violet-50",
+    theme: {
+      backgroundStart: "#1e1b4b",
+      backgroundEnd: "#0f172a",
+      backgroundMid: "#312e81",
+      primaryText: "#ffffff",
+      secondaryText: "#c7d2fe",
+      accent: "#6366f1",
+      accentSecondary: "#818cf8",
+      headingGradientStart: "#a5b4fc",
+      headingGradientEnd: "#ffffff",
+      cardBackground: "#312e81",
+      cardBackgroundOpacity: 0.75,
+      border: "rgba(129, 140, 248, 0.25)",
+      ctaBackground: "#4f46e5",
+      ctaText: "#ffffff",
+      badgeBackground: "#3730a3",
+      badgeText: "#e0e7ff"
+    },
+    layoutVariant: "digital",
+    imageMode: "standard"
   },
   {
     id: "hackathon-poster",
@@ -88,7 +208,27 @@ const posterData = [
     accentClass: "bg-fuchsia-500 text-white",
     headingClass: "from-fuchsia-300 via-pink-200 to-white",
     badgeClass: "bg-fuchsia-100 text-fuchsia-800 border-fuchsia-200",
-    previewClass: "border-fuchsia-300 bg-fuchsia-50"
+    previewClass: "border-fuchsia-300 bg-fuchsia-50",
+    theme: {
+      backgroundStart: "#4c0519",
+      backgroundEnd: "#0f172a",
+      backgroundMid: "#700727",
+      primaryText: "#ffffff",
+      secondaryText: "#fbcfe8",
+      accent: "#e11d48",
+      accentSecondary: "#f43f5e",
+      headingGradientStart: "#fda4af",
+      headingGradientEnd: "#ffffff",
+      cardBackground: "#881337",
+      cardBackgroundOpacity: 0.8,
+      border: "rgba(244, 63, 94, 0.3)",
+      ctaBackground: "#f43f5e",
+      ctaText: "#ffffff",
+      badgeBackground: "#9f1239",
+      badgeText: "#ffe4e6"
+    },
+    layoutVariant: "cyber",
+    imageMode: "standard"
   },
   {
     id: "cultural-event-poster",
@@ -101,7 +241,27 @@ const posterData = [
     accentClass: "bg-pink-500 text-white",
     headingClass: "from-pink-300 via-rose-200 to-white",
     badgeClass: "bg-pink-100 text-pink-800 border-pink-200",
-    previewClass: "border-pink-300 bg-pink-50"
+    previewClass: "border-pink-300 bg-pink-50",
+    theme: {
+      backgroundStart: "#701a75",
+      backgroundEnd: "#4a044e",
+      backgroundMid: "#831843",
+      primaryText: "#ffffff",
+      secondaryText: "#f5d0fe",
+      accent: "#c026d3",
+      accentSecondary: "#e879f9",
+      headingGradientStart: "#f0abfc",
+      headingGradientEnd: "#fef08a",
+      cardBackground: "#581c87",
+      cardBackgroundOpacity: 0.75,
+      border: "rgba(232, 121, 249, 0.3)",
+      ctaBackground: "#d946ef",
+      ctaText: "#ffffff",
+      badgeBackground: "#86198f",
+      badgeText: "#fae8ff"
+    },
+    layoutVariant: "artistic",
+    imageMode: "standard"
   },
   {
     id: "sports-event-poster",
@@ -114,7 +274,27 @@ const posterData = [
     accentClass: "bg-orange-500 text-white",
     headingClass: "from-orange-300 via-amber-200 to-white",
     badgeClass: "bg-orange-100 text-orange-800 border-orange-200",
-    previewClass: "border-orange-300 bg-orange-50"
+    previewClass: "border-orange-300 bg-orange-50",
+    theme: {
+      backgroundStart: "#7c2d12",
+      backgroundEnd: "#0f172a",
+      backgroundMid: "#9a3412",
+      primaryText: "#ffffff",
+      secondaryText: "#ffedd5",
+      accent: "#ea580c",
+      accentSecondary: "#fb923c",
+      headingGradientStart: "#fdba74",
+      headingGradientEnd: "#fef08a",
+      cardBackground: "#7c2d12",
+      cardBackgroundOpacity: 0.8,
+      border: "rgba(251, 146, 60, 0.3)",
+      ctaBackground: "#f97316",
+      ctaText: "#ffffff",
+      badgeBackground: "#9a3412",
+      badgeText: "#ffedd5"
+    },
+    layoutVariant: "dynamic",
+    imageMode: "standard"
   },
   {
     id: "technical-event-poster",
@@ -127,7 +307,27 @@ const posterData = [
     accentClass: "bg-blue-500 text-white",
     headingClass: "from-blue-300 via-cyan-200 to-white",
     badgeClass: "bg-slate-100 text-slate-800 border-slate-200",
-    previewClass: "border-slate-300 bg-slate-50"
+    previewClass: "border-slate-300 bg-slate-50",
+    theme: {
+      backgroundStart: "#0f172a",
+      backgroundEnd: "#0284c7",
+      backgroundMid: "#1e293b",
+      primaryText: "#ffffff",
+      secondaryText: "#e0f2fe",
+      accent: "#2563eb",
+      accentSecondary: "#60a5fa",
+      headingGradientStart: "#93c5fd",
+      headingGradientEnd: "#ffffff",
+      cardBackground: "#1e293b",
+      cardBackgroundOpacity: 0.85,
+      border: "rgba(96, 165, 250, 0.25)",
+      ctaBackground: "#3b82f6",
+      ctaText: "#ffffff",
+      badgeBackground: "#1d4ed8",
+      badgeText: "#dbeafe"
+    },
+    layoutVariant: "tech",
+    imageMode: "standard"
   },
   {
     id: "project-exhibition-poster",
@@ -140,7 +340,27 @@ const posterData = [
     accentClass: "bg-teal-500 text-white",
     headingClass: "from-teal-300 via-emerald-200 to-white",
     badgeClass: "bg-teal-100 text-teal-800 border-teal-200",
-    previewClass: "border-teal-300 bg-teal-50"
+    previewClass: "border-teal-300 bg-teal-50",
+    theme: {
+      backgroundStart: "#134e4a",
+      backgroundEnd: "#0f172a",
+      backgroundMid: "#115e59",
+      primaryText: "#ffffff",
+      secondaryText: "#ccfbf1",
+      accent: "#0d9488",
+      accentSecondary: "#2dd4bf",
+      headingGradientStart: "#5eead4",
+      headingGradientEnd: "#ffffff",
+      cardBackground: "#134e4a",
+      cardBackgroundOpacity: 0.75,
+      border: "rgba(45, 212, 191, 0.25)",
+      ctaBackground: "#14b8a6",
+      ctaText: "#ffffff",
+      badgeBackground: "#0f766e",
+      badgeText: "#e6fffa"
+    },
+    layoutVariant: "expo",
+    imageMode: "standard"
   },
   {
     id: "training-program-poster",
@@ -153,7 +373,27 @@ const posterData = [
     accentClass: "bg-lime-500 text-slate-950",
     headingClass: "from-lime-300 via-emerald-200 to-white",
     badgeClass: "bg-lime-100 text-lime-800 border-lime-200",
-    previewClass: "border-lime-300 bg-lime-50"
+    previewClass: "border-lime-300 bg-lime-50",
+    theme: {
+      backgroundStart: "#1a2e05",
+      backgroundEnd: "#0f172a",
+      backgroundMid: "#365314",
+      primaryText: "#ffffff",
+      secondaryText: "#ecfccb",
+      accent: "#65a30d",
+      accentSecondary: "#a3e635",
+      headingGradientStart: "#bef264",
+      headingGradientEnd: "#ffffff",
+      cardBackground: "#365314",
+      cardBackgroundOpacity: 0.75,
+      border: "rgba(163, 230, 53, 0.25)",
+      ctaBackground: "#84cc16",
+      ctaText: "#0f172a",
+      badgeBackground: "#3f6212",
+      badgeText: "#f7fee7"
+    },
+    layoutVariant: "bootcamp",
+    imageMode: "standard"
   }
 ];
 

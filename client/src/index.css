@@ -420,3 +420,21 @@ button {
     scroll-behavior: auto !important;
   }
 }
+
+/* Pure SVG Poster Container & Responsive Shell Rules */
+.poster-preview-shell {
+  width: 100%;
+  max-width: 760px;
+  margin-inline: auto;
+}
+
+.poster-preview-shell svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.poster-svg {
+  overflow: visible;
+}
+

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import PosterPreview from "../components/PosterPreview.jsx";
 import { getPosters, deletePoster } from "../services/posterApi.js";
@@ -17,6 +17,8 @@ function PosterRecords() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [categoryFilter, setCategoryFilter] = useState("All");
+
+  const posterSvgRef = useRef(null);
 
   const fetchPosterRecords = async () => {
     try {
@@ -73,16 +75,16 @@ function PosterRecords() {
     setSelectedPoster(poster);
     setTimeout(() => {
       const fileName = `Poster_${poster.posterTitle}_${poster.posterId || "POSTER-2026-0001"}.png`;
-      downloadPosterPng("poster-preview-record", fileName);
-    }, 300);
+      downloadPosterPng(posterSvgRef.current, fileName);
+    }, 150);
   };
 
   const handleDownloadPdf = (poster) => {
     setSelectedPoster(poster);
     setTimeout(() => {
       const fileName = `Poster_${poster.posterTitle}_${poster.posterId || "POSTER-2026-0001"}.pdf`;
-      downloadPosterPdf("poster-preview-record", fileName);
-    }, 300);
+      downloadPosterPdf(posterSvgRef.current, fileName);
+    }, 150);
   };
 
   const filteredPosters = posters.filter((p) => {
@@ -325,7 +327,8 @@ function PosterRecords() {
 
           <div className="w-full flex justify-center overflow-x-auto py-2">
             <PosterPreview
-              id="poster-preview-record"
+              ref={posterSvgRef}
+              id="poster-preview-record-svg"
               posterTitle={selectedPoster.posterTitle}
               tagline={selectedPoster.tagline}
               category={selectedPoster.category}

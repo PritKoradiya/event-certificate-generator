@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import PosterPreview from "../components/PosterPreview.jsx";
+import PosterSvgTestPanel from "../components/poster/PosterSvgTestPanel.jsx";
 import posterData from "../data/posterData.js";
 import { createPoster, saveDraftPoster } from "../services/posterApi.js";
 import { downloadPosterPng, downloadPosterPdf } from "../utils/downloadPoster.js";
@@ -37,6 +38,8 @@ function CreatePoster() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSavingDraft, setIsSavingDraft] = useState(false);
   const [generatedPoster, setGeneratedPoster] = useState(null);
+
+  const posterSvgRef = useRef(null);
 
   // Auto-select template from localStorage if set from Template Gallery
   useEffect(() => {
@@ -224,11 +227,11 @@ function CreatePoster() {
   };
 
   const handleDownloadPngAction = () => {
-    downloadPosterPng("poster-preview", getPosterFileName("png"));
+    downloadPosterPng(posterSvgRef.current, getPosterFileName("png"));
   };
 
   const handleDownloadPdfAction = () => {
-    downloadPosterPdf("poster-preview", getPosterFileName("pdf"));
+    downloadPosterPdf(posterSvgRef.current, getPosterFileName("pdf"));
   };
 
   const selectedConfig = posterData.find((p) => p.name === formData.templateStyle) || posterData[0];
@@ -620,7 +623,8 @@ function CreatePoster() {
 
         <div className="w-full flex justify-center py-4">
           <PosterPreview
-            id="poster-preview"
+            ref={posterSvgRef}
+            id="poster-preview-svg"
             posterTitle={formData.posterTitle}
             tagline={formData.tagline}
             category={formData.category}
@@ -641,6 +645,9 @@ function CreatePoster() {
           />
         </div>
       </section>
+
+      {/* Development QA Test Panel */}
+      <PosterSvgTestPanel />
     </section>
   );
 }
