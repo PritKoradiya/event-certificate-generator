@@ -17,6 +17,9 @@ server/uploads/*
 !server/uploads/event-reports/
 server/uploads/event-reports/*
 !server/uploads/event-reports/.gitkeep
+!server/uploads/posters/
+server/uploads/posters/*
+!server/uploads/posters/.gitkeep
 
 .DS_Store
 Thumbs.db

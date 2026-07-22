@@ -1,11 +1,12 @@
 # Event Certificate & Report Generator
 
-A full-stack MERN platform for generating professional event certificates and structured academic event reports with live preview, template selection, photo support, PDF export, ZIP export, and record management.
+A full-stack MERN platform for generating professional event certificates, structured academic event reports, and event posters with live preview, template selection, image support, export tools, and record management.
 
-This project includes two major modules:
+This project includes three major modules:
 
 1. Event Certificate Generator  
 2. Event Report Generator  
+3. Event Poster Generator
 
 The Event Report Generator follows the academic event report structure provided in the mentor format, including event details, outline, objectives, outcomes, photos, coordinator, and dean section. :contentReference[oaicite:0]{index=0}
 
@@ -70,6 +71,32 @@ The Event Report Generator allows users to create structured academic event repo
 - Delete event reports
 - Download report PDF
 - Professional report management page
+
+---
+
+### 3. Event Poster Generator
+
+The Poster Generator backend stores poster content and design choices while the frontend handles poster preview and PNG/PDF export.
+
+#### Backend Features
+
+- Poster model with draft and generated statuses
+- Poster create and draft APIs
+- Poster records API
+- Optional event image upload
+- Optional organization logo upload
+- Poster update and delete support
+
+#### Poster API Summary
+
+```txt
+POST   /api/posters
+POST   /api/posters/draft
+GET    /api/posters
+GET    /api/posters/:id
+PUT    /api/posters/:id
+DELETE /api/posters/:id
+```
 
 ---
 

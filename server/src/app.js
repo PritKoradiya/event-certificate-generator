@@ -7,6 +7,7 @@ import certificateRoutes from "./routes/certificateRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import eventReportRoutes from "./routes/eventReportRoutes.js";
 import healthRoutes from "./routes/healthRoutes.js";
+import posterRoutes from "./routes/posterRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -34,6 +35,7 @@ app.use("/api/health", healthRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/certificates", certificateRoutes);
 app.use("/api/event-reports", eventReportRoutes);
+app.use("/api/posters", posterRoutes);
 
 app.get("/", (req, res) => {
   res.send("Event Certificate and Report Generator API");
@@ -48,9 +50,13 @@ app.use("/api", (req, res) => {
 
 app.use((error, req, res, next) => {
   if (error instanceof multer.MulterError && error.code === "LIMIT_FILE_SIZE") {
+    const message = req.originalUrl.startsWith("/api/posters")
+      ? "Poster asset must be smaller than 5MB."
+      : "Image size must be less than 5MB.";
+
     return res.status(400).json({
       success: false,
-      message: "Image size must be less than 5MB."
+      message
     });
   }
 
@@ -61,7 +67,10 @@ app.use((error, req, res, next) => {
     });
   }
 
-  if (error.message === "Only image files are allowed.") {
+  if ([
+    "Only image files are allowed.",
+    "Only JPG, PNG, and WebP images are allowed."
+  ].includes(error.message)) {
     return res.status(400).json({
       success: false,
       message: error.message
