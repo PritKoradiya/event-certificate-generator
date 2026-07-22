@@ -2,6 +2,22 @@ import backgroundTemplateData from "./backgroundTemplateData.js";
 
 const baseTemplateData = [
   {
+    id: "classic-appreciation",
+    name: "Classic Appreciation Certificate",
+    category: "Appreciation",
+    description: "An elegant cream and warm brown appreciation certificate inspired by formal university layouts.",
+    type: "certificate",
+    designKey: "classic-appreciation",
+    badgeClass: "bg-amber-100 text-amber-900",
+    theme: {
+      primaryText: "#4a3b32",
+      secondaryText: "#786354",
+      accent: "#b89759",
+      line: "rgba(184,151,89,0.4)",
+      seal: "#b89759"
+    }
+  },
+  {
     id: "classic-certificate",
     name: "Classic Certificate",
     category: "Academic",
@@ -379,7 +395,10 @@ const baseTemplateData = [
     designKey: "academic-seal",
     badgeClass: "bg-blue-100 text-blue-900"
   }
-];
+].map((item) => ({
+  backgroundFit: "stretch",
+  ...item
+}));
 
 const templateData = [...baseTemplateData, ...backgroundTemplateData];
 

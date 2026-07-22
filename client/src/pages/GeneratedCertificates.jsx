@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import CertificatePreview from "../components/CertificatePreview.jsx";
+import CertificateCanvas from "../components/certificate/CertificateCanvas.jsx";
 import templateData from "../data/templateData.js";
 import { deleteCertificate, getCertificates, updateCertificate } from "../services/certificateApi.js";
 import downloadCertificatePdf from "../utils/downloadCertificatePdf.js";
@@ -104,7 +105,7 @@ function GeneratedCertificates() {
 
     const downloadSelectedCertificate = async () => {
       await new Promise((resolve) => requestAnimationFrame(resolve));
-      await downloadCertificatePdf("generated-certificate-preview", createPdfFileName(selectedCertificate));
+      await downloadCertificatePdf("certificate-export-canvas", createPdfFileName(selectedCertificate));
       setPendingDownload(false);
     };
 
@@ -206,7 +207,7 @@ function GeneratedCertificates() {
       return;
     }
 
-    await downloadCertificatePdf("generated-certificate-preview", createPdfFileName(selectedCertificate));
+    await downloadCertificatePdf("certificate-export-canvas", createPdfFileName(selectedCertificate));
   };
 
   if (isLoading) {
@@ -231,6 +232,18 @@ function GeneratedCertificates() {
 
   return (
     <section className="space-y-8 pb-10">
+      {/* Off-screen Export Host Component for 1600x1131 PDF Capture */}
+      {selectedCertificate && (
+        <div className="certificate-export-host" aria-hidden="true">
+          <CertificateCanvas
+            id="certificate-export-canvas"
+            {...selectedCertificate}
+            certificateCategory={selectedCertificate.certificateCategory}
+            exportMode
+          />
+        </div>
+      )}
+
       {/* Breadcrumb Navigation */}
       <nav className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
         <Link to="/certificate-dashboard" className="hover:text-blue-600 transition">

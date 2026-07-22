@@ -1,0 +1,197 @@
+import React from "react";
+import {
+  getParticipantNameSize,
+  getCertificateTitleSize,
+  getDescriptionSize
+} from "../../utils/certificateTextSizing.js";
+
+function CertificateContentLayout({
+  participantName = "Pritkumar Koradiya",
+  organizationName = "School of Engineering, PP Savani University",
+  eventName = "International Tech Summit 2026",
+  certificateCategory = "Seminar",
+  certificateTitle = "Certificate of Participation",
+  eventDate = "2026-08-15",
+  description = "for successfully attending and participating in the technical sessions and workshops.",
+  certificateId = "CERT-2026-0001",
+  authorizedSignatureName = "Dr. Jayshri Patil",
+  deanName = "Dr. Niraj Shah",
+  isDarkTheme = false,
+  themeColors = {}
+}) {
+  // Theme Color Overrides
+  const primaryTextColor = themeColors.primaryText || (isDarkTheme ? "#f8fafc" : "#0f172a");
+  const secondaryTextColor = themeColors.secondaryText || (isDarkTheme ? "#cbd5e1" : "#475569");
+  const accentColor = themeColors.accent || (isDarkTheme ? "#fbbf24" : "#1e3a8a");
+  const lineColor = themeColors.line || (isDarkTheme ? "rgba(251,191,36,0.4)" : "rgba(30,58,138,0.25)");
+  const sealColor = themeColors.seal || (isDarkTheme ? "#f59e0b" : "#d97706");
+
+  // Dynamic Font Sizes
+  const nameStyle = getParticipantNameSize(participantName);
+  const titleStyle = getCertificateTitleSize(certificateTitle);
+  const descStyle = getDescriptionSize(description);
+
+  const formattedDate = eventDate
+    ? new Date(eventDate).toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric"
+      })
+    : "August 15, 2026";
+
+  return (
+    <div
+      className="absolute inset-0 z-10 flex flex-col justify-between pointer-events-none select-none"
+      style={{
+        paddingTop: "80px",
+        paddingBottom: "75px",
+        paddingLeft: "110px",
+        paddingRight: "110px"
+      }}
+    >
+      {/* ROW 1: HEADER SECTION (22% Height) */}
+      <div className="flex flex-col items-center justify-center text-center">
+        {certificateCategory && (
+          <span
+            className="text-[19px] font-black uppercase tracking-[0.3em] mb-2"
+            style={{ color: accentColor }}
+          >
+            {certificateCategory}
+          </span>
+        )}
+
+        <h1
+          className="font-serif font-black uppercase tracking-tight"
+          style={{
+            color: primaryTextColor,
+            fontSize: titleStyle.fontSize,
+            lineHeight: titleStyle.lineHeight
+          }}
+        >
+          {certificateTitle || "Certificate of Participation"}
+        </h1>
+
+        <div className="mt-3 flex items-center gap-3 w-72 justify-center">
+          <div className="h-0.5 flex-1" style={{ background: lineColor }} />
+          <div className="h-2 w-2 rounded-full" style={{ background: accentColor }} />
+          <div className="h-0.5 flex-1" style={{ background: lineColor }} />
+        </div>
+      </div>
+
+      {/* ROW 2: RECIPIENT SECTION (38% Height) */}
+      <div className="flex flex-col items-center justify-center text-center my-auto">
+        <p
+          className="text-[20px] font-extrabold uppercase tracking-[0.2em] mb-2"
+          style={{ color: secondaryTextColor }}
+        >
+          THIS CERTIFICATE IS PROUDLY PRESENTED TO
+        </p>
+
+        <div className="max-w-[1200px] px-4 my-1">
+          <h2
+            className="font-serif font-black tracking-normal text-center leading-tight overflow-hidden line-clamp-2"
+            style={{
+              color: primaryTextColor,
+              fontSize: nameStyle.fontSize,
+              lineHeight: nameStyle.lineHeight,
+              wordBreak: "break-word"
+            }}
+          >
+            {participantName || "Participant Name"}
+          </h2>
+        </div>
+
+        {/* Recipient Underline */}
+        <div
+          className="my-3 h-1 w-96 rounded-full"
+          style={{
+            background: `linear-gradient(90deg, transparent, ${accentColor}, transparent)`
+          }}
+        />
+
+        {(eventName || organizationName) && (
+          <p
+            className="text-[22px] font-bold tracking-wide max-w-[1100px] leading-snug"
+            style={{ color: secondaryTextColor }}
+          >
+            for successful participation in{" "}
+            <span className="font-extrabold" style={{ color: primaryTextColor }}>
+              {eventName}
+            </span>
+            {organizationName ? ` organized by ${organizationName}` : ""}
+          </p>
+        )}
+      </div>
+
+      {/* ROW 3: MESSAGE & DATE SECTION (18% Height) */}
+      <div className="flex flex-col items-center justify-center text-center my-auto">
+        {description && (
+          <p
+            className="max-w-[1050px] font-medium leading-relaxed line-clamp-3 text-center"
+            style={{
+              color: secondaryTextColor,
+              fontSize: descStyle.fontSize,
+              lineHeight: descStyle.lineHeight
+            }}
+          >
+            {description}
+          </p>
+        )}
+
+        <div className="mt-2 text-[19px] font-bold" style={{ color: secondaryTextColor }}>
+          Given on <span className="font-extrabold" style={{ color: primaryTextColor }}>{formattedDate}</span>
+        </div>
+      </div>
+
+      {/* ROW 4: FOOTER SECTION (22% Height - 3 Equal Columns) */}
+      <div className="grid grid-cols-3 items-end pt-4 border-t" style={{ borderColor: lineColor }}>
+        {/* Left Column: Authorized Signature */}
+        <div className="flex flex-col items-center text-center">
+          <span className="signature-font text-[28px] leading-none mb-1" style={{ color: accentColor }}>
+            {authorizedSignatureName || "Authorized Signature"}
+          </span>
+          <div className="h-0.5 w-48 mb-1.5" style={{ background: primaryTextColor, opacity: 0.6 }} />
+          <span className="text-[17px] font-black uppercase tracking-wider" style={{ color: primaryTextColor }}>
+            {authorizedSignatureName || "Dr. Jayshri Patil"}
+          </span>
+          <span className="text-[15px] font-bold" style={{ color: secondaryTextColor }}>
+            Authorized Signature
+          </span>
+        </div>
+
+        {/* Center Column: Official Seal & ID */}
+        <div className="flex flex-col items-center text-center justify-end">
+          <div
+            className="flex h-16 w-16 items-center justify-center rounded-full border-2 text-[10px] font-black uppercase mb-1 shadow-xs"
+            style={{
+              borderColor: sealColor,
+              color: sealColor,
+              background: isDarkTheme ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.8)"
+            }}
+          >
+            OFFICIAL SEAL
+          </div>
+          <span className="font-mono text-[16px] font-bold tracking-widest opacity-80" style={{ color: secondaryTextColor }}>
+            {certificateId}
+          </span>
+        </div>
+
+        {/* Right Column: Dean / Coordinator Signature */}
+        <div className="flex flex-col items-center text-center">
+          <span className="signature-font text-[28px] leading-none mb-1" style={{ color: accentColor }}>
+            {deanName || "Dr. Niraj Shah"}
+          </span>
+          <div className="h-0.5 w-48 mb-1.5" style={{ background: primaryTextColor, opacity: 0.6 }} />
+          <span className="text-[17px] font-black uppercase tracking-wider" style={{ color: primaryTextColor }}>
+            {deanName || "Dr. Niraj Shah"}
+          </span>
+          <span className="text-[15px] font-bold" style={{ color: secondaryTextColor }}>
+            Dean, SOE
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default CertificateContentLayout;

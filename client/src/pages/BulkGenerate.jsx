@@ -2,6 +2,7 @@ import JSZip from "jszip";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import CertificatePreview from "../components/CertificatePreview.jsx";
+import CertificateCanvas from "../components/certificate/CertificateCanvas.jsx";
 import templateData from "../data/templateData.js";
 import { bulkCreateCertificates } from "../services/certificateApi.js";
 import downloadCertificatePdf, { generateCertificatePdfBlob, safeFileName } from "../utils/downloadCertificatePdf.js";
@@ -313,7 +314,7 @@ function BulkGenerate() {
       return;
     }
 
-    await downloadCertificatePdf("bulk-certificate-preview", createPdfFileName(selectedCertificate));
+    await downloadCertificatePdf("bulk-certificate-export-canvas", createPdfFileName(selectedCertificate));
   };
 
   const handleDownloadAllZip = async () => {
@@ -336,7 +337,7 @@ function BulkGenerate() {
         await new Promise((resolve) => setTimeout(resolve, 300));
 
         try {
-          const pdfBlob = await generateCertificatePdfBlob("bulk-zip-export-preview");
+          const pdfBlob = await generateCertificatePdfBlob("bulk-zip-export-canvas");
           zip.file(createPdfFileName(certificate), pdfBlob);
         } catch (error) {
           failedCount += 1;
@@ -376,6 +377,29 @@ function BulkGenerate() {
 
   return (
     <section className="space-y-8 pb-10">
+      {/* Off-screen Export Host Elements for Single & Batch ZIP Export */}
+      {selectedCertificate && (
+        <div className="certificate-export-host" aria-hidden="true">
+          <CertificateCanvas
+            id="bulk-certificate-export-canvas"
+            {...selectedCertificate}
+            certificateCategory={selectedCertificate.certificateCategory || commonDetails.certificateCategory}
+            exportMode
+          />
+        </div>
+      )}
+
+      {exportCertificate && (
+        <div className="certificate-export-host" aria-hidden="true">
+          <CertificateCanvas
+            id="bulk-zip-export-canvas"
+            {...exportCertificate}
+            certificateCategory={exportCertificate.certificateCategory || commonDetails.certificateCategory}
+            exportMode
+          />
+        </div>
+      )}
+
       {/* Breadcrumb Navigation */}
       <nav className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
         <Link to="/certificate-dashboard" className="hover:text-blue-600 transition">
@@ -776,13 +800,6 @@ function BulkGenerate() {
           <CertificatePreview certificateData={selectedCertificate} previewId="bulk-certificate-preview" />
         </div>
       )}
-
-      {/* CRITICAL PDF & ZIP EXPORT CONTAINER */}
-      <div className="fixed left-[-9999px] top-0 bg-white">
-        {exportCertificate && (
-          <CertificatePreview certificateData={exportCertificate} previewId="bulk-zip-export-preview" />
-        )}
-      </div>
     </section>
   );
 }

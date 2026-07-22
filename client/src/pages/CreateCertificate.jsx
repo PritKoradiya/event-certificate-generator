@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import CertificatePreview from "../components/CertificatePreview.jsx";
+import CertificateCanvas from "../components/certificate/CertificateCanvas.jsx";
+import CertificateExportTestPanel from "../components/certificate/CertificateExportTestPanel.jsx";
 import templateData from "../data/templateData.js";
 import { createCertificate, saveDraftCertificate } from "../services/certificateApi.js";
 import downloadCertificatePdf from "../utils/downloadCertificatePdf.js";
@@ -159,7 +161,7 @@ function CreateCertificate() {
       return;
     }
 
-    await downloadCertificatePdf("certificate-preview", createPdfFileName());
+    await downloadCertificatePdf("certificate-export-canvas", createPdfFileName());
   };
 
   const selectedTemplateName = formData.templateStyle || "Classic Certificate";
@@ -172,8 +174,23 @@ function CreateCertificate() {
       }
     : formData;
 
+  const descLength = (formData.description || "").length;
+
   return (
     <section className="space-y-8 pb-10">
+      {/* Off-screen Export Host Component for 1600x1131 PDF Capture */}
+      <div className="certificate-export-host" aria-hidden="true">
+        <CertificateCanvas
+          id="certificate-export-canvas"
+          {...previewData}
+          certificateCategory={formData.category}
+          exportMode
+        />
+      </div>
+
+      {/* DEV-Only Export Test Panel */}
+      <CertificateExportTestPanel />
+
       {/* Breadcrumb Navigation */}
       <nav className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
         <Link to="/certificate-dashboard" className="hover:text-blue-600 transition">
@@ -285,7 +302,12 @@ function CreateCertificate() {
               />
             </label>
             <label className="grid gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-600 md:col-span-2 xl:col-span-3">
-              Certificate Description / Details
+              <div className="flex justify-between items-center">
+                <span>Certificate Description / Details</span>
+                <span className={`text-[10px] font-bold ${descLength > 180 ? "text-amber-600" : "text-slate-400"}`}>
+                  {descLength}/220 characters {descLength > 180 && "(Recommended max reached)"}
+                </span>
+              </div>
               <textarea
                 className={`${inputClass} !h-28 resize-y py-3`}
                 name="description"
@@ -416,7 +438,7 @@ function CreateCertificate() {
           </div>
         </div>
 
-        {/* Certificate Target Preview Root (No CSS transforms) */}
+        {/* Certificate Target Preview Root */}
         <div className="mx-auto w-full max-w-[1200px] overflow-hidden">
           <CertificatePreview certificateData={previewData} previewId="certificate-preview" />
         </div>

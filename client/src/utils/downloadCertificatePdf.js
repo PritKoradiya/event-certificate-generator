@@ -31,21 +31,27 @@ const waitForImagesToLoad = async (element) => {
   );
 };
 
-const createPdfFromElement = async (elementId) => {
-  let exportWrapper;
+const createPdfFromElement = async (elementId = "certificate-export-canvas") => {
+  let exportWrapper = null;
+  let targetElement = document.getElementById(elementId);
+
+  // If target element is not found, try fallback to "certificate-canvas" or "certificate-preview"
+  if (!targetElement) {
+    targetElement = document.getElementById("certificate-canvas") || document.getElementById("certificate-preview");
+  }
+
+  if (!targetElement) {
+    throw new Error("Certificate element was not found for export. Please try again.");
+  }
 
   try {
-    const certificateElement = document.getElementById(elementId);
-
-    if (!certificateElement) {
-      throw new Error("Certificate preview was not found. Please try again.");
-    }
-
-    const clonedCertificate = certificateElement.cloneNode(true);
+    // Clone node to guarantee fixed 1600x1131 unscaled export host
+    const clonedCertificate = targetElement.cloneNode(true);
     exportWrapper = document.createElement("div");
 
+    exportWrapper.className = "certificate-export-host";
     exportWrapper.style.position = "fixed";
-    exportWrapper.style.left = "-99999px";
+    exportWrapper.style.left = "-20000px";
     exportWrapper.style.top = "0";
     exportWrapper.style.width = `${EXPORT_WIDTH}px`;
     exportWrapper.style.height = `${EXPORT_HEIGHT}px`;
@@ -53,19 +59,18 @@ const createPdfFromElement = async (elementId) => {
     exportWrapper.style.margin = "0";
     exportWrapper.style.overflow = "hidden";
     exportWrapper.style.background = "#ffffff";
-    exportWrapper.style.zIndex = "-1";
+    exportWrapper.style.zIndex = "-1000";
+    exportWrapper.style.opacity = "1";
+    exportWrapper.style.pointerEvents = "none";
 
-    clonedCertificate.classList.add("pdf-export-clone");
     clonedCertificate.style.width = `${EXPORT_WIDTH}px`;
     clonedCertificate.style.height = `${EXPORT_HEIGHT}px`;
     clonedCertificate.style.maxWidth = "none";
     clonedCertificate.style.maxHeight = "none";
     clonedCertificate.style.aspectRatio = "auto";
-    clonedCertificate.style.overflow = "hidden";
     clonedCertificate.style.transform = "none";
     clonedCertificate.style.opacity = "1";
     clonedCertificate.style.filter = "none";
-    clonedCertificate.style.boxShadow = "none";
 
     exportWrapper.appendChild(clonedCertificate);
     document.body.appendChild(exportWrapper);
@@ -73,24 +78,25 @@ const createPdfFromElement = async (elementId) => {
     if (document.fonts?.ready) {
       await document.fonts.ready;
     }
-    await waitForImagesToLoad(clonedCertificate);
+    await waitForImagesToLoad(exportWrapper);
     await new Promise((resolve) => setTimeout(resolve, 300));
 
     const canvas = await html2canvas(exportWrapper, {
       backgroundColor: "#ffffff",
-      scale: 1.25,
-      useCORS: true,
-      logging: false,
-      removeContainer: true,
-      scrollX: 0,
-      scrollY: 0,
+      width: EXPORT_WIDTH,
+      height: EXPORT_HEIGHT,
       windowWidth: EXPORT_WIDTH,
       windowHeight: EXPORT_HEIGHT,
-      width: EXPORT_WIDTH,
-      height: EXPORT_HEIGHT
+      scale: 1.25,
+      useCORS: true,
+      allowTaint: false,
+      logging: false,
+      scrollX: 0,
+      scrollY: 0,
+      imageTimeout: 10000
     });
 
-    const imageData = canvas.toDataURL("image/jpeg", 0.82);
+    const imageData = canvas.toDataURL("image/jpeg", 0.88);
     const pdf = new jsPDF({
       orientation: "landscape",
       unit: "mm",
@@ -98,13 +104,31 @@ const createPdfFromElement = async (elementId) => {
       compress: true
     });
 
-    const pageWidth = 297;
-    const pageHeight = 210;
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
     const margin = 4;
-    const imageWidth = pageWidth - margin * 2;
-    const imageHeight = pageHeight - margin * 2;
 
-    pdf.addImage(imageData, "JPEG", margin, margin, imageWidth, imageHeight, undefined, "FAST");
+    const maxWidth = pageWidth - margin * 2;
+    const maxHeight = pageHeight - margin * 2;
+
+    const canvasRatio = canvas.width / canvas.height;
+    const targetRatio = maxWidth / maxHeight;
+
+    let renderWidth;
+    let renderHeight;
+
+    if (canvasRatio > targetRatio) {
+      renderWidth = maxWidth;
+      renderHeight = maxWidth / canvasRatio;
+    } else {
+      renderHeight = maxHeight;
+      renderWidth = maxHeight * canvasRatio;
+    }
+
+    const x = (pageWidth - renderWidth) / 2;
+    const y = (pageHeight - renderHeight) / 2;
+
+    pdf.addImage(imageData, "JPEG", x, y, renderWidth, renderHeight, undefined, "FAST");
 
     return pdf;
   } finally {
@@ -116,19 +140,19 @@ const createPdfFromElement = async (elementId) => {
 
 export const generateCertificatePdfBlob = async (elementId) => {
   const pdf = await createPdfFromElement(elementId);
-
   return pdf.output("blob");
 };
 
-const downloadCertificatePdf = async (elementId, fileName) => {
+const downloadCertificatePdf = async (elementId = "certificate-export-canvas", fileName = "certificate.pdf") => {
   try {
     const pdf = await createPdfFromElement(elementId);
-    const cleanName = safeFileName(fileName || "certificate.pdf");
+    const cleanName = safeFileName(fileName);
     const finalFileName = cleanName.toLowerCase().endsWith(".pdf") ? cleanName : `${cleanName}.pdf`;
 
     pdf.save(finalFileName);
     return true;
   } catch (error) {
+    console.error("PDF export error:", error);
     alert(error.message || "Unable to download certificate PDF. Please try again.");
     return false;
   }
