@@ -132,11 +132,11 @@ button {
   }
 }
 
-/* Extended Redesign Keyframe Animations */
-@keyframes heroReveal {
+/* Module Enhancement Keyframe Animations */
+@keyframes moduleHeroFade {
   from {
     opacity: 0;
-    transform: translateY(-24px) scale(0.98);
+    transform: translateY(28px) scale(0.985);
   }
   to {
     opacity: 1;
@@ -144,54 +144,89 @@ button {
   }
 }
 
-@keyframes titleBlurIn {
+@keyframes floatOrb {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+  33% {
+    transform: translate(30px, -40px) rotate(120deg) scale(1.12);
+  }
+  66% {
+    transform: translate(-25px, 25px) rotate(240deg) scale(0.92);
+  }
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes cardRevealUp {
   from {
     opacity: 0;
-    filter: blur(12px);
-    transform: translateY(-10px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
-    filter: blur(0);
     transform: translateY(0);
   }
 }
 
-@keyframes cardRevealLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes cardRevealRight {
-  from {
-    opacity: 0;
-    transform: translateX(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes floatingOrb {
+@keyframes subtleParallax {
   0%, 100% {
-    transform: translate(0, 0) scale(1);
+    transform: translateY(0) rotate(0deg);
   }
-  33% {
-    transform: translate(25px, -35px) scale(1.1);
-  }
-  66% {
-    transform: translate(-20px, 20px) scale(0.95);
+  50% {
+    transform: translateY(-8px) rotate(1.5deg);
   }
 }
 
-@keyframes animatedGradient {
+@keyframes borderShimmer {
+  0% {
+    border-color: rgba(59, 130, 246, 0.2);
+  }
+  50% {
+    border-color: rgba(99, 102, 241, 0.5);
+  }
+  100% {
+    border-color: rgba(59, 130, 246, 0.2);
+  }
+}
+
+@keyframes iconBob {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes buttonArrowSlide {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+}
+
+@keyframes softGridMove {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 32px 32px;
+  }
+}
+
+@keyframes morphGradient {
   0% {
     background-position: 0% 50%;
   }
@@ -203,54 +238,36 @@ button {
   }
 }
 
-@keyframes movingBorder {
-  0% {
-    background-position: 0% 0%;
-  }
-  100% {
-    background-position: 200% 0%;
-  }
+/* Utility Animation Classes */
+.animate-module-hero-fade {
+  animation: moduleHeroFade 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes iconFloat {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-4px);
-  }
+.animate-float-orb {
+  animation: floatOrb 18s infinite ease-in-out;
 }
 
-@keyframes buttonArrowMove {
-  0%, 100% {
-    transform: translateX(0);
-  }
-  50% {
-    transform: translateX(4px);
-  }
+.animate-glow-pulse {
+  animation: glowPulse 4s infinite ease-in-out;
 }
 
-@keyframes softGlowPulse {
-  0%, 100% {
-    opacity: 0.4;
-    filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.4));
-  }
-  50% {
-    opacity: 0.8;
-    filter: drop-shadow(0 0 25px rgba(99, 102, 241, 0.7));
-  }
+.animate-card-reveal-up {
+  animation: cardRevealUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes backgroundGridMove {
-  from {
-    background-position: 0 0;
-  }
-  to {
-    background-position: 24px 24px;
-  }
+.animate-subtle-parallax {
+  animation: subtleParallax 6s infinite ease-in-out;
 }
 
-/* Utility animation classes */
+.animate-icon-bob {
+  animation: iconBob 3.5s infinite ease-in-out;
+}
+
+.animate-morph-gradient {
+  background-size: 200% 200%;
+  animation: morphGradient 8s ease infinite;
+}
+
 .fade-in {
   animation: fadeIn 0.35s ease both;
 }
@@ -503,21 +520,13 @@ button {
   line-height: 1.25 !important;
 }
 
-.animate-hero-fade-in {
-  animation: heroReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.animate-float-blob {
-  animation: floatingOrb 15s infinite ease-in-out;
-}
-
 .hover-lift {
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease;
 }
 
 .hover-lift:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.12);
+  transform: translateY(-8px);
+  box-shadow: 0 25px 45px -12px rgba(15, 23, 42, 0.14);
 }
 
 /* Accessibility: Reduced Motion Support */
