@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import ModuleHeader from "../components/ui/ModuleHeader.jsx";
+import FeatureCard from "../components/ui/FeatureCard.jsx";
+import PageHero from "../components/ui/PageHero.jsx";
 import { getDashboardStats } from "../services/dashboardApi.js";
 
 function CertificateDashboard() {
@@ -25,140 +28,131 @@ function CertificateDashboard() {
     fetchStats();
   }, []);
 
-  const features = [
+  const featureCards = [
     {
-      title: "Create Certificate",
-      description: "Create a certificate with participant and event details.",
-      btnText: "Create Certificate",
-      link: "/create-certificate",
-      icon: "📝"
+      title: "Certificate Builder",
+      description: "Design custom certificates with participant details, event dates, and live visual preview.",
+      btnText: "Open Builder",
+      to: "/create-certificate",
+      icon: "📝",
+      badge: "Popular"
     },
     {
       title: "Template Gallery",
-      description: "Choose from certificate templates and image background designs.",
-      btnText: "Browse Templates",
-      link: "/templates",
-      icon: "🎨"
+      description: "Browse 24+ professional designs, ornate frames, and customizable background templates.",
+      btnText: "Explore Gallery",
+      to: "/templates",
+      icon: "🎨",
+      badge: "24+ Styles"
     },
     {
-      title: "Categories",
-      description: "Organize certificates by seminar, conference, FDP, workshop, hackathon, and more.",
+      title: "Event Categories",
+      description: "Filter designs tailored for seminars, conferences, hackathons, FDPs, and workshops.",
       btnText: "View Categories",
-      link: "/categories",
-      icon: "🗂️"
+      to: "/categories",
+      icon: "🗂️",
+      badge: "14 Categories"
     },
     {
-      title: "Bulk Generate",
-      description: "Generate multiple certificates from manual list or CSV upload.",
-      btnText: "Bulk Generate",
-      link: "/bulk-generate",
-      icon: "📄"
+      title: "Bulk Generation",
+      description: "Generate dozens or hundreds of certificates at once using CSV spreadsheet upload.",
+      btnText: "Bulk Studio",
+      to: "/bulk-generate",
+      icon: "📄",
+      badge: "CSV Upload"
     },
     {
-      title: "Generated Certificates",
-      description: "View, edit, delete, and download saved certificate records.",
-      btnText: "Manage Certificates",
-      link: "/generated-certificates",
-      icon: "🏆"
+      title: "Certificate Records",
+      description: "Search, filter, view, edit details, or delete saved certificate records anytime.",
+      btnText: "Manage Records",
+      to: "/generated-certificates",
+      icon: "🏆",
+      badge: `${statsData.total || "All"} Records`
     },
     {
-      title: "Export Tools",
-      description: "Download single PDFs and bulk ZIP files.",
-      btnText: "Manage Exports",
-      link: "/generated-certificates",
-      icon: "📦"
+      title: "Export Center",
+      description: "Download single certificates as crisp PDFs or export batch runs in compressed ZIP files.",
+      btnText: "Export Tools",
+      to: "/generated-certificates",
+      icon: "📦",
+      badge: "PDF & ZIP"
     }
   ];
 
-  const stats = [
-    { label: "24+ Certificate Templates", icon: "🎓" },
-    { label: "PDF Export Ready", icon: "📥" },
-    { label: "ZIP Export Ready", icon: "📦" },
-    { label: "Bulk Generation", icon: "⚡" },
-    { label: "Draft Management", icon: "💾" },
-    { label: "Record Management", icon: "🗂️" }
-  ];
-
-  const workflow = [
-    { step: "Select Template", desc: "Choose from 24+ professional designs or background layouts." },
-    { step: "Enter Details", desc: "Fill certificate fields manually or upload a participant list via CSV." },
-    { step: "Preview Certificate", desc: "See live visual rendering before confirming or exporting." },
-    { step: "Generate PDF", desc: "Download single certificates as PDF or bulk files inside a ZIP." },
-    { step: "Manage Records", desc: "Save drafts, edit details, or delete records from the platform." }
+  const capabilities = [
+    "Single Certificate",
+    "Bulk CSV Processing",
+    "PDF Export",
+    "ZIP Export",
+    "Draft Management",
+    "Image Background Templates"
   ];
 
   return (
-    <section className="page-transition space-y-10 pb-10">
-      {/* Back Link */}
-      <div>
-        <Link to="/" className="inline-flex items-center gap-2 text-sm font-black text-primary-600 hover:text-primary-800 transition">
-          <span>←</span>
-          <span>Go to Main Dashboard</span>
-        </Link>
-      </div>
+    <section className="space-y-8 pb-10">
+      {/* Top Module Header */}
+      <ModuleHeader
+        title="Certificate Studio"
+        subtitle="Professional certificate creation workspace"
+        theme="certificate"
+        badge="Certificate Module"
+        primaryAction={{
+          label: "Create Certificate",
+          to: "/create-certificate"
+        }}
+      />
 
       {/* Hero Section */}
-      <div className="relative overflow-hidden rounded-3xl border border-blue-100 bg-gradient-to-br from-blue-500/10 via-indigo-500/5 to-purple-500/10 p-8 shadow-soft lg:p-10 animate-hero-fade-in">
-        <div className="absolute -left-12 -top-12 h-48 w-48 rounded-full bg-blue-500/10 blur-2xl animate-float-blob" />
-        <div className="absolute right-0 bottom-0 h-64 w-64 rounded-full bg-purple-500/10 blur-2xl animate-float-blob [animation-delay:4s]" />
-
-        <div className="relative z-10">
-          <p className="text-xs font-black uppercase tracking-wider text-primary-600">Module Workspace</p>
-          <h1 className="mt-3 text-3xl sm:text-4xl font-black text-slate-950">Event Certificate Generator</h1>
-          <p className="mt-3 max-w-2xl text-base sm:text-lg leading-7 text-slate-600">
-            Create, manage, preview, and export professional event certificates using templates and bulk tools.
-          </p>
+      <PageHero
+        tag="CERTIFICATE WORKSPACE"
+        title="Build certificates that look official, polished, and ready to share."
+        subtitle="Select a design, enter participant details, preview instantly, and export as PDF—or generate complete batches from CSV."
+        theme="blue"
+      >
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Link
+            to="/create-certificate"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3.5 text-sm font-black text-white shadow-md transition hover:bg-blue-700 active:scale-98"
+          >
+            <span>Create Certificate</span>
+            <span>→</span>
+          </Link>
+          <Link
+            to="/templates"
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200/80 bg-white/90 px-6 py-3.5 text-sm font-black text-slate-800 shadow-sm transition hover:bg-slate-50 active:scale-98"
+          >
+            <span>Browse Templates</span>
+          </Link>
         </div>
-      </div>
+      </PageHero>
 
-      {/* Stats Cards Section */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {stats.map((item, idx) => (
-          <div key={idx} className="rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50/30 to-white p-5 shadow-sm hover-lift flex items-center gap-4">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-xl">{item.icon}</span>
-            <div>
-              <p className="text-base font-black text-slate-950">{item.label}</p>
-              {idx === 0 && <p className="text-xs text-slate-500 font-semibold">24+ beautiful designs available</p>}
-              {idx === 3 && statsData.total > 0 && <p className="text-xs text-slate-500 font-semibold">{statsData.total} generated overall</p>}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Feature Cards Grid */}
-      <div className="space-y-4">
-        <h2 className="text-2xl font-black text-slate-950 tracking-tight">Generator Tools & Features</h2>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {features.map((feat, idx) => (
-            <div key={idx} className="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover-lift flex flex-col justify-between">
-              <div>
-                <span className="text-3xl">{feat.icon}</span>
-                <h3 className="mt-4 text-xl font-black text-slate-950 tracking-tight">{feat.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-650">{feat.description}</p>
-              </div>
-              <div className="mt-6">
-                <Link to={feat.link} className="inline-flex w-full items-center justify-center gap-1.5 px-4 py-2.5 bg-blue-50 hover:bg-blue-100 text-primary-700 font-black rounded-xl text-sm transition-all shadow-sm group-hover:-translate-y-0.5 active:scale-98">
-                  <span>{feat.btnText}</span>
-                  <span>→</span>
-                </Link>
-              </div>
-            </div>
+      {/* Capability Strip */}
+      <div className="rounded-2xl border border-blue-100 bg-gradient-to-r from-blue-50/50 via-indigo-50/30 to-blue-50/50 p-4 backdrop-blur-md shadow-xs">
+        <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-bold text-slate-700">
+          <span className="text-blue-600 font-extrabold uppercase tracking-wider">Features:</span>
+          {capabilities.map((cap) => (
+            <span key={cap} className="inline-flex items-center gap-1.5 rounded-lg bg-white/90 px-3 py-1.5 shadow-2xs border border-blue-100/60">
+              <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
+              {cap}
+            </span>
           ))}
         </div>
       </div>
 
-      {/* Workflow Section */}
-      <div className="rounded-3xl border border-indigo-100 bg-indigo-50/20 p-7 space-y-6">
-        <h2 className="text-2xl font-black text-slate-950 tracking-tight flex items-center gap-2">
-          <span>🏆</span> Certificate Workflow
-        </h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          {workflow.map((item, idx) => (
-            <div key={idx} className="rounded-2xl bg-white p-5 border border-indigo-50 hover-lift">
-              <div className="text-xs font-black uppercase text-indigo-500 tracking-wider">Step {idx + 1}</div>
-              <h4 className="mt-2 text-base font-black text-slate-950">{item.step}</h4>
-              <p className="mt-2 text-xs leading-5 text-slate-600">{item.desc}</p>
-            </div>
+      {/* Feature Tools Grid (6 Cards) */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-black text-slate-950 tracking-tight font-sans">
+            Certificate Generator Tools
+          </h2>
+          <span className="text-xs font-extrabold text-slate-500 uppercase tracking-wider">
+            6 Specialized Modules
+          </span>
+        </div>
+
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {featureCards.map((card) => (
+            <FeatureCard key={card.title} {...card} theme="blue" />
           ))}
         </div>
       </div>

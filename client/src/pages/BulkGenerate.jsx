@@ -1,12 +1,13 @@
 import JSZip from "jszip";
 import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import CertificatePreview from "../components/CertificatePreview.jsx";
 import templateData from "../data/templateData.js";
 import { bulkCreateCertificates } from "../services/certificateApi.js";
 import downloadCertificatePdf, { generateCertificatePdfBlob, safeFileName } from "../utils/downloadCertificatePdf.js";
 
 const inputClass =
-  "h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-base outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-primary-100";
+  "h-11 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 text-sm font-semibold outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100";
 
 const categories = [
   "Seminar",
@@ -36,11 +37,11 @@ const initialCommonDetails = {
   authorizedSignatureName: "Event Coordinator"
 };
 
-const stepItems = [
-  { title: "Add Participants", icon: "🧾" },
-  { title: "Add Event Details", icon: "📝" },
-  { title: "Generate Certificates", icon: "📄" },
-  { title: "Export Results", icon: "⬇️" }
+const workflowPhases = [
+  { title: "1. Add Participants", desc: "CSV file or manual list", icon: "🧾" },
+  { title: "2. Common Details", desc: "Event & template fields", icon: "📝" },
+  { title: "3. Batch Processing", desc: "Generate record set", icon: "📄" },
+  { title: "4. ZIP Export", desc: "Download bundled PDFs", icon: "⬇️" }
 ];
 
 function BulkGenerate() {
@@ -374,141 +375,177 @@ function BulkGenerate() {
   };
 
   return (
-    <section className="page-transition space-y-7">
-      <div className="overflow-hidden rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-cyan-50 p-8 shadow-soft lg:p-10">
-        <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Bulk Tools</p>
-        <h2 className="mt-3 text-4xl font-black tracking-tight text-slate-950">Bulk Certificate Generator</h2>
-        <p className="mt-3 max-w-4xl text-lg leading-8 text-slate-600">
-          Generate multiple certificates from a participant list or CSV file.
+    <section className="space-y-8 pb-10">
+      {/* Breadcrumb Navigation */}
+      <nav className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
+        <Link to="/certificate-dashboard" className="hover:text-blue-600 transition">
+          Certificate Studio
+        </Link>
+        <span>/</span>
+        <span className="text-slate-800">Bulk Generation</span>
+      </nav>
+
+      {/* Page Hero */}
+      <div className="rounded-3xl border border-blue-100/80 bg-gradient-to-br from-blue-50/60 via-white to-indigo-50/40 p-7 shadow-xs lg:p-9 animate-hero-fade-in">
+        <span className="text-xs font-black uppercase tracking-widest text-blue-600">
+          BULK STUDIO WORKSPACE
+        </span>
+        <h1 className="mt-2 text-3xl sm:text-4xl font-black text-slate-950 tracking-tight font-sans">
+          Bulk Certificate Generator
+        </h1>
+        <p className="mt-2 max-w-3xl text-base text-slate-600 font-medium leading-relaxed">
+          Upload a CSV participant roster or enter manual names to generate complete batches of certificates simultaneously. Download individually or export as a single ZIP archive.
         </p>
-      </div>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {stepItems.map((item, index) => (
-          <div key={item.title} className={`slide-up rounded-2xl border border-slate-200 bg-white p-5 shadow-soft delay-${Math.min(index + 1, 4)}00`}>
-            <div className="flex items-center gap-4">
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-lg font-black text-primary-700">
-                {item.icon}
+        {/* Workspace Phases Strip */}
+        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {workflowPhases.map((phase) => (
+            <div key={phase.title} className="rounded-2xl border border-slate-200/80 bg-white/90 p-3.5 shadow-xs flex items-center gap-3">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-lg">
+                {phase.icon}
               </span>
-              <p className="text-base font-black text-slate-800">{item.title}</p>
+              <div>
+                <p className="text-xs font-black text-slate-950">{phase.title}</p>
+                <p className="text-[11px] font-semibold text-slate-500">{phase.desc}</p>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-        <div className="space-y-6">
-          <div className="slide-up rounded-2xl border border-slate-200 bg-white p-6 shadow-soft">
-            <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Option A</p>
-            <h3 className="mt-2 text-2xl font-black text-slate-950">Manual List</h3>
-            <textarea
-              value={manualNames}
-              onChange={(event) => setManualNames(event.target.value)}
-              className="mt-4 min-h-40 w-full resize-y rounded-xl border border-slate-200 bg-white px-4 py-3 text-base outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-primary-100"
-              placeholder={"Prit Koradiya\nRahul Patel\nNeha Sharma"}
-            />
-            <button
-              type="button"
-              onClick={handleManualParticipants}
-              className="button-press soft-hover mt-4 rounded-xl bg-primary-600 px-5 py-3 text-base font-black text-white transition hover:bg-primary-700"
-            >
-              Add Manual Participants
-            </button>
+      {/* Phase 1: Participant Input Options */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Option A: Manual Roster */}
+        <div className="rounded-3xl border border-slate-200/90 bg-white/90 p-6 shadow-xl backdrop-blur-md space-y-4">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <span className="text-xs font-black uppercase tracking-wider text-blue-600">Option A</span>
+            <span className="text-xs font-bold text-slate-400">One Name Per Line</span>
           </div>
+          <h3 className="text-lg font-black text-slate-950 font-sans">Enter Manual Participant List</h3>
 
-          <div className="slide-up delay-100 rounded-2xl border border-slate-200 bg-white p-6 shadow-soft">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-              <div>
-                <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Option B</p>
-                <h3 className="mt-2 text-2xl font-black text-slate-950">CSV Upload</h3>
-                <p className="mt-2 text-base leading-7 text-slate-600">Format: participantName,organizationName</p>
-              </div>
+          <textarea
+            value={manualNames}
+            onChange={(event) => setManualNames(event.target.value)}
+            className="min-h-36 w-full rounded-2xl border border-slate-200 bg-slate-50/50 p-4 text-sm font-semibold outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
+            placeholder={"Pritkumar Koradiya\nRahul Patel\nNeha Sharma"}
+          />
+
+          <button
+            type="button"
+            onClick={handleManualParticipants}
+            className="w-full rounded-xl bg-blue-600 py-3 text-sm font-black text-white shadow-xs hover:bg-blue-700 transition active:scale-98"
+          >
+            Add Manual Roster to Queue
+          </button>
+        </div>
+
+        {/* Option B: CSV Upload Dropzone */}
+        <div className="rounded-3xl border border-slate-200/90 bg-white/90 p-6 shadow-xl backdrop-blur-md space-y-4 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
+              <span className="text-xs font-black uppercase tracking-wider text-blue-600">Option B</span>
               <button
                 type="button"
                 onClick={handleDownloadCsvTemplate}
-                className="button-press soft-hover rounded-xl border border-primary-200 bg-primary-50 px-4 py-3 text-sm font-black text-primary-700"
+                className="text-xs font-black text-blue-600 hover:underline"
               >
-                Download CSV Template
+                Download CSV Sample
               </button>
             </div>
-            <input
-              type="file"
-              accept=".csv"
-              onChange={handleCsvUpload}
-              className="mt-4 block w-full rounded-xl border border-dashed border-blue-200 bg-blue-50 px-4 py-5 text-base font-bold text-slate-700"
-            />
-            <div className="mt-4 rounded-xl bg-slate-50 p-4 text-sm font-semibold leading-6 text-slate-600">
-              participantName,organizationName<br />
-              Prit Koradiya,PPSU<br />
-              Rahul Patel,PPSU<br />
-              Neha Sharma,PPSU
+            <h3 className="text-lg font-black text-slate-950 font-sans">Upload CSV Spreadsheet</h3>
+            <p className="text-xs font-medium text-slate-500 mt-1">
+              Required CSV headers: <code className="bg-slate-100 px-1.5 py-0.5 rounded text-slate-800">participantName,organizationName</code>
+            </p>
+
+            <div className="mt-4 rounded-2xl border-2 border-dashed border-blue-200 bg-blue-50/30 p-6 text-center hover:bg-blue-50/60 transition cursor-pointer relative">
+              <input
+                type="file"
+                accept=".csv"
+                onChange={handleCsvUpload}
+                className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+              />
+              <span className="text-3xl block mb-2">📄</span>
+              <p className="text-sm font-black text-slate-900">Click or drag CSV file here</p>
+              <p className="text-xs font-medium text-slate-500 mt-1">Supports standard CSV spreadsheets up to 1000 rows</p>
             </div>
+          </div>
+
+          <div className="rounded-xl bg-slate-50 p-3 text-xs font-mono text-slate-600 border border-slate-100">
+            participantName,organizationName<br />
+            Pritkumar Koradiya,PPSU<br />
+            Rahul Patel,PPSU
           </div>
         </div>
+      </div>
 
-        <div className="slide-up delay-200 rounded-2xl border border-slate-200 bg-white p-6 shadow-soft">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Participant Preview</p>
-              <h3 className="mt-2 text-2xl font-black text-slate-950">{participants.length} participants</h3>
-            </div>
+      {/* Participant Roster Queue Table */}
+      <div className="rounded-3xl border border-slate-200/90 bg-white/90 p-6 shadow-xl backdrop-blur-md space-y-4">
+        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div>
+            <h3 className="text-lg font-black text-slate-950 font-sans">Participant Queue</h3>
+            <p className="text-xs font-medium text-slate-500">Review or modify names before launching batch generation</p>
           </div>
+          <span className="rounded-full bg-blue-50 border border-blue-200 px-3 py-1 text-xs font-black text-blue-700">
+            {participants.length} Participants Added
+          </span>
+        </div>
 
-          <div className="mt-5 overflow-x-auto">
-            <table className="min-w-full text-left text-base">
+        {participants.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs sm:text-sm">
               <thead>
-                <tr className="border-b border-slate-200 text-sm uppercase tracking-wide text-slate-500">
-                  <th className="px-3 py-3">No.</th>
-                  <th className="px-3 py-3">Participant Name</th>
-                  <th className="px-3 py-3">Organization Name</th>
-                  <th className="px-3 py-3">Action</th>
+                <tr className="border-b border-slate-200 text-slate-400 uppercase font-black tracking-wider text-[10px]">
+                  <th className="py-3 px-3">#</th>
+                  <th className="py-3 px-3">Participant Name</th>
+                  <th className="py-3 px-3">Organization Name</th>
+                  <th className="py-3 px-3 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-slate-100">
                 {participants.map((participant, index) => {
                   const isEditing = editingParticipantId === participant.id;
 
                   return (
-                    <tr key={participant.id} className="border-b border-slate-100 align-top">
-                      <td className="px-3 py-4 font-bold text-slate-500">{index + 1}</td>
-                      <td className="px-3 py-4">
+                    <tr key={participant.id} className="hover:bg-slate-50/60 transition">
+                      <td className="py-3 px-3 font-bold text-slate-400">{index + 1}</td>
+                      <td className="py-3 px-3">
                         {isEditing ? (
                           <input
                             value={editParticipantDraft.participantName}
-                            onChange={(event) => setEditParticipantDraft((draft) => ({ ...draft, participantName: event.target.value }))}
+                            onChange={(e) => setEditParticipantDraft((draft) => ({ ...draft, participantName: e.target.value }))}
                             className={inputClass}
                           />
                         ) : (
-                          <span className="font-black text-slate-900">{participant.participantName}</span>
+                          <span className="font-bold text-slate-900">{participant.participantName}</span>
                         )}
                       </td>
-                      <td className="px-3 py-4">
+                      <td className="py-3 px-3">
                         {isEditing ? (
                           <input
                             value={editParticipantDraft.organizationName}
-                            onChange={(event) => setEditParticipantDraft((draft) => ({ ...draft, organizationName: event.target.value }))}
+                            onChange={(e) => setEditParticipantDraft((draft) => ({ ...draft, organizationName: e.target.value }))}
                             className={inputClass}
-                            placeholder="Default organization will be used"
+                            placeholder="Uses default organization if blank"
                           />
                         ) : (
-                          <span className="font-semibold text-slate-600">{participant.organizationName || commonDetails.organizationName || "Default organization"}</span>
+                          <span className="font-medium text-slate-600">{participant.organizationName || commonDetails.organizationName || "Default Organization"}</span>
                         )}
                       </td>
-                      <td className="px-3 py-4">
-                        <div className="flex flex-wrap gap-2">
+                      <td className="py-3 px-3 text-right">
+                        <div className="inline-flex gap-2">
                           {isEditing ? (
                             <>
                               <button
                                 type="button"
                                 onClick={() => handleSaveParticipant(participant.id)}
-                                className="button-press soft-hover rounded-lg bg-emerald-600 px-3 py-2 text-sm font-black text-white"
+                                className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-bold text-white shadow-xs"
                               >
                                 Save
                               </button>
                               <button
                                 type="button"
                                 onClick={() => setEditingParticipantId("")}
-                                className="button-press soft-hover rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-black text-slate-700"
+                                className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700"
                               >
                                 Cancel
                               </button>
@@ -518,14 +555,14 @@ function BulkGenerate() {
                               <button
                                 type="button"
                                 onClick={() => handleEditParticipant(participant)}
-                                className="button-press soft-hover rounded-lg border border-primary-200 bg-primary-50 px-3 py-2 text-sm font-black text-primary-700"
+                                className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700 hover:bg-blue-100 transition"
                               >
                                 Edit
                               </button>
                               <button
                                 type="button"
                                 onClick={() => handleRemoveParticipant(participant.id)}
-                                className="button-press soft-hover rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-sm font-black text-red-700"
+                                className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-bold text-rose-700 hover:bg-rose-100 transition"
                               >
                                 Remove
                               </button>
@@ -539,171 +576,176 @@ function BulkGenerate() {
               </tbody>
             </table>
           </div>
-
-          {participants.length === 0 && (
-            <div className="mt-5 rounded-xl border border-dashed border-slate-200 bg-slate-50 p-6 text-center text-base font-bold text-slate-500">
-              Added participants will appear here.
-            </div>
-          )}
-        </div>
+        ) : (
+          <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 p-8 text-center text-xs font-bold text-slate-500">
+            No participants in queue yet. Enter manual names or upload a CSV above.
+          </div>
+        )}
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[480px_1fr]">
-        <form className="slide-up rounded-2xl border border-slate-200 bg-white p-6 shadow-soft" onSubmit={(event) => event.preventDefault()}>
-          <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Common Details</p>
-          <h3 className="mt-2 text-2xl font-black text-slate-950">Certificate form</h3>
+      {/* Phase 2 & Live Sample Preview Grid */}
+      <div className="grid gap-6 lg:grid-cols-[1fr_440px]">
+        {/* Form for Common Details */}
+        <form className="rounded-3xl border border-slate-200/90 bg-white/90 p-6 sm:p-8 shadow-xl backdrop-blur-md space-y-5" onSubmit={(e) => e.preventDefault()}>
+          <div className="border-b border-slate-100 pb-3">
+            <span className="text-xs font-black uppercase tracking-wider text-blue-600">Common Roster Details</span>
+            <h3 className="text-lg font-black text-slate-950 font-sans">Batch Certificate Form</h3>
+          </div>
 
-          <div className="mt-5 grid gap-5">
-            <label className="grid gap-2 text-base font-bold text-slate-700">
+          <div className="grid gap-4 md:grid-cols-2">
+            <label className="grid gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-600">
               Default Organization Name
-              <input className={inputClass} name="organizationName" value={commonDetails.organizationName} onChange={handleCommonChange} placeholder="PPSU" />
+              <input className={inputClass} name="organizationName" value={commonDetails.organizationName} onChange={handleCommonChange} placeholder="e.g. PP Savani University" />
             </label>
 
-            <label className="grid gap-2 text-base font-bold text-slate-700">
-              Event Name
-              <input className={inputClass} name="eventName" value={commonDetails.eventName} onChange={handleCommonChange} placeholder="Hackathon" />
+            <label className="grid gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-600">
+              Event Name *
+              <input className={inputClass} name="eventName" value={commonDetails.eventName} onChange={handleCommonChange} placeholder="e.g. Hackathon 2026" />
             </label>
 
-            <label className="grid gap-2 text-base font-bold text-slate-700">
-              Certificate Category
+            <label className="grid gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-600">
+              Certificate Category *
               <select className={inputClass} name="certificateCategory" value={commonDetails.certificateCategory} onChange={handleCommonChange}>
-                <option value="">Select category</option>
-                {categories.map((category) => (
-                  <option key={category} value={category}>
-                    {category}
+                <option value="">Select Category</option>
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
                   </option>
                 ))}
               </select>
             </label>
 
-            <label className="grid gap-2 text-base font-bold text-slate-700">
-              Certificate Title
+            <label className="grid gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-600">
+              Certificate Title *
               <input className={inputClass} name="certificateTitle" value={commonDetails.certificateTitle} onChange={handleCommonChange} />
             </label>
 
-            <label className="grid gap-2 text-base font-bold text-slate-700">
-              Event Date
+            <label className="grid gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-600">
+              Event Date *
               <input className={inputClass} type="date" name="eventDate" value={commonDetails.eventDate} onChange={handleCommonChange} />
             </label>
 
-            <label className="grid gap-2 text-base font-bold text-slate-700">
+            <label className="grid gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-600">
+              Template Style *
+              <select className={inputClass} name="templateStyle" value={commonDetails.templateStyle} onChange={handleCommonChange}>
+                <option value="">Select Template Style</option>
+                {templateData.map((tpl) => (
+                  <option key={tpl.id} value={tpl.name}>
+                    {tpl.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="grid gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-600 md:col-span-2">
+              Authorized Signature Name
+              <input className={inputClass} name="authorizedSignatureName" value={commonDetails.authorizedSignatureName} onChange={handleCommonChange} />
+            </label>
+
+            <label className="grid gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-600 md:col-span-2">
               Description / Details
               <textarea
-                className="min-h-28 w-full resize-y rounded-xl border border-slate-200 bg-white px-4 py-3 text-base outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-primary-100"
+                className={`${inputClass} !h-24 resize-y py-2.5`}
                 name="description"
                 value={commonDetails.description}
                 onChange={handleCommonChange}
               />
             </label>
-
-            <label className="grid gap-2 text-base font-bold text-slate-700">
-              Template Style
-              <select className={inputClass} name="templateStyle" value={commonDetails.templateStyle} onChange={handleCommonChange}>
-                <option value="">Select template style</option>
-                {templateData.map((template) => (
-                  <option key={template.id} value={template.name}>
-                    {template.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <label className="grid gap-2 text-base font-bold text-slate-700">
-              Authorized Signature Name
-              <input className={inputClass} name="authorizedSignatureName" value={commonDetails.authorizedSignatureName} onChange={handleCommonChange} />
-            </label>
           </div>
 
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row gap-3">
             <button
               type="button"
               onClick={handleGenerateBulkCertificates}
               disabled={isGenerating}
-              className="button-press soft-hover rounded-xl bg-primary-600 px-5 py-3 text-base font-black text-white transition hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-70"
+              className="flex-1 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 py-3 text-sm font-black text-white shadow-md hover:from-blue-700 hover:to-indigo-700 transition disabled:opacity-60 active:scale-98"
             >
-              {isGenerating ? "Generating Bulk Certificates..." : "Generate Bulk Certificates"}
+              {isGenerating ? "Processing Roster..." : `Generate ${participants.length} Certificates`}
             </button>
             <button
               type="button"
               onClick={handleDownloadAllZip}
               disabled={isPreparingZip || generatedCertificates.length === 0}
-              className="button-press soft-hover rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-3 text-base font-black text-emerald-700 transition hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-xl border border-emerald-300 bg-emerald-50 px-5 py-3 text-sm font-black text-emerald-700 hover:bg-emerald-100 transition disabled:opacity-50 active:scale-98"
             >
-              {isPreparingZip ? "Preparing ZIP..." : "Download All PDFs as ZIP"}
+              {isPreparingZip ? "Building ZIP Archive..." : "Download All as ZIP"}
             </button>
           </div>
 
           {successMessage && (
-            <div className="mt-5 rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-base font-black text-emerald-800">
-              {successMessage}
+            <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3.5 text-xs font-bold text-emerald-800">
+              ✓ {successMessage}
             </div>
           )}
 
           {zipProgress && (
-            <div className="mt-4 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-base font-black text-primary-700">
-              {zipProgress}
+            <div className="rounded-xl border border-blue-200 bg-blue-50 p-3.5 text-xs font-bold text-blue-700 flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-blue-600 animate-ping" />
+              <span>{zipProgress}</span>
             </div>
           )}
         </form>
 
-        <div className="slide-up delay-100 space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-soft">
+        {/* Sample Live Canvas */}
+        <div className="rounded-3xl border border-slate-200/90 bg-white/90 p-5 shadow-xl backdrop-blur-md space-y-4">
           <div>
-            <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Live Preview</p>
-            <h3 className="mt-1 text-2xl font-black text-slate-950">Sample certificate</h3>
+            <span className="text-xs font-black uppercase tracking-wider text-blue-600">Sample Preview</span>
+            <h3 className="text-base font-black text-slate-950 font-sans">Batch Sample Visual</h3>
           </div>
-          <CertificatePreview certificateData={samplePreviewData} previewId="bulk-sample-preview" />
+          <div className="overflow-hidden">
+            <CertificatePreview certificateData={samplePreviewData} previewId="bulk-sample-preview" />
+          </div>
         </div>
       </div>
 
+      {/* Generated Batch Roster Results Table */}
       {generatedCertificates.length > 0 && (
-        <div className="slide-up space-y-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-soft">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="rounded-3xl border border-slate-200/90 bg-white/90 p-6 shadow-xl backdrop-blur-md space-y-5">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <div>
-              <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Generated Result</p>
-              <h3 className="mt-2 text-2xl font-black text-slate-950">Bulk generated certificates</h3>
+              <span className="text-xs font-black uppercase tracking-wider text-emerald-600">Generated Batch</span>
+              <h3 className="text-lg font-black text-slate-950 font-sans">Generated Certificate Records</h3>
             </div>
-            <span className="rounded-full bg-emerald-50 px-4 py-2 text-sm font-black text-emerald-700">
-              {generatedCertificates.length} ready
-            </span>
+            <button
+              type="button"
+              onClick={handleDownloadAllZip}
+              className="rounded-xl bg-emerald-600 px-4 py-2 text-xs font-black text-white hover:bg-emerald-700 transition"
+            >
+              Download All ZIP
+            </button>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="min-w-full text-left text-base">
+            <table className="w-full text-left text-xs sm:text-sm">
               <thead>
-                <tr className="border-b border-slate-200 text-sm uppercase tracking-wide text-slate-500">
-                  <th className="px-3 py-3">No.</th>
-                  <th className="px-3 py-3">Participant</th>
-                  <th className="px-3 py-3">Organization</th>
-                  <th className="px-3 py-3">Event</th>
-                  <th className="px-3 py-3">Category</th>
-                  <th className="px-3 py-3">Template</th>
-                  <th className="px-3 py-3">Certificate ID</th>
-                  <th className="px-3 py-3">Status</th>
-                  <th className="px-3 py-3">Action</th>
+                <tr className="border-b border-slate-200 text-slate-400 uppercase font-black tracking-wider text-[10px]">
+                  <th className="py-3 px-3">#</th>
+                  <th className="py-3 px-3">Participant</th>
+                  <th className="py-3 px-3">Organization</th>
+                  <th className="py-3 px-3">Certificate ID</th>
+                  <th className="py-3 px-3">Status</th>
+                  <th className="py-3 px-3 text-right">Action</th>
                 </tr>
               </thead>
-              <tbody>
-                {generatedCertificates.map((certificate, index) => (
-                  <tr key={certificate._id || certificate.certificateId} className="border-b border-slate-100">
-                    <td className="px-3 py-4 font-bold text-slate-500">{index + 1}</td>
-                    <td className="px-3 py-4 font-black text-slate-900">{certificate.participantName}</td>
-                    <td className="px-3 py-4 font-semibold text-slate-600">{certificate.organizationName}</td>
-                    <td className="px-3 py-4 font-semibold text-slate-600">{certificate.eventName}</td>
-                    <td className="px-3 py-4 font-semibold text-slate-600">{certificate.certificateCategory}</td>
-                    <td className="px-3 py-4 font-semibold text-slate-600">{certificate.templateStyle}</td>
-                    <td className="px-3 py-4 font-black text-slate-700">{certificate.certificateId}</td>
-                    <td className="px-3 py-4">
-                      <span className="rounded-full bg-emerald-50 px-3 py-1 text-sm font-black text-emerald-700">
-                        {certificate.status}
+              <tbody className="divide-y divide-slate-100">
+                {generatedCertificates.map((cert, idx) => (
+                  <tr key={cert._id || cert.certificateId} className="hover:bg-slate-50 transition">
+                    <td className="py-3 px-3 font-bold text-slate-400">{idx + 1}</td>
+                    <td className="py-3 px-3 font-bold text-slate-900">{cert.participantName}</td>
+                    <td className="py-3 px-3 font-medium text-slate-600">{cert.organizationName}</td>
+                    <td className="py-3 px-3 font-mono text-xs text-slate-700">{cert.certificateId}</td>
+                    <td className="py-3 px-3">
+                      <span className="rounded-full bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-emerald-700">
+                        {cert.status}
                       </span>
                     </td>
-                    <td className="px-3 py-4">
+                    <td className="py-3 px-3 text-right">
                       <button
                         type="button"
-                        onClick={() => setSelectedCertificate(certificate)}
-                        className="button-press soft-hover rounded-lg bg-primary-600 px-4 py-2 text-sm font-black text-white"
+                        onClick={() => setSelectedCertificate(cert)}
+                        className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700 hover:bg-blue-100 transition"
                       >
-                        View
+                        View Card
                       </button>
                     </td>
                   </tr>
@@ -714,19 +756,20 @@ function BulkGenerate() {
         </div>
       )}
 
+      {/* Selected Certificate View Box */}
       {selectedCertificate && (
-        <div className="slide-up space-y-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-soft">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="rounded-3xl border border-slate-200/90 bg-white/90 p-6 shadow-xl backdrop-blur-md space-y-4">
+          <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Selected Bulk Preview</p>
-              <h3 className="mt-1 text-2xl font-black text-slate-950">{selectedCertificate.participantName}</h3>
+              <span className="text-xs font-black uppercase tracking-wider text-blue-600">Selected Certificate</span>
+              <h3 className="text-lg font-black text-slate-950 font-sans">{selectedCertificate.participantName}</h3>
             </div>
             <button
               type="button"
               onClick={handleDownloadSelectedPdf}
-              className="button-press soft-hover rounded-xl bg-emerald-600 px-5 py-3 text-base font-black text-white transition hover:bg-emerald-700"
+              className="rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-black text-white hover:bg-emerald-700 transition"
             >
-              Download PDF
+              Export Selected PDF
             </button>
           </div>
 
@@ -734,6 +777,7 @@ function BulkGenerate() {
         </div>
       )}
 
+      {/* CRITICAL PDF & ZIP EXPORT CONTAINER */}
       <div className="fixed left-[-9999px] top-0 bg-white">
         {exportCertificate && (
           <CertificatePreview certificateData={exportCertificate} previewId="bulk-zip-export-preview" />

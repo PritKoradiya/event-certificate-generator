@@ -3,12 +3,13 @@ import { Link } from "react-router-dom";
 import EventReportPreview, { getAssetUrl } from "../components/EventReportPreview.jsx";
 import { getEventReports, deleteEventReport, updateEventReport } from "../services/eventReportApi.js";
 import { downloadEventReportPdf } from "../utils/downloadEventReportPdf.js";
+import StatusPill from "../components/ui/StatusPill.jsx";
 
 const inputClass =
-  "h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-primary-100";
+  "h-11 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 text-sm font-semibold outline-none transition focus:border-purple-500 focus:bg-white focus:ring-4 focus:ring-purple-100";
 
 const textareaClass =
-  "w-full rounded-xl border border-slate-200 bg-white p-4 text-sm outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-primary-100 min-h-24 resize-y";
+  "w-full rounded-xl border border-slate-200 bg-slate-50/50 p-4 text-sm font-semibold outline-none transition focus:border-purple-500 focus:bg-white focus:ring-4 focus:ring-purple-100 min-h-24 resize-y";
 
 function EventReports() {
   const [reports, setReports] = useState([]);
@@ -37,7 +38,6 @@ function EventReports() {
 
   useEffect(() => {
     return () => {
-      // Clean up object URLs
       photosRef.current.forEach((p) => {
         if (p.preview.startsWith("blob:")) {
           URL.revokeObjectURL(p.preview);
@@ -53,8 +53,7 @@ function EventReports() {
       const result = await getEventReports();
       const reportsList = result.data || [];
       setReports(reportsList);
-      
-      // If we already had a selected report, find it in the refreshed list to update it
+
       if (selectedReport) {
         const updated = reportsList.find(
           (r) => r._id === selectedReport._id || r.id === selectedReport.id
@@ -83,14 +82,12 @@ function EventReports() {
 
   const handleView = (report) => {
     setSelectedReport(report);
-    // Smooth scroll to the preview section
     const previewEl = document.getElementById("report-preview-section");
     if (previewEl) {
       previewEl.scrollIntoView({ behavior: "smooth" });
     }
   };
 
-  // Edit Click Handler
   const handleEditClick = (report) => {
     setEditReport(report);
     setEditFormData({
@@ -120,7 +117,6 @@ function EventReports() {
     setIsEditing(true);
   };
 
-  // Edit Photo Handlers
   const handleEditPhotoChange = (e) => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
@@ -161,7 +157,6 @@ function EventReports() {
     });
   };
 
-  // Save Edit Handler
   const handleSaveEdit = async () => {
     const requiredFields = [
       { key: "reportDate", label: "Report Date" },
@@ -179,7 +174,6 @@ function EventReports() {
       { key: "deanName", label: "Dean Name" }
     ];
 
-    // Only validate required fields if the status is not Draft
     if (editFormData.status !== "Draft") {
       const missingFields = requiredFields
         .filter((field) => !editFormData[field.key] || !String(editFormData[field.key]).trim())
@@ -208,15 +202,12 @@ function EventReports() {
       data.append("deanName", editFormData.deanName);
       data.append("status", editFormData.status);
 
-      // Photos to remove
       data.append("removePhotos", JSON.stringify(removedPhotos));
 
-      // Append new photo files
       newPhotos.forEach((photoObj) => {
         data.append("photos", photoObj.file);
       });
 
-      // Split and append objectives
       const objectivesArray = String(editFormData.objectives)
         .split("\n")
         .map((line) => line.trim())
@@ -225,7 +216,6 @@ function EventReports() {
         data.append("eventObjectives", obj);
       });
 
-      // Split and append outcomes
       const outcomesArray = String(editFormData.outcomes)
         .split("\n")
         .map((line) => line.trim())
@@ -237,7 +227,6 @@ function EventReports() {
       const response = await updateEventReport(editReport._id || editReport.id, data);
       alert(response.message || "Event report updated successfully.");
 
-      // Clean up object URLs
       newPhotos.forEach((p) => {
         if (p.preview.startsWith("blob:")) {
           URL.revokeObjectURL(p.preview);
@@ -254,12 +243,10 @@ function EventReports() {
     }
   };
 
-  // PDF Export
   const handleDownloadPdf = (report) => {
     const reportId = report.reportId || report._id || report.id;
     const fileName = `Event_Report_${report.eventName}_${reportId}.pdf`;
-    
-    // If already rendered below, download instantly
+
     if (selectedReport && (selectedReport._id === report._id || selectedReport.id === report.id)) {
       downloadEventReportPdf(fileName);
     } else {
@@ -270,7 +257,6 @@ function EventReports() {
     }
   };
 
-  // Delete Action
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this event report?")) {
       return;
@@ -288,7 +274,6 @@ function EventReports() {
     }
   };
 
-  // Client-side filtering of reports
   const filteredReports = reports.filter((report) => {
     const query = searchQuery.toLowerCase();
     const matchesSearch =
@@ -308,302 +293,231 @@ function EventReports() {
   });
 
   return (
-    <section className="page-transition space-y-7">
-      {/* Page Header */}
-      <div className="fade-in rounded-3xl border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-slate-50 p-7 shadow-soft lg:p-9">
-        <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Report Explorer</p>
-        <h2 className="mt-2 text-4xl font-black tracking-tight text-slate-950 font-sans">Event Report Records</h2>
-        <p className="mt-2 max-w-4xl text-lg leading-8 text-slate-600 font-sans">
-          View, edit, delete, and export saved event reports.
+    <section className="space-y-8 pb-10">
+      {/* Breadcrumb Navigation */}
+      <nav className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
+        <Link to="/report-dashboard" className="hover:text-purple-600 transition">
+          Report Studio
+        </Link>
+        <span>/</span>
+        <span className="text-slate-800">Event Report Records</span>
+      </nav>
+
+      {/* Page Hero */}
+      <div className="rounded-3xl border border-purple-100/80 bg-gradient-to-br from-purple-50/60 via-white to-pink-50/40 p-7 shadow-xs lg:p-9 animate-hero-fade-in">
+        <span className="text-xs font-black uppercase tracking-widest text-purple-600">
+          REPORT REPOSITORY
+        </span>
+        <h1 className="mt-2 text-3xl sm:text-4xl font-black text-slate-950 tracking-tight font-sans">
+          Event Report Records
+        </h1>
+        <p className="mt-2 max-w-3xl text-base text-slate-600 font-medium leading-relaxed">
+          Manage saved academic event reports. Filter by status, search by speaker or venue, update narrative details, or download A4 PDF documents.
         </p>
       </div>
 
       {/* Error Alert */}
       {errorMessage && (
-        <div className="rounded-2xl border border-rose-100 bg-rose-50 p-5 text-sm font-bold text-rose-700">
-          <p className="flex items-center gap-2">
-            <span>⚠️</span> {errorMessage}
-          </p>
+        <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-xs font-bold text-rose-700 flex items-center justify-between">
+          <span>⚠️ {errorMessage}</span>
           <button
             onClick={fetchReports}
-            className="mt-3 rounded-lg bg-rose-600 px-4 py-2 text-white hover:bg-rose-700 transition"
+            className="rounded-lg bg-rose-600 px-3 py-1.5 text-white hover:bg-rose-700 transition"
           >
             Retry Fetching
           </button>
         </div>
       )}
 
-      {/* Filters Panel */}
-      <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 bg-white p-5 rounded-2xl border border-slate-200 shadow-soft">
-        <label className="grid gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-500">
-          Search Records
+      {/* Search & Filter Toolbar */}
+      <div className="rounded-2xl border border-slate-200/90 bg-white/95 p-4 shadow-md backdrop-blur-xl">
+        <div className="grid gap-3 sm:grid-cols-3">
           <input
             type="text"
-            placeholder="Search by event, speaker, venue, or ID..."
+            placeholder="Search by event title, speaker, or ID..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm outline-none transition focus:border-primary-500 focus:bg-white"
+            className={inputClass}
           />
-        </label>
-        <label className="grid gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-500">
-          Status
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm outline-none transition focus:border-primary-500 focus:bg-white"
+            className={inputClass}
           >
-            <option value="All">All Statuses</option>
+            <option value="All">Status: All</option>
             <option value="Generated">Generated</option>
             <option value="Draft">Draft</option>
           </select>
-        </label>
-        <label className="grid gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-500 sm:col-span-2 md:col-span-1">
-          Event Date (Optional)
           <input
             type="date"
             value={dateFilter}
             onChange={(e) => setDateFilter(e.target.value)}
-            className="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm outline-none transition focus:border-primary-500 focus:bg-white"
+            className={inputClass}
           />
-        </label>
+        </div>
+        <div className="mt-3 flex items-center justify-between text-xs font-bold text-slate-500 px-1">
+          <span>Showing {filteredReports.length} of {reports.length} report records</span>
+          {(searchQuery || statusFilter !== "All" || dateFilter) && (
+            <button
+              onClick={() => {
+                setSearchQuery("");
+                setStatusFilter("All");
+                setDateFilter("");
+              }}
+              className="text-purple-600 hover:underline"
+            >
+              Reset Filters
+            </button>
+          )}
+        </div>
       </div>
 
+      {/* Records Table */}
       {isLoading ? (
-        <div className="flex h-60 items-center justify-center rounded-3xl border border-slate-100 bg-white shadow-soft">
+        <div className="flex h-48 items-center justify-center rounded-3xl border border-slate-200 bg-white shadow-xs">
           <div className="flex flex-col items-center gap-3">
-            <div className="h-10 w-10 animate-spin rounded-full border-4 border-slate-200 border-t-primary-600" />
-            <p className="text-base font-bold text-slate-500">Loading event reports...</p>
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-purple-100 border-t-purple-600" />
+            <p className="text-xs font-bold text-slate-500">Fetching report records...</p>
           </div>
         </div>
       ) : reports.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-slate-300 bg-white p-16 text-center shadow-soft">
-          <span className="text-5xl mb-4">📋</span>
+        <div className="rounded-3xl border border-dashed border-slate-300 bg-white/80 p-12 text-center shadow-xs">
+          <span className="text-4xl block mb-3">📋</span>
           <h3 className="text-xl font-black text-slate-950 font-sans">No event reports found.</h3>
-          <p className="mt-2 max-w-md text-base leading-6 text-slate-600 font-sans">
-            Drafts and generated academic event reports will appear here.
+          <p className="mt-2 text-sm text-slate-600 max-w-md mx-auto">
+            Drafts and generated event reports will be displayed in this table.
           </p>
           <Link
             to="/create-event-report"
-            className="mt-6 button-press soft-hover inline-flex items-center justify-center rounded-xl bg-primary-600 px-6 py-3 text-base font-bold text-white shadow-sm transition hover:bg-primary-700"
+            className="mt-5 inline-flex items-center gap-2 rounded-xl bg-purple-600 px-5 py-2.5 text-sm font-black text-white hover:bg-purple-700 transition"
           >
-            Create Event Report
+            <span>Create First Report</span>
+            <span>→</span>
           </Link>
         </div>
-      ) : filteredReports.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-slate-300 bg-white p-16 text-center shadow-soft">
-          <span className="text-5xl mb-4">📋</span>
-          <h3 className="text-xl font-black text-slate-950 font-sans">No event reports found.</h3>
-          <p className="mt-2 max-w-md text-base leading-6 text-slate-600 font-sans">
-            No event reports match your search query or status criteria.
-          </p>
-        </div>
       ) : (
-        <div className="space-y-7">
-          {/* Reports Table Card */}
-          <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-soft">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="border-b border-slate-200 bg-slate-50/50 text-xs font-black uppercase tracking-wider text-slate-400">
-                    <th className="p-4 sm:p-5">Event Name</th>
-                    <th className="p-4 sm:p-5">Event Date</th>
-                    <th className="p-4 sm:p-5">Resource Person</th>
-                    <th className="p-4 sm:p-5">Venue</th>
-                    <th className="p-4 sm:p-5">No. of Participants</th>
-                    <th className="p-4 sm:p-5">Report ID</th>
-                    <th className="p-4 sm:p-5">Status</th>
-                    <th className="p-4 sm:p-5">Created Date</th>
-                    <th className="p-4 sm:p-5 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {filteredReports.map((report) => {
-                    const reportId = report.reportId || report._id || report.id;
-                    const isSelected = selectedReport && (selectedReport._id === report._id || selectedReport.id === report.id);
-                    return (
-                      <tr
-                        key={report._id || report.id}
-                        className={`hover:bg-blue-50/20 transition ${
-                          isSelected ? "bg-blue-50/40 font-semibold" : ""
-                        }`}
-                      >
-                        <td className="p-4 sm:p-5 font-bold text-slate-900 min-w-[180px]">
-                          {report.eventName}
-                        </td>
-                        <td className="p-4 sm:p-5 text-slate-600 whitespace-nowrap">
-                          {report.eventDate || report.dateOfEvent}
-                        </td>
-                        <td className="p-4 sm:p-5 text-slate-600 min-w-[150px]">
-                          {report.resourcePerson}
-                        </td>
-                        <td className="p-4 sm:p-5 text-slate-600 whitespace-nowrap">
-                          {report.venue}
-                        </td>
-                        <td className="p-4 sm:p-5 text-slate-600 text-center">
-                          {report.numberOfParticipants || report.noOfParticipants}
-                        </td>
-                        <td className="p-4 sm:p-5 text-slate-500 font-mono text-xs whitespace-nowrap">
-                          {reportId}
-                        </td>
-                        <td className="p-4 sm:p-5 whitespace-nowrap">
-                          <span
-                            className={`inline-flex rounded-full px-2.5 py-1 text-xs font-bold uppercase tracking-wider ${
-                              report.status === "draft" || report.status === "Draft"
-                                ? "bg-amber-100 text-amber-800"
-                                : "bg-emerald-100 text-emerald-800"
+        <div className="rounded-3xl border border-slate-200/90 bg-white/90 shadow-xl overflow-hidden backdrop-blur-md">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs sm:text-sm">
+              <thead>
+                <tr className="border-b border-slate-200 bg-slate-50/70 text-slate-400 font-black uppercase tracking-wider text-[10px]">
+                  <th className="py-4 px-4">Event Name</th>
+                  <th className="py-4 px-4">Date</th>
+                  <th className="py-4 px-4">Resource Person</th>
+                  <th className="py-4 px-4">Venue</th>
+                  <th className="py-4 px-4">Status</th>
+                  <th className="py-4 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {filteredReports.map((report) => {
+                  const isSelected = selectedReport && (selectedReport._id === report._id || selectedReport.id === report.id);
+                  return (
+                    <tr
+                      key={report._id || report.id}
+                      className={`hover:bg-purple-50/30 transition ${
+                        isSelected ? "bg-purple-50/50 font-semibold" : ""
+                      }`}
+                    >
+                      <td className="py-3.5 px-4 font-bold text-slate-950 min-w-[180px]">
+                        {report.eventName}
+                      </td>
+                      <td className="py-3.5 px-4 font-medium text-slate-600 whitespace-nowrap">
+                        {report.eventDate || report.dateOfEvent}
+                      </td>
+                      <td className="py-3.5 px-4 font-medium text-slate-600 min-w-[140px]">
+                        {report.resourcePerson}
+                      </td>
+                      <td className="py-3.5 px-4 font-medium text-slate-600">{report.venue}</td>
+                      <td className="py-3.5 px-4 whitespace-nowrap">
+                        <StatusPill status={report.status || "Generated"} />
+                      </td>
+                      <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                        <div className="inline-flex items-center gap-1.5">
+                          <button
+                            onClick={() => handleView(report)}
+                            className={`rounded-lg px-3 py-1.5 text-xs font-bold transition ${
+                              isSelected
+                                ? "bg-purple-600 text-white"
+                                : "border border-purple-200 bg-purple-50 text-purple-700 hover:bg-purple-100"
                             }`}
                           >
-                            {report.status}
-                          </span>
-                        </td>
-                        <td className="p-4 sm:p-5 text-slate-500 whitespace-nowrap">
-                          {new Date(report.createdAt || Date.now()).toLocaleDateString()}
-                        </td>
-                        <td className="p-4 sm:p-5 text-right whitespace-nowrap">
-                          <div className="inline-flex gap-2">
-                            <button
-                              onClick={() => handleView(report)}
-                              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
-                                isSelected
-                                  ? "bg-primary-600 text-white"
-                                  : "bg-blue-50 text-primary-700 hover:bg-blue-100"
-                              }`}
-                            >
-                              View
-                            </button>
-                            <button
-                              onClick={() => handleEditClick(report)}
-                              className="px-3 py-1.5 bg-slate-50 text-slate-700 hover:bg-slate-100 rounded-lg text-xs font-bold transition"
-                            >
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => handleDownloadPdf(report)}
-                              className="px-3 py-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-xs font-bold transition"
-                            >
-                              Download PDF
-                            </button>
-                            <button
-                              onClick={() => handleDelete(report._id || report.id)}
-                              className="px-3 py-1.5 bg-rose-50 text-rose-700 hover:bg-rose-100 rounded-lg text-xs font-bold transition"
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                            View
+                          </button>
+                          <button
+                            onClick={() => handleEditClick(report)}
+                            className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-100 transition"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDownloadPdf(report)}
+                            className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-emerald-700 transition"
+                          >
+                            PDF
+                          </button>
+                          <button
+                            onClick={() => handleDelete(report._id || report.id)}
+                            className="rounded-lg border border-rose-200 bg-rose-50 px-2.5 py-1.5 text-xs font-bold text-rose-700 hover:bg-rose-100 transition"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
-
-          {/* Selected Report Details Card & Live Preview Container */}
-          {selectedReport && (
-            <div id="report-preview-section" className="slide-up rounded-3xl border border-blue-100 bg-slate-50 p-6 shadow-xl space-y-6">
-              <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-                <div>
-                  <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Event Report Details</p>
-                  <h3 className="mt-1 text-2xl font-black text-slate-950 font-sans">
-                    {selectedReport.eventName}
-                  </h3>
-                </div>
-                <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-                  <button
-                    onClick={() => handleDownloadPdf(selectedReport)}
-                    className="button-press soft-hover px-4 py-2 bg-emerald-600 hover:bg-emerald-750 text-white font-bold text-sm shadow-sm transition rounded-xl"
-                  >
-                    Download Report PDF
-                  </button>
-                  <span className="w-fit rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-sm font-black text-primary-700">
-                    Status: {selectedReport.status?.toUpperCase()}
-                  </span>
-                </div>
-              </div>
-
-              {/* View Details Card */}
-              <div className="bg-white border border-blue-100 rounded-2xl p-6 shadow-soft grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-                <div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Report Date</span>
-                  <span className="text-sm font-semibold text-slate-800">{selectedReport.reportDate}</span>
-                </div>
-                <div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Date of Event</span>
-                  <span className="text-sm font-semibold text-slate-800">{selectedReport.eventDate || selectedReport.dateOfEvent}</span>
-                </div>
-                <div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Time</span>
-                  <span className="text-sm font-semibold text-slate-800">{selectedReport.eventTime || selectedReport.time}</span>
-                </div>
-                <div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Resource Person</span>
-                  <span className="text-sm font-semibold text-slate-800">{selectedReport.resourcePerson}</span>
-                </div>
-                <div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Event Name</span>
-                  <span className="text-sm font-bold text-primary-700">{selectedReport.eventName}</span>
-                </div>
-                <div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">No. of Participants</span>
-                  <span className="text-sm font-semibold text-slate-800">{selectedReport.numberOfParticipants || selectedReport.noOfParticipants}</span>
-                </div>
-                <div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Attendee</span>
-                  <span className="text-sm font-semibold text-slate-800">{selectedReport.attendee}</span>
-                </div>
-                <div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Venue</span>
-                  <span className="text-sm font-semibold text-slate-800">{selectedReport.venue}</span>
-                </div>
-                <div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Coordinator</span>
-                  <span className="text-sm font-semibold text-slate-800">{selectedReport.eventCoordinatorName || selectedReport.eventCoordinator}</span>
-                </div>
-                <div className="sm:col-span-2 md:col-span-1">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Dean</span>
-                  <span className="text-sm font-semibold text-slate-800">{selectedReport.deanName}</span>
-                </div>
-              </div>
-
-              <div className="mx-auto w-full flex justify-center">
-                <EventReportPreview data={selectedReport} />
-              </div>
-            </div>
-          )}
         </div>
       )}
 
-      {/* Edit Modal Overlay */}
+      {/* Selected Report Preview & Details */}
+      {selectedReport && (
+        <section id="report-preview-section" className="rounded-3xl border border-slate-200/90 bg-slate-100/70 p-6 sm:p-8 shadow-xl space-y-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200 pb-4">
+            <div>
+              <span className="text-xs font-black uppercase tracking-wider text-purple-600">Active Document View</span>
+              <h3 className="text-xl font-black text-slate-950 font-sans">{selectedReport.eventName}</h3>
+            </div>
+            <button
+              onClick={() => handleDownloadPdf(selectedReport)}
+              className="rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-black text-white hover:bg-emerald-700 transition shadow-xs"
+            >
+              Export A4 PDF
+            </button>
+          </div>
+
+          <div className="w-full flex justify-center overflow-x-auto py-2">
+            <EventReportPreview data={selectedReport} />
+          </div>
+        </section>
+      )}
+
+      {/* Edit Event Report Modal Overlay */}
       {isEditing && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-4xl rounded-3xl bg-white shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            {/* Modal Header */}
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-full max-w-4xl rounded-3xl bg-white shadow-2xl overflow-hidden border border-slate-100 max-h-[90vh] flex flex-col">
             <div className="bg-slate-50 px-6 py-4 border-b border-slate-100 flex items-center justify-between">
               <div>
                 <h3 className="text-lg font-black text-slate-950">Edit Event Report</h3>
-                <p className="text-xs text-slate-500 font-medium">Modify report metadata and upload photos.</p>
+                <p className="text-xs font-semibold text-slate-500">Modify event details, outcomes, and photo uploads</p>
               </div>
               <button
                 onClick={() => {
                   setIsEditing(false);
                   setEditReport(null);
-                  newPhotos.forEach((p) => {
-                    if (p.preview.startsWith("blob:")) {
-                      URL.revokeObjectURL(p.preview);
-                    }
-                  });
                 }}
-                className="text-slate-400 hover:text-slate-600 transition text-sm font-bold p-1"
+                className="text-slate-400 hover:text-slate-600 transition font-bold"
               >
                 ✕
               </button>
             </div>
 
-            {/* Modal Body (Scrollable) */}
             <div className="p-6 overflow-y-auto space-y-6 flex-1">
-              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                <label className="grid gap-1.5 text-xs font-bold text-slate-700">
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <label className="grid gap-1 text-xs font-bold text-slate-700">
                   Report Date *
                   <input
                     className={inputClass}
@@ -612,8 +526,7 @@ function EventReports() {
                     onChange={(e) => setEditFormData({ ...editFormData, reportDate: e.target.value })}
                   />
                 </label>
-
-                <label className="grid gap-1.5 text-xs font-bold text-slate-700">
+                <label className="grid gap-1 text-xs font-bold text-slate-700">
                   Date of Event *
                   <input
                     className={inputClass}
@@ -622,72 +535,34 @@ function EventReports() {
                     onChange={(e) => setEditFormData({ ...editFormData, dateOfEvent: e.target.value })}
                   />
                 </label>
-
-                <label className="grid gap-1.5 text-xs font-bold text-slate-700">
+                <label className="grid gap-1 text-xs font-bold text-slate-700">
                   Time *
                   <input
                     className={inputClass}
                     type="text"
                     value={editFormData.time}
                     onChange={(e) => setEditFormData({ ...editFormData, time: e.target.value })}
-                    placeholder="e.g. 10:00 AM to 1:00 PM"
                   />
                 </label>
-
-                <label className="grid gap-1.5 text-xs font-bold text-slate-700">
+                <label className="grid gap-1 text-xs font-bold text-slate-700">
                   Resource Person *
                   <input
                     className={inputClass}
                     type="text"
                     value={editFormData.resourcePerson}
                     onChange={(e) => setEditFormData({ ...editFormData, resourcePerson: e.target.value })}
-                    placeholder="Speaker details"
                   />
                 </label>
-
-                <label className="grid gap-1.5 text-xs font-bold text-slate-700 md:col-span-2 xl:col-span-1">
-                  Name of the Event *
+                <label className="grid gap-1 text-xs font-bold text-slate-700">
+                  Name of Event *
                   <input
                     className={inputClass}
                     type="text"
                     value={editFormData.eventName}
                     onChange={(e) => setEditFormData({ ...editFormData, eventName: e.target.value })}
-                    placeholder="Event title"
                   />
                 </label>
-
-                <label className="grid gap-1.5 text-xs font-bold text-slate-700">
-                  No. of Participants *
-                  <input
-                    className={inputClass}
-                    type="number"
-                    value={editFormData.noOfParticipants}
-                    onChange={(e) => setEditFormData({ ...editFormData, noOfParticipants: e.target.value })}
-                  />
-                </label>
-
-                <label className="grid gap-1.5 text-xs font-bold text-slate-700">
-                  Attendee *
-                  <input
-                    className={inputClass}
-                    type="text"
-                    value={editFormData.attendee}
-                    onChange={(e) => setEditFormData({ ...editFormData, attendee: e.target.value })}
-                    placeholder="Target audience"
-                  />
-                </label>
-
-                <label className="grid gap-1.5 text-xs font-bold text-slate-700">
-                  Venue *
-                  <input
-                    className={inputClass}
-                    type="text"
-                    value={editFormData.venue}
-                    onChange={(e) => setEditFormData({ ...editFormData, venue: e.target.value })}
-                  />
-                </label>
-
-                <label className="grid gap-1.5 text-xs font-bold text-slate-700">
+                <label className="grid gap-1 text-xs font-bold text-slate-700">
                   Status *
                   <select
                     className={inputClass}
@@ -700,185 +575,96 @@ function EventReports() {
                 </label>
               </div>
 
-              {/* Textareas */}
-              <div className="space-y-4">
-                <label className="grid gap-1.5 text-xs font-bold text-slate-700">
+              <div className="space-y-3">
+                <label className="grid gap-1 text-xs font-bold text-slate-700">
                   Event Outline *
                   <textarea
                     className={textareaClass}
                     value={editFormData.eventOutline}
                     onChange={(e) => setEditFormData({ ...editFormData, eventOutline: e.target.value })}
-                    placeholder="Enter outline summary..."
                   />
                 </label>
-
-                <label className="grid gap-1.5 text-xs font-bold text-slate-700">
-                  Objectives of the Event * (one objective per line)
+                <label className="grid gap-1 text-xs font-bold text-slate-700">
+                  Objectives (one per line) *
                   <textarea
                     className={textareaClass}
                     value={editFormData.objectives}
                     onChange={(e) => setEditFormData({ ...editFormData, objectives: e.target.value })}
-                    placeholder="Enter objectives..."
                   />
                 </label>
-
-                <label className="grid gap-1.5 text-xs font-bold text-slate-700">
-                  Outcomes of the Event * (one outcome per line)
+                <label className="grid gap-1 text-xs font-bold text-slate-700">
+                  Outcomes (one per line) *
                   <textarea
                     className={textareaClass}
                     value={editFormData.outcomes}
                     onChange={(e) => setEditFormData({ ...editFormData, outcomes: e.target.value })}
-                    placeholder="Enter outcomes..."
                   />
                 </label>
               </div>
 
-              {/* Photo Upload and caption */}
-              <div className="border-t border-slate-100 pt-5 space-y-4">
-                <h4 className="text-sm font-bold text-slate-900">Manage Event Photos</h4>
-                <div className="grid gap-4 md:grid-cols-2">
-                  <label className="grid gap-1.5 text-xs font-bold text-slate-700">
-                    Photo Caption
+              {/* Photo Management */}
+              <div className="border-t border-slate-100 pt-4 space-y-3">
+                <h4 className="text-xs font-black uppercase text-slate-800 tracking-wider">Manage Photos</h4>
+                <div className="flex items-center gap-3">
+                  <label className="cursor-pointer rounded-lg bg-purple-600 hover:bg-purple-700 px-3 py-1.5 text-xs font-bold text-white transition">
+                    Add Replacement Photos
                     <input
-                      className={inputClass}
-                      type="text"
-                      value={editFormData.photoCaption}
-                      onChange={(e) => setEditFormData({ ...editFormData, photoCaption: e.target.value })}
-                      placeholder="Caption below photos"
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={handleEditPhotoChange}
+                      className="hidden"
                     />
                   </label>
-
-                  <div className="rounded-xl border-2 border-dashed border-slate-200 bg-slate-50/50 p-4 transition hover:bg-slate-50">
-                    <label className="block text-xs font-bold text-slate-700 mb-1.5">Add New Photos</label>
-                    <div className="flex items-center gap-3">
-                      <label className="cursor-pointer rounded-lg bg-primary-600 hover:bg-primary-700 px-3 py-1.5 text-xs font-bold text-white transition shadow-sm inline-block">
-                        Choose files
-                        <input
-                          type="file"
-                          multiple
-                          accept="image/*"
-                          onChange={handleEditPhotoChange}
-                          className="hidden"
-                        />
-                      </label>
-                      <span className="text-[11px] text-slate-500">
-                        {(existingPhotos.length - removedPhotos.length) + newPhotos.length}/4 total photos selected
-                      </span>
-                    </div>
-                  </div>
                 </div>
 
-                {/* Photo Thumbnails Display */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                  {/* Saved photos */}
-                  {existingPhotos.map((photoPath, index) => {
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  {existingPhotos.map((photoPath, idx) => {
                     const isRemoved = removedPhotos.includes(photoPath);
                     return (
-                      <div
-                        key={`existing-${index}`}
-                        className={`relative rounded-xl overflow-hidden border aspect-square bg-slate-100 shadow-soft transition duration-150 ${
-                          isRemoved ? "opacity-35 border-rose-300" : "border-slate-200"
-                        }`}
-                      >
-                        <img
-                          src={getAssetUrl(photoPath)}
-                          className="w-full h-full object-cover"
-                          alt={`Existing ${index + 1}`}
-                        />
+                      <div key={idx} className={`relative rounded-xl overflow-hidden border aspect-square ${isRemoved ? "opacity-30 border-rose-300" : "border-slate-200"}`}>
+                        <img src={getAssetUrl(photoPath)} className="w-full h-full object-cover" alt="" />
                         {isRemoved ? (
-                          <div className="absolute inset-0 bg-rose-50/10 flex items-center justify-center">
-                            <button
-                              type="button"
-                              onClick={() => handleRestoreExistingPhoto(photoPath)}
-                              className="bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold px-2.5 py-1 rounded shadow"
-                            >
-                              Keep Photo
-                            </button>
-                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleRestoreExistingPhoto(photoPath)}
+                            className="absolute inset-0 m-auto h-7 w-20 bg-emerald-600 text-white text-[10px] font-bold rounded"
+                          >
+                            Keep
+                          </button>
                         ) : (
-                          <div className="absolute inset-0 bg-black/45 opacity-0 hover:opacity-100 transition flex items-center justify-center">
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveExistingPhoto(photoPath)}
-                              className="rounded-full bg-rose-600 p-2 text-white hover:bg-rose-700 transition"
-                            >
-                              🗑️
-                            </button>
-                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveExistingPhoto(photoPath)}
+                            className="absolute top-1 right-1 rounded-full bg-rose-600 p-1 text-white text-xs"
+                          >
+                            ✕
+                          </button>
                         )}
-                        <span className="absolute bottom-2 left-2 bg-black/60 text-white text-[9px] font-bold px-2 py-0.5 rounded font-sans uppercase">
-                          Saved
-                        </span>
                       </div>
                     );
                   })}
-
-                  {/* New uploaded photos */}
-                  {newPhotos.map((photo, index) => (
-                    <div
-                      key={`new-${index}`}
-                      className="relative rounded-xl overflow-hidden border border-primary-200 aspect-square bg-slate-50 shadow-soft"
-                    >
-                      <img
-                        src={photo.preview}
-                        className="w-full h-full object-cover"
-                        alt={`New ${index + 1}`}
-                      />
-                      <div className="absolute inset-0 bg-black/45 opacity-0 hover:opacity-100 transition flex items-center justify-center">
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveNewPhoto(index)}
-                          className="rounded-full bg-rose-600 p-2 text-white hover:bg-rose-700 transition"
-                        >
-                          🗑️
-                        </button>
-                      </div>
-                      <span className="absolute bottom-2 left-2 bg-primary-600 text-white text-[9px] font-bold px-2 py-0.5 rounded font-sans uppercase">
-                        New
-                      </span>
+                  {newPhotos.map((photo, idx) => (
+                    <div key={`new-${idx}`} className="relative rounded-xl overflow-hidden border border-purple-300 aspect-square">
+                      <img src={photo.preview} className="w-full h-full object-cover" alt="" />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveNewPhoto(idx)}
+                        className="absolute top-1 right-1 rounded-full bg-rose-600 p-1 text-white text-xs"
+                      >
+                        ✕
+                      </button>
                     </div>
                   ))}
                 </div>
               </div>
-
-              {/* Signatures */}
-              <div className="border-t border-slate-100 pt-5 grid gap-4 md:grid-cols-2">
-                <label className="grid gap-1.5 text-xs font-bold text-slate-700">
-                  Event Coordinator Name *
-                  <input
-                    className={inputClass}
-                    type="text"
-                    value={editFormData.eventCoordinator}
-                    onChange={(e) => setEditFormData({ ...editFormData, eventCoordinator: e.target.value })}
-                  />
-                </label>
-
-                <label className="grid gap-1.5 text-xs font-bold text-slate-700">
-                  Dean Name *
-                  <input
-                    className={inputClass}
-                    type="text"
-                    value={editFormData.deanName}
-                    onChange={(e) => setEditFormData({ ...editFormData, deanName: e.target.value })}
-                  />
-                </label>
-              </div>
             </div>
 
-            {/* Modal Footer */}
-            <div className="bg-slate-50 px-6 py-4 border-t border-slate-100 flex flex-col gap-3 sm:flex-row sm:justify-end">
+            <div className="bg-slate-50 px-6 py-4 border-t border-slate-100 flex justify-end gap-3">
               <button
                 type="button"
-                onClick={() => {
-                  setIsEditing(false);
-                  setEditReport(null);
-                  newPhotos.forEach((p) => {
-                    if (p.preview.startsWith("blob:")) {
-                      URL.revokeObjectURL(p.preview);
-                    }
-                  });
-                }}
-                className="button-press w-full rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-50 sm:w-auto"
+                onClick={() => setIsEditing(false)}
+                className="rounded-xl border border-slate-200 bg-white px-5 py-2 text-xs font-bold text-slate-700"
               >
                 Cancel
               </button>
@@ -886,7 +672,7 @@ function EventReports() {
                 type="button"
                 onClick={handleSaveEdit}
                 disabled={isSavingEdit}
-                className="button-press w-full rounded-xl bg-primary-600 hover:bg-primary-700 px-6 py-2.5 text-sm font-bold text-white shadow-sm transition disabled:opacity-75 disabled:cursor-not-allowed sm:w-auto"
+                className="rounded-xl bg-purple-600 px-5 py-2 text-xs font-black text-white hover:bg-purple-700 transition disabled:opacity-60"
               >
                 {isSavingEdit ? "Saving..." : "Save Changes"}
               </button>

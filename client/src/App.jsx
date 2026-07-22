@@ -1,7 +1,8 @@
 import { Navigate, Route, Routes } from "react-router-dom";
-import Footer from "./components/Footer.jsx";
-import Navbar from "./components/Navbar.jsx";
-import Sidebar from "./components/Sidebar.jsx";
+import LandingLayout from "./layouts/LandingLayout.jsx";
+import CertificateLayout from "./layouts/CertificateLayout.jsx";
+import ReportLayout from "./layouts/ReportLayout.jsx";
+
 import Dashboard from "./pages/Dashboard.jsx";
 import CertificateDashboard from "./pages/CertificateDashboard.jsx";
 import ReportDashboard from "./pages/ReportDashboard.jsx";
@@ -15,30 +16,32 @@ import EventReports from "./pages/EventReports.jsx";
 
 function App() {
   return (
-    <div className="min-h-screen bg-slate-50 text-base text-slate-900">
-      <Navbar />
-      <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-6 px-4 py-6 sm:px-5 lg:flex-row lg:px-6">
-        <Sidebar />
-        <main className="min-w-0 flex-1">
-          <div className="min-w-0">
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/certificate-dashboard" element={<CertificateDashboard />} />
-              <Route path="/report-dashboard" element={<ReportDashboard />} />
-              <Route path="/create-certificate" element={<CreateCertificate />} />
-              <Route path="/templates" element={<Templates />} />
-              <Route path="/categories" element={<Categories />} />
-              <Route path="/bulk-generate" element={<BulkGenerate />} />
-              <Route path="/generated-certificates" element={<GeneratedCertificates />} />
-              <Route path="/create-event-report" element={<CreateEventReport />} />
-              <Route path="/event-reports" element={<EventReports />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </div>
-          <Footer />
-        </main>
-      </div>
-    </div>
+    <Routes>
+      {/* 1. Public Landing Layout */}
+      <Route element={<LandingLayout />}>
+        <Route path="/" element={<Dashboard />} />
+      </Route>
+
+      {/* 2. Certificate Module Layout */}
+      <Route element={<CertificateLayout />}>
+        <Route path="/certificate-dashboard" element={<CertificateDashboard />} />
+        <Route path="/create-certificate" element={<CreateCertificate />} />
+        <Route path="/templates" element={<Templates />} />
+        <Route path="/categories" element={<Categories />} />
+        <Route path="/bulk-generate" element={<BulkGenerate />} />
+        <Route path="/generated-certificates" element={<GeneratedCertificates />} />
+      </Route>
+
+      {/* 3. Report Module Layout */}
+      <Route element={<ReportLayout />}>
+        <Route path="/report-dashboard" element={<ReportDashboard />} />
+        <Route path="/create-event-report" element={<CreateEventReport />} />
+        <Route path="/event-reports" element={<EventReports />} />
+      </Route>
+
+      {/* Catch-all redirect to Landing */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }
 

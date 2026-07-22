@@ -2,6 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --background: #090d16;
+  --surface: #0f172a;
+  --surface-elevated: #1e293b;
+  --border: rgba(255, 255, 255, 0.1);
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --certificate-primary: #2563eb;
+  --certificate-secondary: #4f46e5;
+  --report-primary: #9333ea;
+  --report-secondary: #db2777;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1.5rem;
+  --shadow-soft: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
+  --shadow-elevated: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -20,6 +41,7 @@ button {
   font: inherit;
 }
 
+/* Base Keyframe Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -110,6 +132,125 @@ button {
   }
 }
 
+/* Extended Redesign Keyframe Animations */
+@keyframes heroReveal {
+  from {
+    opacity: 0;
+    transform: translateY(-24px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes titleBlurIn {
+  from {
+    opacity: 0;
+    filter: blur(12px);
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+@keyframes cardRevealLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes cardRevealRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes floatingOrb {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(25px, -35px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.95);
+  }
+}
+
+@keyframes animatedGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes movingBorder {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 200% 0%;
+  }
+}
+
+@keyframes iconFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes buttonArrowMove {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+}
+
+@keyframes softGlowPulse {
+  0%, 100% {
+    opacity: 0.4;
+    filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.4));
+  }
+  50% {
+    opacity: 0.8;
+    filter: drop-shadow(0 0 25px rgba(99, 102, 241, 0.7));
+  }
+}
+
+@keyframes backgroundGridMove {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 24px 24px;
+  }
+}
+
+/* Utility animation classes */
 .fade-in {
   animation: fadeIn 0.35s ease both;
 }
@@ -215,27 +356,6 @@ button {
 .card-hover:hover {
   transform: translateY(-6px);
   box-shadow: 0 22px 48px rgba(15, 23, 42, 0.13);
-}
-
-.sidebar-link {
-  position: relative;
-  overflow: hidden;
-}
-
-.sidebar-link::before {
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
-  content: "";
-  height: 100%;
-  left: -120%;
-  position: absolute;
-  top: 0;
-  transform: skewX(-18deg);
-  transition: left 0.5s ease;
-  width: 80%;
-}
-
-.sidebar-link:hover::before {
-  left: 120%;
 }
 
 .signature-text {
@@ -373,17 +493,6 @@ button {
   line-height: 1 !important;
 }
 
-
-.pdf-export-clone .certificate-bg-title {
-  font-size: 42px !important;
-  line-height: 1.05 !important;
-}
-
-.pdf-export-clone .certificate-bg-name {
-  font-size: 56px !important;
-  line-height: 1 !important;
-}
-
 .pdf-export-clone .certificate-bg-body {
   font-size: 16px !important;
   line-height: 1.35 !important;
@@ -394,66 +503,12 @@ button {
   line-height: 1.25 !important;
 }
 
-/* Custom Redesign Animations */
-@keyframes heroFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes floatBlob {
-  0%, 100% {
-    transform: translate(0, 0) scale(1);
-  }
-  33% {
-    transform: translate(30px, -50px) scale(1.15);
-  }
-  66% {
-    transform: translate(-20px, 20px) scale(0.9);
-  }
-}
-
-@keyframes cardSlideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes softPulse {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 0.95;
-  }
-  50% {
-    transform: scale(1.025);
-    opacity: 1;
-  }
-}
-
 .animate-hero-fade-in {
-  animation: heroFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: heroReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .animate-float-blob {
-  animation: floatBlob 15s infinite ease-in-out;
-}
-
-.animate-card-slide-up {
-  animation: cardSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.animate-soft-pulse {
-  animation: softPulse 4s infinite ease-in-out;
+  animation: floatingOrb 15s infinite ease-in-out;
 }
 
 .hover-lift {
@@ -461,6 +516,18 @@ button {
 }
 
 .hover-lift:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.15);
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.12);
+}
+
+/* Accessibility: Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

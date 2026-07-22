@@ -1,13 +1,14 @@
 import { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import EventReportPreview from "../components/EventReportPreview.jsx";
 import { createEventReport, saveDraftEventReport } from "../services/eventReportApi.js";
 import { downloadEventReportPdf } from "../utils/downloadEventReportPdf.js";
 
 const inputClass =
-  "h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-base outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-primary-100";
+  "h-11 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 text-sm font-semibold outline-none transition focus:border-purple-500 focus:bg-white focus:ring-4 focus:ring-purple-100";
 
 const textareaClass =
-  "w-full rounded-xl border border-slate-200 bg-white p-4 text-base outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-primary-100 min-h-32 resize-y";
+  "w-full rounded-xl border border-slate-200 bg-slate-50/50 p-4 text-sm font-semibold outline-none transition focus:border-purple-500 focus:bg-white focus:ring-4 focus:ring-purple-100 min-h-28 resize-y";
 
 const initialFormData = {
   reportDate: "",
@@ -55,7 +56,6 @@ function CreateEventReport() {
       ...currentData,
       [name]: value
     }));
-    // If they change any field, reset generatedReport so preview goes back to live
     if (generatedReport) {
       setGeneratedReport(null);
     }
@@ -80,7 +80,6 @@ function CreateEventReport() {
       setGeneratedReport(null);
     }
 
-    // Reset input value to allow uploading the same file again
     event.target.value = "";
   };
 
@@ -155,7 +154,6 @@ function CreateEventReport() {
     data.append("eventCoordinatorName", formData.eventCoordinator);
     data.append("deanName", formData.deanName);
 
-    // Objectives list
     const objectivesArray = formData.objectives
       .split("\n")
       .map((line) => line.trim())
@@ -164,7 +162,6 @@ function CreateEventReport() {
       data.append("eventObjectives", obj);
     });
 
-    // Outcomes list
     const outcomesArray = formData.outcomes
       .split("\n")
       .map((line) => line.trim())
@@ -173,7 +170,6 @@ function CreateEventReport() {
       data.append("eventOutcomes", out);
     });
 
-    // Photos files
     selectedPhotos.forEach((photoObj) => {
       data.append("photos", photoObj.file);
     });
@@ -224,30 +220,48 @@ function CreateEventReport() {
   };
 
   return (
-    <section className="page-transition space-y-7">
-      {/* Page Header */}
-      <div className="fade-in rounded-3xl border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-slate-50 p-7 shadow-soft lg:p-9">
-        <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Report Builder</p>
-        <h2 className="mt-2 text-4xl font-black tracking-tight text-slate-950">Create Event Report</h2>
-        <p className="mt-2 max-w-4xl text-lg leading-8 text-slate-600">
-          Enter event details to generate a structured event report preview.
+    <section className="space-y-8 pb-10">
+      {/* Breadcrumb Navigation */}
+      <nav className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
+        <Link to="/report-dashboard" className="hover:text-purple-600 transition">
+          Report Studio
+        </Link>
+        <span>/</span>
+        <span className="text-slate-800">Create Event Report</span>
+      </nav>
+
+      {/* Page Hero */}
+      <div className="rounded-3xl border border-purple-100/80 bg-gradient-to-br from-purple-50/60 via-white to-pink-50/40 p-7 shadow-xs lg:p-9 animate-hero-fade-in">
+        <span className="text-xs font-black uppercase tracking-widest text-purple-600">
+          REPORT DOCUMENT EDITOR
+        </span>
+        <h1 className="mt-2 text-3xl sm:text-4xl font-black text-slate-950 tracking-tight font-sans">
+          Create Event Report
+        </h1>
+        <p className="mt-2 max-w-3xl text-base text-slate-600 font-medium leading-relaxed">
+          Fill in event administration details, outline, objectives, learning outcomes, and attach photos to format an A4 academic report.
         </p>
       </div>
 
-      {/* Form Container */}
+      {/* Editor Form Container */}
       <form
-        className="slide-up rounded-3xl border border-blue-100 bg-white p-6 shadow-xl lg:p-8 space-y-8"
+        className="rounded-3xl border border-slate-200/90 bg-white/90 p-6 sm:p-8 shadow-xl backdrop-blur-md space-y-8"
         onSubmit={(event) => event.preventDefault()}
       >
-        {/* Basic Details Section */}
+        {/* Section 1: Basic Administrative Details */}
         <div>
-          <h3 className="mt-1 text-2xl font-black text-slate-950">Basic Details</h3>
-          <p className="mt-1 text-base leading-7 text-slate-600">
-            Fill in the primary administrative information for the event.
-          </p>
+          <div className="flex items-center gap-3 border-b border-slate-100 pb-3 mb-5">
+            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-purple-50 text-purple-600 text-sm font-black">
+              1
+            </span>
+            <div>
+              <h3 className="text-lg font-black text-slate-950 font-sans">Basic Administrative Details</h3>
+              <p className="text-xs text-slate-500 font-semibold font-sans">Date, time, speaker, venue, and attendee numbers</p>
+            </div>
+          </div>
 
-          <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            <label className="grid gap-2 text-base font-bold text-slate-700">
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            <label className="grid gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-600">
               Report Date *
               <input
                 className={inputClass}
@@ -258,7 +272,7 @@ function CreateEventReport() {
               />
             </label>
 
-            <label className="grid gap-2 text-base font-bold text-slate-700">
+            <label className="grid gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-600">
               Date of Event *
               <input
                 className={inputClass}
@@ -269,7 +283,7 @@ function CreateEventReport() {
               />
             </label>
 
-            <label className="grid gap-2 text-base font-bold text-slate-700">
+            <label className="grid gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-600">
               Time *
               <input
                 className={inputClass}
@@ -277,23 +291,23 @@ function CreateEventReport() {
                 name="time"
                 value={formData.time}
                 onChange={handleChange}
-                placeholder="e.g., 10:00 AM to 1:00 PM"
+                placeholder="e.g. 10:00 AM to 1:00 PM"
               />
             </label>
 
-            <label className="grid gap-2 text-base font-bold text-slate-700">
-              Resource Person *
+            <label className="grid gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-600">
+              Resource Person / Speaker *
               <input
                 className={inputClass}
                 type="text"
                 name="resourcePerson"
                 value={formData.resourcePerson}
                 onChange={handleChange}
-                placeholder="Name, Designation, Organization"
+                placeholder="Name, Designation, Company"
               />
             </label>
 
-            <label className="grid gap-2 text-base font-bold text-slate-700 md:col-span-2 xl:col-span-1">
+            <label className="grid gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-600 md:col-span-2 xl:col-span-1">
               Name of the Event *
               <input
                 className={inputClass}
@@ -301,11 +315,11 @@ function CreateEventReport() {
                 name="eventName"
                 value={formData.eventName}
                 onChange={handleChange}
-                placeholder="e.g., Seminar on AI Tools"
+                placeholder="e.g. Seminar on AI & Machine Learning"
               />
             </label>
 
-            <label className="grid gap-2 text-base font-bold text-slate-700">
+            <label className="grid gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-600">
               No. of Participants *
               <input
                 className={inputClass}
@@ -313,23 +327,23 @@ function CreateEventReport() {
                 name="noOfParticipants"
                 value={formData.noOfParticipants}
                 onChange={handleChange}
-                placeholder="e.g., 50"
+                placeholder="e.g. 50"
               />
             </label>
 
-            <label className="grid gap-2 text-base font-bold text-slate-700">
-              Attendee *
+            <label className="grid gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-600">
+              Attendee / Target Group *
               <input
                 className={inputClass}
                 type="text"
                 name="attendee"
                 value={formData.attendee}
                 onChange={handleChange}
-                placeholder="e.g., B.Tech Students"
+                placeholder="e.g. B.Tech Computer Engineering Students"
               />
             </label>
 
-            <label className="grid gap-2 text-base font-bold text-slate-700">
+            <label className="grid gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-600 md:col-span-2 xl:col-span-2">
               Venue *
               <input
                 className={inputClass}
@@ -337,64 +351,74 @@ function CreateEventReport() {
                 name="venue"
                 value={formData.venue}
                 onChange={handleChange}
-                placeholder="e.g., Seminar Hall, SOE"
+                placeholder="e.g. Seminar Hall, SOE, PP Savani University"
               />
             </label>
           </div>
         </div>
 
-        {/* Report Content Section */}
-        <div className="border-t border-slate-100 pt-8">
-          <h3 className="mt-1 text-2xl font-black text-slate-950">Report Content</h3>
-          <p className="mt-1 text-base leading-7 text-slate-600">
-            Provide the descriptive outlines, objectives, and outcomes. Use new lines to create lists.
-          </p>
+        {/* Section 2: Report Content & Objectives */}
+        <div>
+          <div className="flex items-center gap-3 border-b border-slate-100 pb-3 mb-5">
+            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-teal-50 text-teal-600 text-sm font-black">
+              2
+            </span>
+            <div>
+              <h3 className="text-lg font-black text-slate-950 font-sans">Report Narrative Content</h3>
+              <p className="text-xs text-slate-500 font-semibold font-sans">Detailed outline, objectives, and outcomes (one per line)</p>
+            </div>
+          </div>
 
-          <div className="mt-6 grid gap-5 grid-cols-1">
-            <label className="grid gap-2 text-base font-bold text-slate-700">
+          <div className="grid gap-5">
+            <label className="grid gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-600">
               Event Outline *
               <textarea
                 className={textareaClass}
                 name="eventOutline"
                 value={formData.eventOutline}
                 onChange={handleChange}
-                placeholder="Enter event outline and summary..."
+                placeholder="Enter a comprehensive summary and background outline of the event session..."
               />
             </label>
 
-            <label className="grid gap-2 text-base font-bold text-slate-700">
-              Objectives of the Event * (one objective per line)
+            <label className="grid gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-600">
+              Objectives of the Event * (enter one objective per line)
               <textarea
                 className={textareaClass}
                 name="objectives"
                 value={formData.objectives}
                 onChange={handleChange}
-                placeholder="Enter event objectives (one per line)..."
+                placeholder={"1. To introduce students to core AI concepts.\n2. To demonstrate real-world industry tools."}
               />
             </label>
 
-            <label className="grid gap-2 text-base font-bold text-slate-700">
-              Outcomes of the Event * (one outcome per line)
+            <label className="grid gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-600">
+              Outcomes of the Event * (enter one outcome per line)
               <textarea
                 className={textareaClass}
                 name="outcomes"
                 value={formData.outcomes}
                 onChange={handleChange}
-                placeholder="Enter event outcomes (one per line)..."
+                placeholder={"1. Students learned practical workflow skills.\n2. Participants created working prototypes."}
               />
             </label>
           </div>
         </div>
 
-        {/* Photos Section */}
-        <div className="border-t border-slate-100 pt-8">
-          <h3 className="mt-1 text-2xl font-black text-slate-950">Photos & Caption</h3>
-          <p className="mt-1 text-base leading-7 text-slate-600">
-            Add up to 4 photos for the event report and provide a caption.
-          </p>
+        {/* Section 3: Event Photos & Caption */}
+        <div>
+          <div className="flex items-center gap-3 border-b border-slate-100 pb-3 mb-5">
+            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-pink-50 text-pink-600 text-sm font-black">
+              3
+            </span>
+            <div>
+              <h3 className="text-lg font-black text-slate-950 font-sans">Event Photos & Caption</h3>
+              <p className="text-xs text-slate-500 font-semibold font-sans">Attach up to 4 photos to be included on Page 2</p>
+            </div>
+          </div>
 
-          <div className="mt-6 grid gap-6 md:grid-cols-2">
-            <label className="grid gap-2 text-base font-bold text-slate-700">
+          <div className="grid gap-5 md:grid-cols-2">
+            <label className="grid gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-600">
               Photo Caption
               <input
                 className={inputClass}
@@ -402,15 +426,17 @@ function CreateEventReport() {
                 name="photoCaption"
                 value={formData.photoCaption}
                 onChange={handleChange}
-                placeholder="e.g., Students attending the hands-on session"
+                placeholder="e.g. Students participating during the expert talk"
               />
             </label>
 
-            <div className="rounded-2xl border-2 border-dashed border-blue-200 bg-blue-50/20 p-5 transition hover:bg-blue-50/45">
-              <label className="block text-sm font-bold text-slate-700 mb-2">Upload Photos</label>
+            <div className="rounded-2xl border-2 border-dashed border-purple-200 bg-purple-50/20 p-5 hover:bg-purple-50/50 transition relative">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                Upload Event Photos (Max 4)
+              </label>
               <div className="flex items-center gap-3">
-                <label className="cursor-pointer rounded-xl bg-primary-600 hover:bg-primary-700 px-4 py-2.5 text-sm font-bold text-white transition shadow-sm inline-block">
-                  Choose files
+                <label className="cursor-pointer rounded-xl bg-purple-600 hover:bg-purple-700 px-4 py-2 text-xs font-bold text-white transition shadow-xs inline-block">
+                  Browse Files
                   <input
                     type="file"
                     multiple
@@ -420,40 +446,36 @@ function CreateEventReport() {
                     className="hidden"
                   />
                 </label>
-                <span className="text-xs text-slate-500">
-                  {selectedPhotos.length}/4 selected
+                <span className="text-xs font-bold text-purple-700">
+                  {selectedPhotos.length}/4 Photos Selected
                 </span>
               </div>
-              <p className="text-xs text-slate-500 mt-2">
-                Supported formats: JPG, PNG, WEBP. First two photos will appear prominently in the report PDF.
-              </p>
             </div>
           </div>
 
-          {/* Premium Thumbnails Display */}
+          {/* Photo Thumbnails */}
           {selectedPhotos.length > 0 && (
-            <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
               {selectedPhotos.map((photo, index) => (
                 <div
                   key={index}
-                  className="relative group rounded-xl overflow-hidden border border-slate-200 aspect-square bg-slate-50 shadow-soft"
+                  className="relative group rounded-xl overflow-hidden border border-slate-200 aspect-square bg-slate-100 shadow-xs"
                 >
                   <img
                     src={photo.preview}
                     className="w-full h-full object-cover"
-                    alt={`Preview ${index + 1}`}
+                    alt={`Event Photo ${index + 1}`}
                   />
-                  <div className="absolute inset-0 bg-black/45 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                  <div className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
                     <button
                       type="button"
                       onClick={() => handleRemovePhoto(index)}
-                      className="rounded-full bg-rose-600 p-2 text-white hover:bg-rose-750 transition transform scale-90 group-hover:scale-100 duration-150"
-                      title="Remove Photo"
+                      className="rounded-lg bg-rose-600 px-3 py-1.5 text-xs font-black text-white hover:bg-rose-700 transition"
                     >
-                      🗑️
+                      Remove
                     </button>
                   </div>
-                  <span className="absolute bottom-2 left-2 bg-black/60 text-white text-[10px] font-bold px-2 py-0.5 rounded font-sans uppercase">
+                  <span className="absolute bottom-1.5 left-1.5 bg-slate-950/70 text-white text-[9px] font-extrabold px-2 py-0.5 rounded uppercase">
                     Photo {index + 1}
                   </span>
                 </div>
@@ -462,15 +484,20 @@ function CreateEventReport() {
           )}
         </div>
 
-        {/* Signatures Section */}
-        <div className="border-t border-slate-100 pt-8">
-          <h3 className="mt-1 text-2xl font-black text-slate-950">Signatures</h3>
-          <p className="mt-1 text-base leading-7 text-slate-600">
-            Define names of the authority figures for the report.
-          </p>
+        {/* Section 4: Authorizing Signatures */}
+        <div>
+          <div className="flex items-center gap-3 border-b border-slate-100 pb-3 mb-5">
+            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 text-sm font-black">
+              4
+            </span>
+            <div>
+              <h3 className="text-lg font-black text-slate-950 font-sans">Authorizing Signatures</h3>
+              <p className="text-xs text-slate-500 font-semibold font-sans">Names appearing at the bottom of Page 2</p>
+            </div>
+          </div>
 
-          <div className="mt-6 grid gap-5 md:grid-cols-2">
-            <label className="grid gap-2 text-base font-bold text-slate-700">
+          <div className="grid gap-5 md:grid-cols-2">
+            <label className="grid gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-600">
               Event Coordinator Name *
               <input
                 className={inputClass}
@@ -482,7 +509,7 @@ function CreateEventReport() {
               />
             </label>
 
-            <label className="grid gap-2 text-base font-bold text-slate-700">
+            <label className="grid gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-600">
               Dean Name *
               <input
                 className={inputClass}
@@ -496,12 +523,12 @@ function CreateEventReport() {
           </div>
         </div>
 
-        {/* Form Action Buttons */}
-        <div className="mt-7 pt-6 border-t border-slate-100 flex flex-col gap-3 sm:flex-row sm:flex-wrap lg:justify-end">
+        {/* Action Buttons */}
+        <div className="pt-6 border-t border-slate-100 flex flex-col gap-3 sm:flex-row sm:flex-wrap lg:justify-end">
           <button
             type="button"
             onClick={handleReset}
-            className="button-press soft-hover w-full rounded-xl border border-slate-200 bg-white px-5 py-3 text-base font-bold text-slate-700 transition hover:bg-slate-50 sm:w-auto"
+            className="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 transition active:scale-98"
           >
             Reset Form
           </button>
@@ -509,7 +536,7 @@ function CreateEventReport() {
             type="button"
             onClick={handleSaveDraft}
             disabled={isSavingDraft || isGenerating}
-            className="button-press soft-hover w-full rounded-xl border border-primary-200 bg-primary-50 px-5 py-3 text-base font-bold text-primary-700 transition hover:bg-primary-100 disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
+            className="rounded-xl border border-purple-200 bg-purple-50 px-5 py-3 text-sm font-bold text-purple-700 hover:bg-purple-100 transition disabled:opacity-60 active:scale-98"
           >
             {isSavingDraft ? "Saving Draft..." : "Save Draft"}
           </button>
@@ -517,15 +544,15 @@ function CreateEventReport() {
             type="button"
             onClick={handleGenerateReport}
             disabled={isSavingDraft || isGenerating}
-            className="button-press soft-hover w-full rounded-xl bg-primary-600 px-5 py-3 text-base font-bold text-white shadow-sm transition hover:bg-primary-700 disabled:cursor-not-allowed disabled:bg-primary-500 disabled:opacity-70 sm:w-auto"
+            className="rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-3 text-sm font-black text-white shadow-md hover:from-purple-700 hover:to-pink-700 transition disabled:opacity-60 active:scale-98"
           >
-            {isGenerating ? "Generating..." : "Generate Report"}
+            {isGenerating ? "Generating Report..." : "Generate Event Report"}
           </button>
           {generatedReport && (
             <button
               type="button"
               onClick={handleManualDownload}
-              className="button-press soft-hover w-full rounded-xl bg-emerald-600 px-5 py-3 text-base font-bold text-white shadow-sm transition hover:bg-emerald-700 sm:w-auto"
+              className="rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-3 text-sm font-black text-white shadow-md hover:from-emerald-700 hover:to-teal-700 transition active:scale-98"
             >
               Download Report PDF
             </button>
@@ -533,17 +560,25 @@ function CreateEventReport() {
         </div>
       </form>
 
-      {/* Live Preview Container (Full Width below form, not side-by-side) */}
-      <section className="slide-up delay-100 rounded-3xl border border-blue-100 bg-slate-50 p-6 shadow-xl">
-        <div className="mb-5">
-          <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Event Report Preview</p>
-          <h3 className="mt-1 text-2xl font-black text-slate-950 font-sans">Live Document View</h3>
-          <p className="mt-1 text-base leading-7 text-slate-600 font-sans">
-            Scroll down to review the live draft output. Report PDF follows the academic event report format provided by the mentor.
-          </p>
+      {/* Live Academic Report Preview Canvas (Page 1 & Page 2) */}
+      <section className="rounded-3xl border border-slate-200/90 bg-slate-100/70 p-6 sm:p-8 shadow-xl space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <span className="text-xs font-black uppercase tracking-wider text-purple-600">Document Canvas</span>
+            <h3 className="text-xl font-black text-slate-950 font-sans">Live Academic Report View</h3>
+          </div>
+          {generatedReport && (
+            <button
+              type="button"
+              onClick={handleManualDownload}
+              className="rounded-xl bg-emerald-600 px-4 py-2 text-xs font-black text-white hover:bg-emerald-700 transition shadow-xs"
+            >
+              Export A4 PDF
+            </button>
+          )}
         </div>
 
-        <div className="mx-auto w-full flex justify-center">
+        <div className="w-full flex justify-center overflow-x-auto py-2">
           <EventReportPreview
             data={
               generatedReport
@@ -561,4 +596,3 @@ function CreateEventReport() {
 }
 
 export default CreateEventReport;
-

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import posterData from "../data/posterData.js";
 import templateData from "../data/templateData.js";
 import templateConfigs from "../components/templates/templateConfigs.js";
@@ -94,40 +94,40 @@ function PremiumCertificateMiniPreview({ template }) {
   const dark = config.dark;
 
   return (
-    <div className="aspect-[1.414/1] overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-2 shadow-sm">
-      <div className="relative h-full w-full overflow-hidden border" style={{ background: config.background, borderColor: config.borderColor }}>
+    <div className="aspect-[1.414/1] overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 p-2 shadow-xs group-hover:shadow-md transition-shadow">
+      <div className="relative h-full w-full overflow-hidden rounded-xl border" style={{ background: config.background, borderColor: config.borderColor }}>
         {(config.decoration === "ornate" || config.decoration === "academic") && <MiniCornerOrnaments color={config.accent} softColor={config.soft} />}
         {config.decoration === "wave" && <MiniWave primary={config.accent} secondary={config.secondary} />}
         {config.decoration === "floral" && <MiniFloral />}
         {config.decoration === "playful" && <MiniPlayful />}
 
         <div
-          className="relative z-10 m-[4%] flex h-[92%] flex-col justify-between border p-[5%] text-center"
+          className="relative z-10 m-[4%] flex h-[92%] flex-col justify-between rounded-lg border p-[5%] text-center"
           style={{ background: config.panelBg, borderColor: config.borderColor }}
         >
           <div className="flex items-center gap-2">
             <div className="h-px flex-1" style={{ background: config.lineColor }} />
-            <p className={`text-[9px] font-black uppercase tracking-[0.22em] ${dark ? "text-amber-100" : "text-slate-600"}`}>Certificate</p>
+            <p className={`text-[8px] font-black uppercase tracking-[0.22em] ${dark ? "text-amber-100" : "text-slate-600"}`}>Certificate</p>
             <div className="h-px flex-1" style={{ background: config.lineColor }} />
           </div>
 
           <div>
-            <p className={`text-base font-black uppercase leading-tight ${config.headingFont} ${dark ? "text-white" : "text-slate-950"}`}>Certificate</p>
-            <div className="mx-auto mt-2 h-1 w-20 rounded-full" style={{ background: config.lineColor }} />
-            <p className="mt-2 truncate text-xl font-black" style={{ color: config.nameColor }}>Recipient Name</p>
+            <p className={`text-sm font-black uppercase leading-tight ${config.headingFont} ${dark ? "text-white" : "text-slate-950"}`}>Certificate</p>
+            <div className="mx-auto mt-1.5 h-1 w-16 rounded-full" style={{ background: config.lineColor }} />
+            <p className="mt-1.5 truncate text-lg font-black" style={{ color: config.nameColor }}>Recipient Name</p>
           </div>
 
           <div className="grid grid-cols-3 items-end gap-2">
             <div className="space-y-1">
-              <div className="mx-auto h-px w-16" style={{ background: config.lineColor }} />
-              <div className={`mx-auto h-1.5 w-12 rounded-full ${dark ? "bg-white/25" : "bg-slate-200"}`} />
+              <div className="mx-auto h-px w-12" style={{ background: config.lineColor }} />
+              <div className={`mx-auto h-1 w-10 rounded-full ${dark ? "bg-white/25" : "bg-slate-200"}`} />
             </div>
-            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full border-2 text-[7px] font-black uppercase" style={{ borderColor: config.sealColor, color: config.sealColor }}>
+            <div className="mx-auto flex h-8 w-8 items-center justify-center rounded-full border-2 text-[6px] font-black uppercase" style={{ borderColor: config.sealColor, color: config.sealColor }}>
               Seal
             </div>
             <div className="space-y-1">
-              <div className="ml-auto h-1.5 w-16 rounded-full" style={{ background: dark ? "rgba(255,255,255,0.24)" : "#e2e8f0" }} />
-              <div className="ml-auto h-1.5 w-12 rounded-full" style={{ background: dark ? "rgba(255,255,255,0.18)" : "#e2e8f0" }} />
+              <div className="ml-auto h-1 w-12 rounded-full" style={{ background: dark ? "rgba(255,255,255,0.24)" : "#e2e8f0" }} />
+              <div className="ml-auto h-1 w-10 rounded-full" style={{ background: dark ? "rgba(255,255,255,0.18)" : "#e2e8f0" }} />
             </div>
           </div>
         </div>
@@ -140,20 +140,20 @@ function ImageBackgroundMiniPreview({ template }) {
   const isLightText = template.textTheme === "light";
 
   return (
-    <div className="relative aspect-[1.414/1] overflow-hidden rounded-xl border border-slate-200 bg-slate-100 shadow-sm">
+    <div className="relative aspect-[1.414/1] overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 shadow-xs">
       <img
         src={template.backgroundImage}
         alt=""
         className="absolute inset-0 h-full w-full object-cover"
         draggable={false}
       />
-      <div className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-[10px] font-black uppercase tracking-wide text-slate-700">
-        Image Template
+      <div className="absolute left-3 top-3 rounded-full bg-slate-950/80 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-white backdrop-blur-md">
+        Image Background
       </div>
       <div className={`relative z-10 flex h-full flex-col items-center justify-center px-[12%] text-center ${isLightText ? "text-white" : "text-slate-950"}`}>
-        <p className="text-lg font-black uppercase leading-tight">Certificate</p>
-        <div className={`mt-2 h-1 w-20 rounded-full ${isLightText ? "bg-amber-200" : "bg-blue-800"}`} />
-        <p className="mt-3 max-w-full truncate font-serif text-2xl font-black">Participant Name</p>
+        <p className="text-base font-black uppercase leading-tight">Certificate</p>
+        <div className={`mt-1.5 h-1 w-16 rounded-full ${isLightText ? "bg-amber-200" : "bg-blue-800"}`} />
+        <p className="mt-2 max-w-full truncate font-serif text-xl font-black">Participant Name</p>
       </div>
     </div>
   );
@@ -169,17 +169,17 @@ function CertificateMiniPreview({ template }) {
   }
 
   return (
-    <div className={`flex aspect-[1.414/1] items-center justify-center rounded-xl border-2 p-3 ${template.previewClass}`}>
-      <div className={`flex h-full w-full flex-col justify-between rounded-lg border bg-white/85 p-4 text-center ${template.borderClass}`}>
-        <div className={`mx-auto h-1.5 w-28 rounded-full ${template.accentClass}`} />
+    <div className={`flex aspect-[1.414/1] items-center justify-center rounded-2xl border-2 p-3 ${template.previewClass}`}>
+      <div className={`flex h-full w-full flex-col justify-between rounded-xl border bg-white/85 p-4 text-center ${template.borderClass}`}>
+        <div className={`mx-auto h-1.5 w-24 rounded-full ${template.accentClass}`} />
         <div>
-          <p className={`text-lg font-black uppercase ${template.headingClass}`}>Certificate</p>
-          <div className="mx-auto mt-3 h-2.5 w-36 rounded-full bg-slate-200" />
-          <div className="mx-auto mt-2 h-2.5 w-24 rounded-full bg-slate-200" />
+          <p className={`text-base font-black uppercase ${template.headingClass}`}>Certificate</p>
+          <div className="mx-auto mt-2 h-2 w-32 rounded-full bg-slate-200" />
+          <div className="mx-auto mt-1.5 h-2 w-20 rounded-full bg-slate-200" />
         </div>
-        <div className="grid grid-cols-3 items-end gap-4">
+        <div className="grid grid-cols-3 items-end gap-3">
           <div className="h-px bg-slate-300" />
-          <div className={`mx-auto h-12 w-12 rounded-full border-2 ${template.borderClass}`} />
+          <div className={`mx-auto h-10 w-10 rounded-full border-2 ${template.borderClass}`} />
           <div className="h-px bg-slate-300" />
         </div>
       </div>
@@ -189,18 +189,18 @@ function CertificateMiniPreview({ template }) {
 
 function PosterMiniPreview({ poster }) {
   return (
-    <div className={`mx-auto flex aspect-[3/4] max-h-72 w-full max-w-52 items-center justify-center rounded-xl border-2 p-3 ${poster.previewClass}`}>
-      <div className="flex h-full w-full flex-col justify-between rounded-lg bg-white/80 p-4 text-center">
+    <div className={`mx-auto flex aspect-[3/4] max-h-72 w-full max-w-52 items-center justify-center rounded-2xl border-2 p-3 ${poster.previewClass}`}>
+      <div className="flex h-full w-full flex-col justify-between rounded-xl bg-white/80 p-4 text-center">
         <div className={`mx-auto h-1.5 w-16 rounded-full ${poster.accentClass}`} />
         <div>
-          <p className="text-base font-black uppercase text-slate-800">Event Title</p>
-          <div className="mx-auto mt-4 h-2.5 w-24 rounded-full bg-slate-200" />
-          <div className="mx-auto mt-2 h-2.5 w-16 rounded-full bg-slate-200" />
+          <p className="text-sm font-black uppercase text-slate-800">Event Title</p>
+          <div className="mx-auto mt-3 h-2 w-20 rounded-full bg-slate-200" />
+          <div className="mx-auto mt-1.5 h-2 w-14 rounded-full bg-slate-200" />
         </div>
-        <div className="space-y-2">
-          <div className="mx-auto h-2.5 w-28 rounded-full bg-slate-100" />
-          <div className="mx-auto h-2.5 w-20 rounded-full bg-slate-100" />
-          <div className={`mx-auto h-7 w-24 rounded-full ${poster.accentClass}`} />
+        <div className="space-y-1.5">
+          <div className="mx-auto h-2 w-24 rounded-full bg-slate-100" />
+          <div className="mx-auto h-2 w-16 rounded-full bg-slate-100" />
+          <div className={`mx-auto h-6 w-20 rounded-full ${poster.accentClass}`} />
         </div>
       </div>
     </div>
@@ -246,44 +246,71 @@ function Templates() {
   const itemLabel = activeTab === "certificate" ? "certificate templates" : "poster designs";
 
   return (
-    <section className="page-transition space-y-7">
-      <div className="rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-slate-50 p-8 shadow-soft">
-        <p className="text-sm font-bold uppercase tracking-wide text-primary-600">Templates</p>
-        <h2 className="mt-3 text-4xl font-black tracking-tight text-slate-950">Template Gallery</h2>
-        <p className="mt-3 text-lg leading-8 text-slate-600">Choose from certificate templates and event poster designs.</p>
+    <section className="space-y-8 pb-10">
+      {/* Breadcrumb Navigation */}
+      <nav className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
+        <Link to="/certificate-dashboard" className="hover:text-blue-600 transition">
+          Certificate Studio
+        </Link>
+        <span>/</span>
+        <span className="text-slate-800">Template Gallery</span>
+      </nav>
+
+      {/* Page Hero */}
+      <div className="rounded-3xl border border-blue-100/80 bg-gradient-to-br from-blue-50/60 via-white to-indigo-50/40 p-7 shadow-xs lg:p-9 animate-hero-fade-in">
+        <span className="text-xs font-black uppercase tracking-widest text-blue-600">
+          TEMPLATE MARKETPLACE
+        </span>
+        <h1 className="mt-2 text-3xl sm:text-4xl font-black text-slate-950 tracking-tight font-sans">
+          Template Gallery
+        </h1>
+        <p className="mt-2 max-w-3xl text-base text-slate-600 font-medium leading-relaxed">
+          Select from our curated collection of professional certificate templates, ornate academic seals, and custom background image layouts.
+        </p>
       </div>
 
-      <div className="sticky top-24 z-20 rounded-2xl border border-slate-200 bg-white/95 p-5 shadow-soft backdrop-blur-xl">
+      {/* Sticky Filter & Search Bar */}
+      <div className="sticky top-20 z-20 rounded-2xl border border-slate-200/90 bg-white/95 p-4 shadow-md backdrop-blur-xl">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-          <div className="grid grid-cols-2 gap-2 rounded-full bg-slate-100 p-1.5">
+          <div className="flex items-center gap-1 rounded-xl bg-slate-100 p-1">
             <button
               type="button"
               onClick={() => setActiveTab("certificate")}
-              className={`button-press soft-hover rounded-full px-5 py-3 text-base font-black transition ${activeTab === "certificate" ? "bg-white text-primary-700 shadow-sm" : "text-slate-600 hover:text-slate-950"}`}
+              className={`rounded-lg px-5 py-2 text-sm font-black transition ${
+                activeTab === "certificate"
+                  ? "bg-white text-blue-600 shadow-xs"
+                  : "text-slate-600 hover:text-slate-950"
+              }`}
             >
-              Certificate
+              Certificate Templates ({templateData.length})
             </button>
             <button
               type="button"
               onClick={() => setActiveTab("poster")}
-              className={`button-press soft-hover rounded-full px-5 py-3 text-base font-black transition ${activeTab === "poster" ? "bg-white text-primary-700 shadow-sm" : "text-slate-600 hover:text-slate-950"}`}
+              className={`rounded-lg px-5 py-2 text-sm font-black transition ${
+                activeTab === "poster"
+                  ? "bg-white text-blue-600 shadow-xs"
+                  : "text-slate-600 hover:text-slate-950"
+              }`}
             >
-              Poster
+              Posters ({posterData.length})
             </button>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-[1fr_240px] xl:min-w-[620px]">
-            <input
-              type="search"
-              value={searchTerm}
-              onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Search by template name"
-              className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-base outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-primary-100"
-            />
+          <div className="flex flex-col sm:flex-row gap-3 xl:w-1/2">
+            <div className="relative flex-1">
+              <input
+                type="search"
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+                placeholder="Search templates by name..."
+                className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 text-sm font-semibold outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
+              />
+            </div>
             <select
               value={selectedCategory}
               onChange={(event) => setSelectedCategory(event.target.value)}
-              className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-base outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-primary-100"
+              className="h-11 rounded-xl border border-slate-200 bg-slate-50/50 px-4 text-sm font-semibold outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 sm:w-52"
             >
               {categories.map((category) => (
                 <option key={category} value={category}>
@@ -294,39 +321,73 @@ function Templates() {
           </div>
         </div>
 
-        <p className="mt-4 text-base font-bold text-slate-600">
-          Showing {filteredItems.length} {itemLabel}
-        </p>
+        <div className="mt-3 flex items-center justify-between text-xs font-bold text-slate-500 px-1">
+          <span>Showing {filteredItems.length} {itemLabel}</span>
+          {selectedCategory !== "All" && (
+            <button
+              onClick={() => setSelectedCategory("All")}
+              className="text-blue-600 hover:underline"
+            >
+              Clear filter
+            </button>
+          )}
+        </div>
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+      {/* Grid Display */}
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {filteredItems.map((item) => (
-          <div key={item.id} className="card-hover rounded-2xl border border-slate-200 bg-white p-6 shadow-soft">
-            {activeTab === "certificate" ? <CertificateMiniPreview template={item} /> : <PosterMiniPreview poster={item} />}
+          <div
+            key={item.id}
+            className="group relative flex flex-col justify-between rounded-3xl border border-slate-200/90 bg-white/90 p-5 shadow-xs hover-lift transition-all duration-300 backdrop-blur-md hover:border-blue-300"
+          >
+            <div>
+              {activeTab === "certificate" ? (
+                <CertificateMiniPreview template={item} />
+              ) : (
+                <PosterMiniPreview poster={item} />
+              )}
 
-            <div className="mt-5 flex items-start justify-between gap-3">
-              <h3 className="text-xl font-black text-slate-950">{item.name}</h3>
-              <span className={`rounded-full px-3 py-1.5 text-xs font-black ${item.badgeClass}`}>
-                {item.category}
-              </span>
+              <div className="mt-4 flex items-start justify-between gap-2">
+                <h3 className="text-lg font-black text-slate-950 font-sans tracking-tight">
+                  {item.name}
+                </h3>
+                <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider ${item.badgeClass || "bg-blue-50 text-blue-700"}`}>
+                  {item.category}
+                </span>
+              </div>
+
+              <p className="mt-2 text-xs leading-relaxed text-slate-600 font-medium line-clamp-2">
+                {item.description}
+              </p>
             </div>
 
-            <p className="mt-3 text-base leading-7 text-slate-500">{item.description}</p>
-
-            <button
-              type="button"
-              onClick={() => (activeTab === "certificate" ? handleUseTemplate(item.name) : handleUsePoster())}
-              className="button-press soft-hover mt-5 w-full rounded-xl bg-primary-600 px-4 py-3 text-base font-black text-white transition hover:bg-primary-700"
-            >
-              {activeTab === "certificate" ? "Use Template" : "Use Poster"}
-            </button>
+            <div className="mt-5 pt-3 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => (activeTab === "certificate" ? handleUseTemplate(item.name) : handleUsePoster())}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-2.5 text-sm font-black text-white shadow-xs hover:bg-blue-700 transition active:scale-98"
+              >
+                <span>{activeTab === "certificate" ? "Use Template" : "Use Poster"}</span>
+                <span>→</span>
+              </button>
+            </div>
           </div>
         ))}
       </div>
 
       {filteredItems.length === 0 && (
-        <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center shadow-soft">
-          <p className="text-base font-bold text-slate-600">No templates match your filter.</p>
+        <div className="rounded-3xl border border-dashed border-slate-300 bg-white/80 p-12 text-center shadow-xs">
+          <p className="text-base font-bold text-slate-600">No templates match your search criteria.</p>
+          <button
+            onClick={() => {
+              setSearchTerm("");
+              setSelectedCategory("All");
+            }}
+            className="mt-4 rounded-xl bg-blue-50 px-4 py-2 text-sm font-black text-blue-700 hover:bg-blue-100 transition"
+          >
+            Reset Filters
+          </button>
         </div>
       )}
     </section>
