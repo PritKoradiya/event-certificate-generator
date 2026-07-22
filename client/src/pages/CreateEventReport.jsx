@@ -1,8 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import EventReportPreview from "../components/EventReportPreview.jsx";
+import EventReportPdfTestPanel from "../components/report/EventReportPdfTestPanel.jsx";
 import { createEventReport, saveDraftEventReport } from "../services/eventReportApi.js";
 import { downloadEventReportPdf } from "../utils/downloadEventReportPdf.js";
+import { normalizeEventReportData } from "../utils/normalizeEventReportData.js";
+import { validateEventReportLayout } from "../utils/validateEventReportLayout.js";
 
 const inputClass =
   "h-11 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 text-sm font-semibold outline-none transition focus:border-purple-500 focus:bg-white focus:ring-4 focus:ring-purple-100";
@@ -11,18 +14,18 @@ const textareaClass =
   "w-full rounded-xl border border-slate-200 bg-slate-50/50 p-4 text-sm font-semibold outline-none transition focus:border-purple-500 focus:bg-white focus:ring-4 focus:ring-purple-100 min-h-28 resize-y";
 
 const initialFormData = {
-  reportDate: "",
-  dateOfEvent: "",
-  time: "",
-  resourcePerson: "",
-  eventName: "",
-  noOfParticipants: "",
-  attendee: "",
-  venue: "",
-  eventOutline: "",
-  objectives: "",
-  outcomes: "",
-  photoCaption: "",
+  reportDate: "03/04/2026",
+  dateOfEvent: "02/04/2026",
+  time: "10.00 AM onwards",
+  resourcePerson: "Dr. Chandresh Kumar Maurya, Associate Professor at IIT Indore",
+  eventName: "Expert Talk on Prompt Engineering: Unlocking the Power of Generative AI",
+  noOfParticipants: "245",
+  attendee: "4th and 8th Semester Students of School of Engineering",
+  venue: "I-313",
+  eventOutline: "An expert talk on “Prompt Engineering: Unlocking the Power of Generative AI” was organized for students to provide insights into the latest advancements in generative AI and the significance of prompt engineering. The session was conducted by an expert from IIT, who shared practical knowledge, examples, and strategies for effectively interacting with AI systems. The event included an informative presentation, live demonstrations, and an interactive Q&A session.",
+  objectives: "To introduce students to the concept of prompt engineering and its importance in generative AI.\nTo create awareness about the applications of generative AI in academics, research, and industry.\nTo help students understand how to design effective prompts for obtaining better AI-generated outputs.\nTo encourage students to explore AI tools for innovation, learning, and problem-solving.\nTo discuss the ethical and responsible use of AI technologies.",
+  outcomes: "Students gained a clear understanding of prompt engineering and its practical applications.\nParticipants learned techniques for creating structured and effective prompts.\nThe session enhanced students’ awareness of generative AI tools and their real-world usage.\nStudents developed interest in exploring AI for academic and professional growth.\nThe event inspired innovative thinking and responsible adoption of AI technologies.",
+  photoCaption: "Expert talk “Prompt Engineering: Unlocking the Power of Generative AI” on 02 April 2026, Thursday (Virtually).",
   eventCoordinator: "DR. JAYSHRI A. PATIL",
   deanName: "DR. NIRAJ SHAH"
 };
@@ -190,6 +193,14 @@ function CreateEventReport() {
     }
   };
 
+  const getNormalizedActiveReport = (savedReport) => {
+    const source = savedReport || {
+      ...formData,
+      photos: selectedPhotos.map((p) => p.preview)
+    };
+    return normalizeEventReportData(source);
+  };
+
   const handleGenerateReport = async () => {
     if (!validateForm()) {
       return;
@@ -199,12 +210,16 @@ function CreateEventReport() {
       setIsGenerating(true);
       const data = buildReportFormData();
       const result = await createEventReport(data);
-      const report = result.data;
-      setGeneratedReport(report);
+      const reportRecord = result.data || result;
+      setGeneratedReport(reportRecord);
+
+      const normalized = getNormalizedActiveReport(reportRecord);
+      validateEventReportLayout(normalized);
+
       alert("Report generated successfully. PDF download will start automatically.");
-      
-      const fileName = `Event_Report_${report.eventName}_${report.reportId}.pdf`;
-      setTimeout(() => downloadEventReportPdf(fileName), 500);
+
+      const fileName = `Event_Report_${normalized.eventName}_${normalized.reportId}.pdf`;
+      await downloadEventReportPdf(normalized, fileName);
     } catch (error) {
       alert(error.message || "Unable to generate event report. Please try again.");
     } finally {
@@ -212,12 +227,13 @@ function CreateEventReport() {
     }
   };
 
-  const handleManualDownload = () => {
-    if (generatedReport) {
-      const fileName = `Event_Report_${generatedReport.eventName}_${generatedReport.reportId}.pdf`;
-      downloadEventReportPdf(fileName);
-    }
+  const handleManualDownload = async () => {
+    const normalized = getNormalizedActiveReport(generatedReport);
+    const fileName = `Event_Report_${normalized.eventName}_${normalized.reportId}.pdf`;
+    await downloadEventReportPdf(normalized, fileName);
   };
+
+  const activeNormalizedReport = getNormalizedActiveReport(generatedReport);
 
   return (
     <section className="space-y-8 pb-10">
@@ -265,10 +281,11 @@ function CreateEventReport() {
               Report Date *
               <input
                 className={inputClass}
-                type="date"
+                type="text"
                 name="reportDate"
                 value={formData.reportDate}
                 onChange={handleChange}
+                placeholder="e.g. 03/04/2026"
               />
             </label>
 
@@ -276,10 +293,11 @@ function CreateEventReport() {
               Date of Event *
               <input
                 className={inputClass}
-                type="date"
+                type="text"
                 name="dateOfEvent"
                 value={formData.dateOfEvent}
                 onChange={handleChange}
+                placeholder="e.g. 02/04/2026"
               />
             </label>
 
@@ -291,7 +309,7 @@ function CreateEventReport() {
                 name="time"
                 value={formData.time}
                 onChange={handleChange}
-                placeholder="e.g. 10:00 AM to 1:00 PM"
+                placeholder="e.g. 10.00 AM onwards"
               />
             </label>
 
@@ -303,7 +321,7 @@ function CreateEventReport() {
                 name="resourcePerson"
                 value={formData.resourcePerson}
                 onChange={handleChange}
-                placeholder="Name, Designation, Company"
+                placeholder="Name, Designation, Organization"
               />
             </label>
 
@@ -315,7 +333,7 @@ function CreateEventReport() {
                 name="eventName"
                 value={formData.eventName}
                 onChange={handleChange}
-                placeholder="e.g. Seminar on AI & Machine Learning"
+                placeholder="e.g. Expert Talk on Prompt Engineering"
               />
             </label>
 
@@ -323,11 +341,11 @@ function CreateEventReport() {
               No. of Participants *
               <input
                 className={inputClass}
-                type="number"
+                type="text"
                 name="noOfParticipants"
                 value={formData.noOfParticipants}
                 onChange={handleChange}
-                placeholder="e.g. 50"
+                placeholder="e.g. 245"
               />
             </label>
 
@@ -339,7 +357,7 @@ function CreateEventReport() {
                 name="attendee"
                 value={formData.attendee}
                 onChange={handleChange}
-                placeholder="e.g. B.Tech Computer Engineering Students"
+                placeholder="e.g. 4th and 8th Semester Students of School of Engineering"
               />
             </label>
 
@@ -351,7 +369,7 @@ function CreateEventReport() {
                 name="venue"
                 value={formData.venue}
                 onChange={handleChange}
-                placeholder="e.g. Seminar Hall, SOE, PP Savani University"
+                placeholder="e.g. I-313"
               />
             </label>
           </div>
@@ -388,7 +406,7 @@ function CreateEventReport() {
                 name="objectives"
                 value={formData.objectives}
                 onChange={handleChange}
-                placeholder={"1. To introduce students to core AI concepts.\n2. To demonstrate real-world industry tools."}
+                placeholder={"1. To introduce students to prompt engineering...\n2. To create awareness..."}
               />
             </label>
 
@@ -399,7 +417,7 @@ function CreateEventReport() {
                 name="outcomes"
                 value={formData.outcomes}
                 onChange={handleChange}
-                placeholder={"1. Students learned practical workflow skills.\n2. Participants created working prototypes."}
+                placeholder={"1. Students gained a clear understanding...\n2. Participants learned techniques..."}
               />
             </label>
           </div>
@@ -426,7 +444,7 @@ function CreateEventReport() {
                 name="photoCaption"
                 value={formData.photoCaption}
                 onChange={handleChange}
-                placeholder="e.g. Students participating during the expert talk"
+                placeholder="e.g. Expert talk 'Prompt Engineering' on 02 April 2026"
               />
             </label>
 
@@ -548,15 +566,13 @@ function CreateEventReport() {
           >
             {isGenerating ? "Generating Report..." : "Generate Event Report"}
           </button>
-          {generatedReport && (
-            <button
-              type="button"
-              onClick={handleManualDownload}
-              className="rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-3 text-sm font-black text-white shadow-md hover:from-emerald-700 hover:to-teal-700 transition active:scale-98"
-            >
-              Download Report PDF
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={handleManualDownload}
+            className="rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-3 text-sm font-black text-white shadow-md hover:from-emerald-700 hover:to-teal-700 transition active:scale-98"
+          >
+            Download Report PDF
+          </button>
         </div>
       </form>
 
@@ -567,30 +583,22 @@ function CreateEventReport() {
             <span className="text-xs font-black uppercase tracking-wider text-purple-600">Document Canvas</span>
             <h3 className="text-xl font-black text-slate-950 font-sans">Live Academic Report View</h3>
           </div>
-          {generatedReport && (
-            <button
-              type="button"
-              onClick={handleManualDownload}
-              className="rounded-xl bg-emerald-600 px-4 py-2 text-xs font-black text-white hover:bg-emerald-700 transition shadow-xs"
-            >
-              Export A4 PDF
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={handleManualDownload}
+            className="rounded-xl bg-emerald-600 px-4 py-2 text-xs font-black text-white hover:bg-emerald-700 transition shadow-xs"
+          >
+            Export A4 PDF
+          </button>
         </div>
 
         <div className="w-full flex justify-center overflow-x-auto py-2">
-          <EventReportPreview
-            data={
-              generatedReport
-                ? generatedReport
-                : {
-                    ...formData,
-                    photos: selectedPhotos.map((p) => p.preview)
-                  }
-            }
-          />
+          <EventReportPreview data={activeNormalizedReport} />
         </div>
       </section>
+
+      {/* Development QA Panel */}
+      <EventReportPdfTestPanel />
     </section>
   );
 }

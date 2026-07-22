@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import EventReportPreview, { getAssetUrl } from "../components/EventReportPreview.jsx";
 import { getEventReports, deleteEventReport, updateEventReport } from "../services/eventReportApi.js";
 import { downloadEventReportPdf } from "../utils/downloadEventReportPdf.js";
+import { normalizeEventReportData } from "../utils/normalizeEventReportData.js";
 import StatusPill from "../components/ui/StatusPill.jsx";
 
 const inputClass =
@@ -243,18 +244,10 @@ function EventReports() {
     }
   };
 
-  const handleDownloadPdf = (report) => {
-    const reportId = report.reportId || report._id || report.id;
-    const fileName = `Event_Report_${report.eventName}_${reportId}.pdf`;
-
-    if (selectedReport && (selectedReport._id === report._id || selectedReport.id === report.id)) {
-      downloadEventReportPdf(fileName);
-    } else {
-      setSelectedReport(report);
-      setTimeout(() => {
-        downloadEventReportPdf(fileName);
-      }, 500);
-    }
+  const handleDownloadPdf = async (report) => {
+    const normalized = normalizeEventReportData(report);
+    const fileName = `Event_Report_${normalized.eventName}_${normalized.reportId}.pdf`;
+    await downloadEventReportPdf(normalized, fileName);
   };
 
   const handleDelete = async (id) => {
@@ -521,7 +514,7 @@ function EventReports() {
                   Report Date *
                   <input
                     className={inputClass}
-                    type="date"
+                    type="text"
                     value={editFormData.reportDate}
                     onChange={(e) => setEditFormData({ ...editFormData, reportDate: e.target.value })}
                   />
@@ -530,7 +523,7 @@ function EventReports() {
                   Date of Event *
                   <input
                     className={inputClass}
-                    type="date"
+                    type="text"
                     value={editFormData.dateOfEvent}
                     onChange={(e) => setEditFormData({ ...editFormData, dateOfEvent: e.target.value })}
                   />

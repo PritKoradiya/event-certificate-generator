@@ -1,11 +1,10 @@
 import React from "react";
+import { normalizeEventReportData } from "../utils/normalizeEventReportData.js";
+import { formatDateForReport, formatDateNumeric } from "../utils/formatReportDate.js";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 const SERVER_BASE = API_BASE.replace("/api", "");
 
-/**
- * Resolves local file urls or backend uploaded asset paths to full URLs.
- */
 export const getAssetUrl = (path) => {
   if (!path) return "";
   if (path.startsWith("blob:") || path.startsWith("data:") || path.startsWith("http")) {
@@ -17,202 +16,201 @@ export const getAssetUrl = (path) => {
   return path;
 };
 
-export default function EventReportPreview({ data = {} }) {
-  // Support both frontend and backend field names
-  const reportDate = data.reportDate || "";
-  const dateOfEvent = data.dateOfEvent || data.eventDate || "";
-  const time = data.time || data.eventTime || "";
-  const resourcePerson = data.resourcePerson || "";
-  const eventName = data.eventName || "";
-  const noOfParticipants = data.noOfParticipants || data.numberOfParticipants || "";
-  const attendee = data.attendee || "";
-  const venue = data.venue || "";
-  const eventOutline = data.eventOutline || "";
-  
-  const objectives = data.objectives || data.eventObjectives || "";
-  const outcomes = data.outcomes || data.eventOutcomes || "";
-  
-  const photoCaption = data.photoCaption || "";
-  const eventCoordinator = data.eventCoordinator || data.eventCoordinatorName || "DR. JAYSHRI A. PATIL";
-  const deanName = data.deanName || "DR. NIRAJ SHAH";
-  const photos = data.photos || [];
-
-  const defaultCaption = `Expert talk "${eventName || "[Event Name]"}" on ${dateOfEvent || "[Event Date]"}.`;
-  const displayCaption = photoCaption || defaultCaption;
-
-  // Map the first two photos
-  const photo1 = photos[0] ? getAssetUrl(photos[0]) : null;
-  const photo2 = photos[1] ? getAssetUrl(photos[1]) : null;
-
-  const renderBulletList = (textOrArray, placeholder) => {
-    let lines = [];
-    if (Array.isArray(textOrArray)) {
-      lines = textOrArray.map((line) => line.trim()).filter((line) => line.length > 0);
-    } else if (typeof textOrArray === "string" && textOrArray.trim()) {
-      lines = textOrArray
-        .split("\n")
-        .map((line) => line.trim())
-        .filter((line) => line.length > 0);
-    }
-
-    if (lines.length === 0) {
-      return (
-        <ul className="list-disc pl-6 space-y-1 text-slate-400 italic font-serif text-sm">
-          <li>{placeholder}</li>
-        </ul>
-      );
-    }
-
-    // Auto-scale list font size down to fit within Page 1 if there are many items
-    const listClass = lines.length > 5
-      ? "list-disc pl-6 space-y-0.5 text-slate-900 font-serif text-xs"
-      : "list-disc pl-6 space-y-1 text-slate-900 font-serif text-sm sm:text-base";
-
-    return (
-      <ul className={listClass}>
-        {lines.map((line, idx) => (
-          <li key={idx} className="leading-relaxed text-justify">
-            {line}
-          </li>
-        ))}
-      </ul>
-    );
-  };
+/**
+ * EventReportPageOnePreview
+ * Renders exact Page 1 of the formal mentor academic report.
+ */
+function EventReportPageOnePreview({ report }) {
+  const formattedReportDate = report.reportDate ? formatDateNumeric(report.reportDate) : "03/04/2026";
 
   return (
-    <div className="mt-8 flex flex-col gap-12 items-center w-full">
-      {/* Page 1 */}
-      <div
-        id="event-report-page-1"
-        className="w-full max-w-[850px] aspect-[210/297] bg-white text-slate-900 border border-slate-300 shadow-2xl p-10 sm:p-14 font-serif relative flex flex-col justify-between box-border"
-        style={{ minHeight: "1120px" }}
-      >
-        <span className="absolute top-4 right-6 text-xs font-sans text-slate-400 select-none print:hidden">Page 1 of 2</span>
-
-        <div className="flex-1 flex flex-col">
-          <h1 className="text-xl sm:text-2xl font-bold tracking-wider text-center uppercase mb-6 text-slate-955 border-b border-slate-950 pb-2">
+    <div
+      className="w-full max-w-[794px] min-h-[1123px] bg-white text-black p-[60px] font-serif shadow-xl box-border relative flex flex-col justify-between"
+      style={{ fontFamily: "Times New Roman, Times, serif" }}
+    >
+      <div>
+        {/* Top Header Title */}
+        <div className="text-center mb-4">
+          <h1 className="text-xl font-bold uppercase tracking-wide inline-block border-b-2 border-black pb-0.5">
             EVENT REPORT
           </h1>
+        </div>
 
-          <div className="grid grid-cols-[200px_1fr] gap-x-4 gap-y-2 border-b border-slate-200 pb-4 mb-4 text-sm sm:text-base">
-            <div className="font-bold">Date:</div>
-            <div>{reportDate || <span className="text-slate-400 italic">[Report Date]</span>}</div>
+        {/* Report Date (Top Right) */}
+        <div className="text-right font-bold text-sm mb-2">
+          <span>Date: </span>
+          <span className="font-normal">{formattedReportDate}</span>
+        </div>
 
-            <div className="font-bold">Date of event:</div>
-            <div>{dateOfEvent || <span className="text-slate-400 italic">[Date of Event]</span>}</div>
-
-            <div className="font-bold">Time:</div>
-            <div>{time || <span className="text-slate-400 italic">[Time]</span>}</div>
-
-            <div className="font-bold">Resource Person:</div>
-            <div className="break-words">{resourcePerson || <span className="text-slate-400 italic">[Resource Person Details]</span>}</div>
-
-            <div className="font-bold">Name of the Event</div>
-            <div className="break-words">{eventName || <span className="text-slate-400 italic">[Name of the Event]</span>}</div>
-
-            <div className="font-bold">No of participants</div>
-            <div>{noOfParticipants || <span className="text-slate-400 italic">[No. of Participants]</span>}</div>
-
-            <div className="font-bold">Attendee:</div>
-            <div>{attendee || <span className="text-slate-400 italic">[Target Audience / Attendees]</span>}</div>
-
-            <div className="font-bold">Venue:</div>
-            <div>{venue || <span className="text-slate-400 italic">[Venue]</span>}</div>
+        {/* Details Table Grid */}
+        <div className="border border-black text-xs sm:text-sm mb-4">
+          {/* Row 1 */}
+          <div className="grid grid-cols-[130px_160px_1fr] border-b border-black divide-x divide-black min-h-[50px]">
+            <div className="p-2">
+              <span className="font-bold block">Date of event:</span>
+              <span className="block mt-1">{report.eventDate ? formatDateNumeric(report.eventDate) : ""}</span>
+            </div>
+            <div className="p-2">
+              <span className="font-bold block">Time:</span>
+              <span className="block mt-1">{report.eventTime || ""}</span>
+            </div>
+            <div className="p-2">
+              <span className="font-bold block">Resource Person:</span>
+              <span className="block mt-1 leading-snug">{report.resourcePerson || ""}</span>
+            </div>
           </div>
 
-          <div className="space-y-4 flex-1 text-sm sm:text-base">
-            <div>
-              <h2 className="font-bold mb-1 border-b border-slate-200 pb-0.5">
-                Event Outline:
-              </h2>
-              {eventOutline && eventOutline.trim() ? (
-                <p className="whitespace-pre-line text-justify leading-relaxed">
-                  {eventOutline}
-                </p>
+          {/* Row 2 */}
+          <div className="grid grid-cols-[160px_1fr] border-b border-black divide-x divide-black min-h-[40px]">
+            <div className="p-2 font-bold flex items-center">
+              Name of the Event
+            </div>
+            <div className="p-2 font-bold leading-snug flex items-center">
+              {report.eventName || ""}
+            </div>
+          </div>
+
+          {/* Row 3 */}
+          <div className="grid grid-cols-[160px_1fr] divide-x divide-black min-h-[32px]">
+            <div className="p-2 font-bold flex items-center">
+              No of participants
+            </div>
+            <div className="p-2 flex items-center">
+              {report.numberOfParticipants || ""}
+            </div>
+          </div>
+        </div>
+
+        {/* Attendee & Venue */}
+        <div className="space-y-1 text-xs sm:text-sm mb-4">
+          <div>
+            <span className="font-bold">Attendee: </span>
+            <span>{report.attendee || ""}</span>
+          </div>
+          <div>
+            <span className="font-bold">Venue: </span>
+            <span>{report.venue || ""}</span>
+          </div>
+        </div>
+
+        {/* Event Outline */}
+        <div className="mb-4">
+          <h2 className="font-bold text-sm sm:text-base mb-1">Event Outline:</h2>
+          <p className="text-xs sm:text-sm text-justify leading-relaxed whitespace-pre-line">
+            {report.eventOutline || ""}
+          </p>
+        </div>
+
+        {/* Objective of the Event */}
+        <div className="mb-4">
+          <h2 className="font-bold text-sm sm:text-base mb-1">Objective of the Event:</h2>
+          <ul className="list-none space-y-1 pl-1 text-xs sm:text-sm">
+            {(report.eventObjectives || []).map((obj, idx) => (
+              <li key={idx} className="flex gap-2 text-justify leading-relaxed">
+                <span>•</span>
+                <span>{obj}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Outcome of the Event */}
+        <div className="mb-4">
+          <h2 className="font-bold text-sm sm:text-base mb-1">Outcome of the Event:</h2>
+          <ul className="list-none space-y-1 pl-1 text-xs sm:text-sm">
+            {(report.eventOutcomes || []).map((out, idx) => (
+              <li key={idx} className="flex gap-2 text-justify leading-relaxed">
+                <span>•</span>
+                <span>{out}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * EventReportPageTwoPreview
+ * Renders exact Page 2 of the formal mentor academic report.
+ */
+function EventReportPageTwoPreview({ report }) {
+  const photo1 = report.photos[0] ? getAssetUrl(report.photos[0]) : null;
+  const photo2 = report.photos[1] ? getAssetUrl(report.photos[1]) : null;
+
+  const formattedEventDate = report.eventDate ? formatDateForReport(report.eventDate) : "02 April 2026";
+  const defaultCaption = `Expert talk “${report.eventName || "Event Name"}” on ${formattedEventDate}.`;
+  const displayCaption = report.photoCaption || defaultCaption;
+
+  return (
+    <div
+      className="w-full max-w-[794px] min-h-[1123px] bg-white text-black p-[60px] font-serif shadow-xl box-border relative flex flex-col justify-between"
+      style={{ fontFamily: "Times New Roman, Times, serif" }}
+    >
+      <div className="flex-1 flex flex-col justify-between">
+        <div>
+          {/* Top Heading: PHOTOS */}
+          <div className="text-center mb-6">
+            <h1 className="text-xl font-bold uppercase tracking-wide inline-block border-b-2 border-black pb-0.5">
+              PHOTOS
+            </h1>
+          </div>
+
+          {/* Vertically Stacked Photos */}
+          <div className="flex flex-col items-center gap-6 mb-6">
+            {/* Photo 1 Slot */}
+            <div className="w-[80%] h-[240px] bg-slate-50 border border-slate-300 flex items-center justify-center overflow-hidden">
+              {photo1 ? (
+                <img src={photo1} className="w-full h-full object-contain" alt="Event Photo 1" />
               ) : (
-                <p className="text-slate-400 italic">[Enter event outline and details here...]</p>
+                <div className="text-center text-slate-400 font-sans text-xs font-bold uppercase">
+                  PHOTO 1
+                </div>
               )}
             </div>
 
-            <div>
-              <h2 className="font-bold mb-1 border-b border-slate-200 pb-0.5">
-                Objective of the Event:
-              </h2>
-              {renderBulletList(objectives, "[Enter event objectives, one per line...]")}
-            </div>
-
-            <div>
-              <h2 className="font-bold mb-1 border-b border-slate-200 pb-0.5">
-                Outcome of the Event:
-              </h2>
-              {renderBulletList(outcomes, "[Enter event outcomes, one per line...]")}
+            {/* Photo 2 Slot */}
+            <div className="w-[80%] h-[240px] bg-slate-50 border border-slate-300 flex items-center justify-center overflow-hidden">
+              {photo2 ? (
+                <img src={photo2} className="w-full h-full object-contain" alt="Event Photo 2" />
+              ) : (
+                <div className="text-center text-slate-400 font-sans text-xs font-bold uppercase">
+                  PHOTO 2
+                </div>
+              )}
             </div>
           </div>
+
+          {/* Caption */}
+          <p className="text-center font-bold text-xs sm:text-sm px-6 leading-relaxed max-w-2xl mx-auto">
+            {displayCaption}
+          </p>
         </div>
-      </div>
 
-      {/* Page 2 */}
-      <div
-        id="event-report-page-2"
-        className="w-full max-w-[850px] aspect-[210/297] bg-white text-slate-900 border border-slate-300 shadow-2xl p-10 sm:p-14 font-serif relative flex flex-col justify-between box-border"
-        style={{ minHeight: "1120px" }}
-      >
-        <span className="absolute top-4 right-6 text-xs font-sans text-slate-400 select-none print:hidden">Page 2 of 2</span>
-
-        <div className="flex-1 flex flex-col justify-between">
+        {/* Signatures at bottom (NO lines, NO boxes) */}
+        <div className="pt-12 pb-4 flex justify-between items-end font-bold text-xs sm:text-sm">
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold tracking-wider text-center uppercase mb-6 text-slate-950 underline underline-offset-8">
-              PHOTOS
-            </h1>
-
-            <div className="flex flex-col gap-6 my-4 items-center">
-              {/* Photo 1 Slot (70% width) */}
-              <div className="w-[70%] h-[240px] sm:h-[260px] bg-slate-50 border border-slate-300 rounded-lg flex items-center justify-center overflow-hidden">
-                {photo1 ? (
-                  <img src={photo1} className="w-full h-full object-cover" alt="Event Photo 1" />
-                ) : (
-                  <div className="text-center font-sans text-slate-400">
-                    <span className="text-3xl block mb-1">📷</span>
-                    <p className="text-xs font-bold uppercase tracking-wide">Photo 1 Placeholder</p>
-                  </div>
-                )}
-              </div>
-
-              {/* Photo 2 Slot (70% width) */}
-              <div className="w-[70%] h-[240px] sm:h-[260px] bg-slate-50 border border-slate-300 rounded-lg flex items-center justify-center overflow-hidden">
-                {photo2 ? (
-                  <img src={photo2} className="w-full h-full object-cover" alt="Event Photo 2" />
-                ) : (
-                  <div className="text-center font-sans text-slate-400">
-                    <span className="text-3xl block mb-1">📷</span>
-                    <p className="text-xs font-bold uppercase tracking-wide">Photo 2 Placeholder</p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <p className="text-center font-bold text-slate-950 text-sm sm:text-base mt-4 mb-4 px-6 leading-relaxed">
-              {displayCaption}
-            </p>
+            <p className="uppercase">EVENT COORDINATOR</p>
+            <p className="uppercase mt-2">{report.eventCoordinatorName || "DR. JAYSHRI A. PATIL"}</p>
           </div>
-
-          {/* Signature section pushed to bottom */}
-          <div className="mt-auto pt-6 pb-2 grid grid-cols-2 gap-8 text-xs sm:text-sm font-bold font-sans">
-            <div className="text-left flex flex-col justify-end min-h-[70px]">
-              <p className="uppercase tracking-wider text-slate-950 text-[10px] sm:text-xs font-bold">EVENT COORDINATOR</p>
-              <div className="border-t border-slate-400 mt-6 pt-1.5">
-                <p className="font-bold text-slate-900 text-xs sm:text-sm">{eventCoordinator}</p>
-              </div>
-            </div>
-            <div className="text-right flex flex-col justify-end items-end min-h-[70px]">
-              <p className="uppercase tracking-wider text-slate-950 text-[10px] sm:text-xs font-bold">DEAN, SOE</p>
-              <div className="border-t border-slate-400 mt-6 pt-1.5 w-full max-w-[200px]">
-                <p className="font-bold text-slate-900 text-xs sm:text-sm">{deanName}</p>
-              </div>
-            </div>
+          <div className="text-right">
+            <p className="uppercase">DEAN, SOE</p>
+            <p className="uppercase mt-2">{report.deanName || "DR. NIRAJ SHAH"}</p>
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+export default function EventReportPreview({ data = {} }) {
+  const normalizedReport = normalizeEventReportData(data);
+
+  return (
+    <div className="my-8 flex flex-col items-center gap-8 w-full">
+      <EventReportPageOnePreview report={normalizedReport} />
+      <EventReportPageTwoPreview report={normalizedReport} />
     </div>
   );
 }

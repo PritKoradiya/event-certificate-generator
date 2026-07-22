@@ -5,6 +5,10 @@ node_modules/
 .env.test.local
 .env.production.local
 
+# Private mentor/reference files
+references/event-report/*.pdf
+references/event-report/*.png
+
 client/node_modules/
 client/dist/
 client/.env
