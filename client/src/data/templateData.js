@@ -8,13 +8,17 @@ const baseTemplateData = [
     description: "An elegant cream and warm brown appreciation certificate inspired by formal university layouts.",
     type: "certificate",
     designKey: "classic-appreciation",
+    backgroundMode: "stretch",
     badgeClass: "bg-amber-100 text-amber-900",
     theme: {
-      primaryText: "#4a3b32",
-      secondaryText: "#786354",
-      accent: "#b89759",
-      line: "rgba(184,151,89,0.4)",
-      seal: "#b89759"
+      titleColor: "#4a3b32",
+      nameColor: "#4a3b32",
+      bodyColor: "#786354",
+      mutedColor: "#786354",
+      accentColor: "#b89759",
+      borderColor: "rgba(184,151,89,0.4)",
+      signatureColor: "#b89759",
+      sealColor: "#b89759"
     }
   },
   {
@@ -23,11 +27,19 @@ const baseTemplateData = [
     category: "Academic",
     description: "A formal white certificate with a dark academic border.",
     type: "certificate",
-    accentClass: "bg-slate-800",
-    previewClass: "border-slate-800 bg-white",
-    borderClass: "border-slate-800",
+    designKey: "academic-seal",
+    backgroundMode: "stretch",
     badgeClass: "bg-slate-100 text-slate-800",
-    headingClass: "font-serif text-slate-950"
+    theme: {
+      titleColor: "#0f172a",
+      nameColor: "#0f172a",
+      bodyColor: "#334155",
+      mutedColor: "#64748b",
+      accentColor: "#1e3a8a",
+      borderColor: "rgba(30,58,138,0.3)",
+      signatureColor: "#1e3a8a",
+      sealColor: "#d97706"
+    }
   },
   {
     id: "modern-blue-certificate",
@@ -35,11 +47,19 @@ const baseTemplateData = [
     category: "Technical",
     description: "A clean blue gradient certificate for modern technical events.",
     type: "certificate",
-    accentClass: "bg-blue-600",
-    previewClass: "border-blue-300 bg-gradient-to-br from-blue-50 to-white",
-    borderClass: "border-blue-300",
+    designKey: "blue-corporate",
+    backgroundMode: "stretch",
     badgeClass: "bg-blue-100 text-blue-800",
-    headingClass: "text-blue-950"
+    theme: {
+      titleColor: "#1e3a8a",
+      nameColor: "#1e3a8a",
+      bodyColor: "#334155",
+      mutedColor: "#64748b",
+      accentColor: "#2563eb",
+      borderColor: "rgba(37,99,235,0.3)",
+      signatureColor: "#2563eb",
+      sealColor: "#2563eb"
+    }
   },
   {
     id: "gold-achievement-certificate",
@@ -47,11 +67,19 @@ const baseTemplateData = [
     category: "Academic",
     description: "A premium light gold certificate for awards and achievements.",
     type: "certificate",
-    accentClass: "bg-amber-500",
-    previewClass: "border-amber-400 bg-amber-50",
-    borderClass: "border-amber-400",
+    designKey: "gold-corner",
+    backgroundMode: "stretch",
     badgeClass: "bg-amber-100 text-amber-800",
-    headingClass: "font-serif text-amber-950"
+    theme: {
+      titleColor: "#78350f",
+      nameColor: "#78350f",
+      bodyColor: "#451a03",
+      mutedColor: "#92400e",
+      accentColor: "#d97706",
+      borderColor: "rgba(217,119,6,0.4)",
+      signatureColor: "#d97706",
+      sealColor: "#d97706"
+    }
   },
   {
     id: "seminar-certificate",
@@ -59,11 +87,19 @@ const baseTemplateData = [
     category: "Seminar",
     description: "A neat academic certificate for seminars and guest sessions.",
     type: "certificate",
-    accentClass: "bg-indigo-500",
-    previewClass: "border-indigo-200 bg-white",
-    borderClass: "border-indigo-200",
+    designKey: "minimal-elegant",
+    backgroundMode: "stretch",
     badgeClass: "bg-indigo-50 text-indigo-700",
-    headingClass: "text-indigo-950"
+    theme: {
+      titleColor: "#312e81",
+      nameColor: "#312e81",
+      bodyColor: "#334155",
+      mutedColor: "#4338ca",
+      accentColor: "#4f46e5",
+      borderColor: "rgba(79,70,229,0.3)",
+      signatureColor: "#4f46e5",
+      sealColor: "#4f46e5"
+    }
   },
   {
     id: "conference-certificate",
@@ -71,11 +107,19 @@ const baseTemplateData = [
     category: "Conference",
     description: "A professional gray-blue layout for conferences.",
     type: "certificate",
-    accentClass: "bg-sky-700",
-    previewClass: "border-sky-300 bg-slate-50",
-    borderClass: "border-sky-300",
+    designKey: "modern-wave",
+    backgroundMode: "stretch",
     badgeClass: "bg-sky-100 text-sky-800",
-    headingClass: "text-slate-950"
+    theme: {
+      titleColor: "#0f172a",
+      nameColor: "#0f172a",
+      bodyColor: "#334155",
+      mutedColor: "#0284c7",
+      accentColor: "#0284c7",
+      borderColor: "rgba(2,132,199,0.3)",
+      signatureColor: "#0284c7",
+      sealColor: "#d97706"
+    }
   },
   {
     id: "fdp-certificate",
@@ -83,11 +127,19 @@ const baseTemplateData = [
     category: "FDP",
     description: "A faculty development program certificate with green accents.",
     type: "certificate",
-    accentClass: "bg-emerald-600",
-    previewClass: "border-emerald-300 bg-emerald-50",
-    borderClass: "border-emerald-300",
+    designKey: "minimal-elegant",
+    backgroundMode: "stretch",
     badgeClass: "bg-emerald-100 text-emerald-800",
-    headingClass: "text-emerald-950"
+    theme: {
+      titleColor: "#064e3b",
+      nameColor: "#064e3b",
+      bodyColor: "#166534",
+      mutedColor: "#047857",
+      accentColor: "#059669",
+      borderColor: "rgba(5,150,105,0.3)",
+      signatureColor: "#059669",
+      sealColor: "#059669"
+    }
   },
   {
     id: "workshop-certificate",
@@ -95,11 +147,9 @@ const baseTemplateData = [
     category: "Workshop",
     description: "A practical certificate design for hands-on learning events.",
     type: "certificate",
-    accentClass: "bg-cyan-600",
-    previewClass: "border-cyan-300 bg-cyan-50",
-    borderClass: "border-cyan-300",
-    badgeClass: "bg-cyan-100 text-cyan-800",
-    headingClass: "text-cyan-950"
+    designKey: "blue-corporate",
+    backgroundMode: "stretch",
+    badgeClass: "bg-cyan-100 text-cyan-800"
   },
   {
     id: "webinar-certificate",
@@ -107,11 +157,9 @@ const baseTemplateData = [
     category: "Webinar",
     description: "A clean certificate for virtual talks and online sessions.",
     type: "certificate",
-    accentClass: "bg-violet-600",
-    previewClass: "border-violet-300 bg-violet-50",
-    borderClass: "border-violet-300",
-    badgeClass: "bg-violet-100 text-violet-800",
-    headingClass: "text-violet-950"
+    designKey: "minimal-elegant",
+    backgroundMode: "stretch",
+    badgeClass: "bg-violet-100 text-violet-800"
   },
   {
     id: "expert-talk-certificate",
@@ -119,11 +167,9 @@ const baseTemplateData = [
     category: "Expert Talk",
     description: "A polished design for invited expert talks and lectures.",
     type: "certificate",
-    accentClass: "bg-purple-600",
-    previewClass: "border-purple-300 bg-purple-50",
-    borderClass: "border-purple-300",
-    badgeClass: "bg-purple-100 text-purple-800",
-    headingClass: "text-purple-950"
+    designKey: "classic-ornate",
+    backgroundMode: "stretch",
+    badgeClass: "bg-purple-100 text-purple-800"
   },
   {
     id: "hackathon-certificate",
@@ -131,11 +177,9 @@ const baseTemplateData = [
     category: "Hackathon",
     description: "A sharp energetic layout for coding sprints and hackathons.",
     type: "certificate",
-    accentClass: "bg-fuchsia-600",
-    previewClass: "border-fuchsia-300 bg-fuchsia-50",
-    borderClass: "border-fuchsia-300",
-    badgeClass: "bg-fuchsia-100 text-fuchsia-800",
-    headingClass: "text-fuchsia-950"
+    designKey: "modern-wave",
+    backgroundMode: "stretch",
+    badgeClass: "bg-fuchsia-100 text-fuchsia-800"
   },
   {
     id: "internship-certificate",
@@ -143,11 +187,9 @@ const baseTemplateData = [
     category: "Training",
     description: "A formal training certificate for internship completion.",
     type: "certificate",
-    accentClass: "bg-teal-600",
-    previewClass: "border-teal-300 bg-teal-50",
-    borderClass: "border-teal-300",
-    badgeClass: "bg-teal-100 text-teal-800",
-    headingClass: "text-teal-950"
+    designKey: "academic-seal",
+    backgroundMode: "stretch",
+    badgeClass: "bg-teal-100 text-teal-800"
   },
   {
     id: "training-completion-certificate",
@@ -155,11 +197,9 @@ const baseTemplateData = [
     category: "Training",
     description: "A calm professional certificate for training programs.",
     type: "certificate",
-    accentClass: "bg-lime-600",
-    previewClass: "border-lime-300 bg-lime-50",
-    borderClass: "border-lime-300",
-    badgeClass: "bg-lime-100 text-lime-800",
-    headingClass: "text-lime-950"
+    designKey: "blue-corporate",
+    backgroundMode: "stretch",
+    badgeClass: "bg-lime-100 text-lime-800"
   },
   {
     id: "participation-certificate",
@@ -167,11 +207,9 @@ const baseTemplateData = [
     category: "Competition",
     description: "A versatile design for participation in events and contests.",
     type: "certificate",
-    accentClass: "bg-blue-500",
-    previewClass: "border-blue-200 bg-blue-50",
-    borderClass: "border-blue-200",
-    badgeClass: "bg-blue-100 text-blue-800",
-    headingClass: "text-blue-950"
+    designKey: "minimal-elegant",
+    backgroundMode: "stretch",
+    badgeClass: "bg-blue-100 text-blue-800"
   },
   {
     id: "appreciation-certificate",
@@ -179,11 +217,9 @@ const baseTemplateData = [
     category: "Appreciation",
     description: "A warm certificate for appreciation and recognition.",
     type: "certificate",
-    accentClass: "bg-rose-500",
-    previewClass: "border-rose-300 bg-rose-50",
-    borderClass: "border-rose-300",
-    badgeClass: "bg-rose-100 text-rose-800",
-    headingClass: "text-rose-950"
+    designKey: "classic-appreciation",
+    backgroundMode: "stretch",
+    badgeClass: "bg-rose-100 text-rose-800"
   },
   {
     id: "excellence-certificate",
@@ -191,11 +227,9 @@ const baseTemplateData = [
     category: "Academic",
     description: "A refined certificate for excellence and top performance.",
     type: "certificate",
-    accentClass: "bg-yellow-500",
-    previewClass: "border-yellow-300 bg-yellow-50",
-    borderClass: "border-yellow-300",
-    badgeClass: "bg-yellow-100 text-yellow-800",
-    headingClass: "font-serif text-yellow-950"
+    designKey: "gold-corner",
+    backgroundMode: "stretch",
+    badgeClass: "bg-yellow-100 text-yellow-800"
   },
   {
     id: "academic-achievement-certificate",
@@ -203,11 +237,9 @@ const baseTemplateData = [
     category: "Academic",
     description: "A college-style certificate for academic achievement.",
     type: "certificate",
-    accentClass: "bg-stone-700",
-    previewClass: "border-stone-300 bg-stone-50",
-    borderClass: "border-stone-300",
-    badgeClass: "bg-stone-100 text-stone-800",
-    headingClass: "font-serif text-stone-950"
+    designKey: "academic-seal",
+    backgroundMode: "stretch",
+    badgeClass: "bg-stone-100 text-stone-800"
   },
   {
     id: "sports-event-certificate",
@@ -215,11 +247,9 @@ const baseTemplateData = [
     category: "Sports",
     description: "A bright certificate for sports events and tournaments.",
     type: "certificate",
-    accentClass: "bg-orange-500",
-    previewClass: "border-orange-300 bg-orange-50",
-    borderClass: "border-orange-300",
-    badgeClass: "bg-orange-100 text-orange-800",
-    headingClass: "text-orange-950"
+    designKey: "playful-award",
+    backgroundMode: "stretch",
+    badgeClass: "bg-orange-100 text-orange-800"
   },
   {
     id: "cultural-event-certificate",
@@ -227,11 +257,9 @@ const baseTemplateData = [
     category: "Cultural",
     description: "A vibrant design for cultural programs and performances.",
     type: "certificate",
-    accentClass: "bg-pink-500",
-    previewClass: "border-pink-300 bg-pink-50",
-    borderClass: "border-pink-300",
-    badgeClass: "bg-pink-100 text-pink-800",
-    headingClass: "text-pink-950"
+    designKey: "floral-creative",
+    backgroundMode: "stretch",
+    badgeClass: "bg-pink-100 text-pink-800"
   },
   {
     id: "technical-event-certificate",
@@ -239,11 +267,9 @@ const baseTemplateData = [
     category: "Technical",
     description: "A crisp certificate for tech fests and technical sessions.",
     type: "certificate",
-    accentClass: "bg-slate-600",
-    previewClass: "border-slate-300 bg-slate-50",
-    borderClass: "border-slate-300",
-    badgeClass: "bg-slate-100 text-slate-800",
-    headingClass: "text-slate-950"
+    designKey: "modern-wave",
+    backgroundMode: "stretch",
+    badgeClass: "bg-slate-100 text-slate-800"
   },
   {
     id: "coding-competition-certificate",
@@ -251,11 +277,9 @@ const baseTemplateData = [
     category: "Competition",
     description: "A clean coding contest certificate with a strong blue accent.",
     type: "certificate",
-    accentClass: "bg-cyan-700",
-    previewClass: "border-cyan-400 bg-cyan-50",
-    borderClass: "border-cyan-400",
-    badgeClass: "bg-cyan-100 text-cyan-800",
-    headingClass: "text-cyan-950"
+    designKey: "modern-wave",
+    backgroundMode: "stretch",
+    badgeClass: "bg-cyan-100 text-cyan-800"
   },
   {
     id: "project-exhibition-certificate",
@@ -263,11 +287,9 @@ const baseTemplateData = [
     category: "Technical",
     description: "A professional design for project exhibitions and showcases.",
     type: "certificate",
-    accentClass: "bg-green-600",
-    previewClass: "border-green-300 bg-green-50",
-    borderClass: "border-green-300",
-    badgeClass: "bg-green-100 text-green-800",
-    headingClass: "text-green-950"
+    designKey: "blue-corporate",
+    backgroundMode: "stretch",
+    badgeClass: "bg-green-100 text-green-800"
   },
   {
     id: "innovation-award-certificate",
@@ -275,11 +297,9 @@ const baseTemplateData = [
     category: "Competition",
     description: "A premium award certificate for innovation challenges.",
     type: "certificate",
-    accentClass: "bg-amber-600",
-    previewClass: "border-amber-500 bg-gradient-to-br from-amber-50 to-white",
-    borderClass: "border-amber-500",
-    badgeClass: "bg-amber-100 text-amber-800",
-    headingClass: "font-serif text-amber-950"
+    designKey: "gold-corner",
+    backgroundMode: "stretch",
+    badgeClass: "bg-amber-100 text-amber-800"
   },
   {
     id: "volunteer-certificate",
@@ -287,11 +307,9 @@ const baseTemplateData = [
     category: "Appreciation",
     description: "A friendly certificate for volunteer service and contribution.",
     type: "certificate",
-    accentClass: "bg-emerald-500",
-    previewClass: "border-emerald-200 bg-white",
-    borderClass: "border-emerald-200",
-    badgeClass: "bg-emerald-100 text-emerald-800",
-    headingClass: "text-emerald-950"
+    designKey: "classic-appreciation",
+    backgroundMode: "stretch",
+    badgeClass: "bg-emerald-100 text-emerald-800"
   },
   {
     id: "completion-certificate",
@@ -299,11 +317,9 @@ const baseTemplateData = [
     category: "Training",
     description: "A simple professional certificate for course completion.",
     type: "certificate",
-    accentClass: "bg-indigo-600",
-    previewClass: "border-indigo-300 bg-indigo-50",
-    borderClass: "border-indigo-300",
-    badgeClass: "bg-indigo-100 text-indigo-800",
-    headingClass: "text-indigo-950"
+    designKey: "academic-seal",
+    backgroundMode: "stretch",
+    badgeClass: "bg-indigo-100 text-indigo-800"
   },
   {
     id: "classic-ornate-certificate",
@@ -312,6 +328,7 @@ const baseTemplateData = [
     description: "An original cream and navy ornate certificate with formal serif styling.",
     type: "certificate",
     designKey: "classic-ornate",
+    backgroundMode: "stretch",
     badgeClass: "bg-indigo-100 text-indigo-900"
   },
   {
@@ -321,6 +338,7 @@ const baseTemplateData = [
     description: "A clean corporate certificate with teal and gold CSS wave accents.",
     type: "certificate",
     designKey: "modern-wave",
+    backgroundMode: "stretch",
     badgeClass: "bg-teal-100 text-teal-800"
   },
   {
@@ -330,6 +348,7 @@ const baseTemplateData = [
     description: "A parchment-inspired premium certificate with subtle CSS texture.",
     type: "certificate",
     designKey: "vintage-border",
+    backgroundMode: "stretch",
     badgeClass: "bg-stone-100 text-stone-800"
   },
   {
@@ -339,6 +358,7 @@ const baseTemplateData = [
     description: "A white award certificate with gold corner ornaments and a medal seal.",
     type: "certificate",
     designKey: "gold-corner",
+    backgroundMode: "stretch",
     badgeClass: "bg-amber-100 text-amber-800"
   },
   {
@@ -348,7 +368,18 @@ const baseTemplateData = [
     description: "A dark charcoal achievement certificate with readable gold accents.",
     type: "certificate",
     designKey: "dark-luxury",
-    badgeClass: "bg-slate-900 text-amber-200"
+    backgroundMode: "stretch",
+    badgeClass: "bg-slate-900 text-amber-200",
+    theme: {
+      titleColor: "#f8fafc",
+      nameColor: "#fbbf24",
+      bodyColor: "#e2e8f0",
+      mutedColor: "#94a3b8",
+      accentColor: "#fbbf24",
+      borderColor: "rgba(251,191,36,0.4)",
+      signatureColor: "#fbbf24",
+      sealColor: "#fbbf24"
+    }
   },
   {
     id: "floral-creative-certificate",
@@ -357,6 +388,7 @@ const baseTemplateData = [
     description: "A fresh event certificate with original SVG floral corner decorations.",
     type: "certificate",
     designKey: "floral-creative",
+    backgroundMode: "stretch",
     badgeClass: "bg-orange-100 text-orange-800"
   },
   {
@@ -366,6 +398,7 @@ const baseTemplateData = [
     description: "A bright student-friendly award design with geometric CSS shapes.",
     type: "certificate",
     designKey: "playful-award",
+    backgroundMode: "stretch",
     badgeClass: "bg-orange-100 text-orange-800"
   },
   {
@@ -375,6 +408,7 @@ const baseTemplateData = [
     description: "A polished blue and white certificate for training and professional events.",
     type: "certificate",
     designKey: "blue-corporate",
+    backgroundMode: "stretch",
     badgeClass: "bg-blue-100 text-blue-800"
   },
   {
@@ -384,6 +418,7 @@ const baseTemplateData = [
     description: "A pure white minimalist certificate with restrained gray line work.",
     type: "certificate",
     designKey: "minimal-elegant",
+    backgroundMode: "stretch",
     badgeClass: "bg-slate-100 text-slate-700"
   },
   {
@@ -393,13 +428,41 @@ const baseTemplateData = [
     description: "A formal university-style certificate with deep blue border and seal.",
     type: "certificate",
     designKey: "academic-seal",
+    backgroundMode: "stretch",
     badgeClass: "bg-blue-100 text-blue-900"
   }
 ].map((item) => ({
-  backgroundFit: "stretch",
+  backgroundMode: "stretch",
+  theme: {
+    titleColor: "#0f172a",
+    nameColor: "#0f172a",
+    bodyColor: "#334155",
+    mutedColor: "#64748b",
+    accentColor: "#1e3a8a",
+    borderColor: "rgba(30,58,138,0.3)",
+    signatureColor: "#1e3a8a",
+    sealColor: "#d97706",
+    ...item.theme
+  },
   ...item
 }));
 
-const templateData = [...baseTemplateData, ...backgroundTemplateData];
+const normalizedBackgroundTemplates = backgroundTemplateData.map((item) => ({
+  ...item,
+  backgroundMode: item.backgroundMode || "stretch",
+  theme: {
+    titleColor: item.textTheme === "light" ? "#ffffff" : "#0f172a",
+    nameColor: item.textTheme === "light" ? "#fef08a" : "#0f172a",
+    bodyColor: item.textTheme === "light" ? "#e2e8f0" : "#334155",
+    mutedColor: item.textTheme === "light" ? "#cbd5e1" : "#64748b",
+    accentColor: item.textTheme === "light" ? "#fbbf24" : "#1e3a8a",
+    borderColor: item.textTheme === "light" ? "rgba(251,191,36,0.5)" : "rgba(30,58,138,0.3)",
+    signatureColor: item.textTheme === "light" ? "#fbbf24" : "#1e3a8a",
+    sealColor: item.textTheme === "light" ? "#fbbf24" : "#d97706",
+    ...item.theme
+  }
+}));
+
+const templateData = [...baseTemplateData, ...normalizedBackgroundTemplates];
 
 export default templateData;

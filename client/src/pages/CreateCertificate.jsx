@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import CertificatePreview from "../components/CertificatePreview.jsx";
-import CertificateCanvas from "../components/certificate/CertificateCanvas.jsx";
-import CertificateExportTestPanel from "../components/certificate/CertificateExportTestPanel.jsx";
+import CertificateSvgTestPanel from "../components/certificate/CertificateSvgTestPanel.jsx";
 import templateData from "../data/templateData.js";
 import { createCertificate, saveDraftCertificate } from "../services/certificateApi.js";
-import downloadCertificatePdf from "../utils/downloadCertificatePdf.js";
+import downloadCertificatePdf, { downloadCertificatePng } from "../utils/downloadCertificatePdf.js";
+import validateCertificateLayout from "../utils/validateCertificateLayout.js";
 
 const inputClass =
   "h-11 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 text-sm font-semibold outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100";
@@ -44,6 +44,7 @@ function CreateCertificate() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSavingDraft, setIsSavingDraft] = useState(false);
   const [generatedCertificate, setGeneratedCertificate] = useState(null);
+  const certificateSvgRef = useRef(null);
 
   useEffect(() => {
     const selectedTemplate = localStorage.getItem("selectedCertificateTemplate");
@@ -116,6 +117,7 @@ function CreateCertificate() {
       return false;
     }
 
+    validateCertificateLayout(formData);
     return true;
   };
 
@@ -155,13 +157,29 @@ function CreateCertificate() {
     return `${participantName}_${certificateId}.pdf`;
   };
 
+  const createPngFileName = () => {
+    const participantName = formData.participantName.trim().replace(/\s+/g, "_") || "Participant";
+    const certificateId = generatedCertificate?.certificateId || "CERT-2026-001";
+
+    return `${participantName}_${certificateId}.png`;
+  };
+
   const handleDownloadPdf = async () => {
-    if (!generatedCertificate) {
-      alert("Please generate certificate first.");
+    if (!certificateSvgRef.current) {
+      alert("Certificate SVG renderer is initializing. Please try again in a moment.");
       return;
     }
 
-    await downloadCertificatePdf("certificate-export-canvas", createPdfFileName());
+    await downloadCertificatePdf(certificateSvgRef.current, createPdfFileName());
+  };
+
+  const handleDownloadPng = async () => {
+    if (!certificateSvgRef.current) {
+      alert("Certificate SVG renderer is initializing. Please try again in a moment.");
+      return;
+    }
+
+    await downloadCertificatePng(certificateSvgRef.current, createPngFileName());
   };
 
   const selectedTemplateName = formData.templateStyle || "Classic Certificate";
@@ -178,18 +196,8 @@ function CreateCertificate() {
 
   return (
     <section className="space-y-8 pb-10">
-      {/* Off-screen Export Host Component for 1600x1131 PDF Capture */}
-      <div className="certificate-export-host" aria-hidden="true">
-        <CertificateCanvas
-          id="certificate-export-canvas"
-          {...previewData}
-          certificateCategory={formData.category}
-          exportMode
-        />
-      </div>
-
-      {/* DEV-Only Export Test Panel */}
-      <CertificateExportTestPanel />
+      {/* DEV-Only Pure SVG Test Suite Panel */}
+      <CertificateSvgTestPanel />
 
       {/* Breadcrumb Navigation */}
       <nav className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
@@ -209,7 +217,7 @@ function CreateCertificate() {
           Create Certificate
         </h1>
         <p className="mt-2 max-w-3xl text-base text-slate-600 font-medium leading-relaxed">
-          Fill out participant and event information, select an official template design, preview live in real-time, and download your high-resolution PDF.
+          Fill out participant and event information, select an official template design, preview live in real-time, and export high-resolution PDF or PNG.
         </p>
       </div>
 
@@ -398,15 +406,21 @@ function CreateCertificate() {
             {isGenerating ? "Generating..." : "Generate Certificate"}
           </button>
 
-          {generatedCertificate && (
-            <button
-              type="button"
-              onClick={handleDownloadPdf}
-              className="rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-3 text-sm font-black text-white shadow-md hover:from-emerald-700 hover:to-teal-700 transition active:scale-98"
-            >
-              Download PDF
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={handleDownloadPdf}
+            className="rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-3 text-sm font-black text-white shadow-md hover:from-emerald-700 hover:to-teal-700 transition active:scale-98"
+          >
+            Download PDF
+          </button>
+
+          <button
+            type="button"
+            onClick={handleDownloadPng}
+            className="rounded-xl border border-emerald-300 bg-emerald-50 px-5 py-3 text-sm font-black text-emerald-700 hover:bg-emerald-100 transition active:scale-98"
+          >
+            Download PNG
+          </button>
         </div>
       </form>
 
@@ -417,7 +431,7 @@ function CreateCertificate() {
           <div>
             <div className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
-              <p className="text-xs font-black uppercase tracking-wider text-slate-500">Live Visual Canvas</p>
+              <p className="text-xs font-black uppercase tracking-wider text-slate-500">Pure SVG Live Canvas</p>
             </div>
             <h3 className="text-lg font-black text-slate-950 font-sans">Certificate Live Preview</h3>
           </div>
@@ -426,21 +440,19 @@ function CreateCertificate() {
             <span className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-black text-blue-700">
               Style: {selectedTemplateName}
             </span>
-            {generatedCertificate && (
-              <button
-                type="button"
-                onClick={handleDownloadPdf}
-                className="rounded-xl bg-emerald-600 px-4 py-2 text-xs font-black text-white shadow-xs hover:bg-emerald-700 transition"
-              >
-                Export PDF
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={handleDownloadPdf}
+              className="rounded-xl bg-emerald-600 px-4 py-2 text-xs font-black text-white shadow-xs hover:bg-emerald-700 transition"
+            >
+              Export PDF
+            </button>
           </div>
         </div>
 
-        {/* Certificate Target Preview Root */}
+        {/* Certificate Target Preview Root (Pure SVG directly) */}
         <div className="mx-auto w-full max-w-[1200px] overflow-hidden">
-          <CertificatePreview certificateData={previewData} previewId="certificate-preview" />
+          <CertificatePreview ref={certificateSvgRef} certificateData={previewData} previewId="create-certificate-preview-svg" />
         </div>
       </section>
     </section>

@@ -1,13 +1,19 @@
-import React from "react";
-import ScaledCertificatePreview from "./certificate/ScaledCertificatePreview.jsx";
+import React, { forwardRef } from "react";
+import CertificateSvg from "./certificate/CertificateSvg.jsx";
 
-function CertificatePreview({ certificateData = {}, previewId = "certificate-preview" }) {
+const CertificatePreview = forwardRef(function CertificatePreview(
+  { certificateData = {}, previewId = "certificate-preview-svg" },
+  ref
+) {
   return (
-    <ScaledCertificatePreview
-      id={previewId}
-      certificateData={certificateData}
-    />
+    <div className="certificate-preview-shell">
+      <CertificateSvg
+        ref={ref}
+        id={previewId}
+        {...certificateData}
+      />
+    </div>
   );
-}
+});
 
 export default CertificatePreview;

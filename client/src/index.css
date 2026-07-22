@@ -383,40 +383,21 @@ button {
   font-family: "Brush Script MT", "Segoe Script", cursive;
 }
 
-/* Fixed Certificate Export Canvas Rules */
-.certificate-export-host {
-  position: fixed;
-  left: -20000px;
-  top: 0;
-  width: 1600px;
-  height: 1131px;
-  pointer-events: none;
-  z-index: -1000;
-  opacity: 1;
+/* Pure SVG Certificate Container & Responsive Shell Rules */
+.certificate-preview-shell {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
 }
 
-.certificate-canvas,
-.certificate-canvas * {
-  box-sizing: border-box;
+.certificate-preview-shell svg {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
-.certificate-canvas {
-  width: 1600px;
-  height: 1131px;
-  position: relative;
-  overflow: hidden;
-  transform: none;
-  opacity: 1;
-  filter: none;
-  animation: none;
-  background: #ffffff;
-}
-
-.certificate-export-host *,
-.certificate-export-host *::before,
-.certificate-export-host *::after {
-  animation: none !important;
-  transition: none !important;
+.certificate-svg {
+  overflow: visible;
 }
 
 .hover-lift {

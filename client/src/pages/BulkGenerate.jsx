@@ -1,8 +1,8 @@
 import JSZip from "jszip";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import CertificatePreview from "../components/CertificatePreview.jsx";
-import CertificateCanvas from "../components/certificate/CertificateCanvas.jsx";
+import CertificateSvg from "../components/certificate/CertificateSvg.jsx";
 import templateData from "../data/templateData.js";
 import { bulkCreateCertificates } from "../services/certificateApi.js";
 import downloadCertificatePdf, { generateCertificatePdfBlob, safeFileName } from "../utils/downloadCertificatePdf.js";
@@ -61,6 +61,9 @@ function BulkGenerate() {
   const [exportCertificate, setExportCertificate] = useState(null);
   const [zipProgress, setZipProgress] = useState("");
   const [isPreparingZip, setIsPreparingZip] = useState(false);
+
+  const selectedSvgRef = useRef(null);
+  const batchSvgRef = useRef(null);
 
   const samplePreviewData = useMemo(() => {
     const firstParticipant = participants[0] || {
@@ -309,12 +312,12 @@ function BulkGenerate() {
   };
 
   const handleDownloadSelectedPdf = async () => {
-    if (!selectedCertificate) {
+    if (!selectedCertificate || !selectedSvgRef.current) {
       alert("Please select a certificate first.");
       return;
     }
 
-    await downloadCertificatePdf("bulk-certificate-export-canvas", createPdfFileName(selectedCertificate));
+    await downloadCertificatePdf(selectedSvgRef.current, createPdfFileName(selectedCertificate));
   };
 
   const handleDownloadAllZip = async () => {
@@ -334,11 +337,13 @@ function BulkGenerate() {
         const certificate = generatedCertificates[index];
         setZipProgress(`Preparing ${index + 1} of ${generatedCertificates.length} certificates...`);
         setExportCertificate(certificate);
-        await new Promise((resolve) => setTimeout(resolve, 300));
+        await new Promise((resolve) => setTimeout(resolve, 150));
 
         try {
-          const pdfBlob = await generateCertificatePdfBlob("bulk-zip-export-canvas");
-          zip.file(createPdfFileName(certificate), pdfBlob);
+          if (batchSvgRef.current) {
+            const pdfBlob = await generateCertificatePdfBlob(batchSvgRef.current);
+            zip.file(createPdfFileName(certificate), pdfBlob);
+          }
         } catch (error) {
           failedCount += 1;
           console.error(`PDF generation failed for ${certificate.participantName}`, error);
@@ -377,28 +382,17 @@ function BulkGenerate() {
 
   return (
     <section className="space-y-8 pb-10">
-      {/* Off-screen Export Host Elements for Single & Batch ZIP Export */}
-      {selectedCertificate && (
-        <div className="certificate-export-host" aria-hidden="true">
-          <CertificateCanvas
-            id="bulk-certificate-export-canvas"
-            {...selectedCertificate}
-            certificateCategory={selectedCertificate.certificateCategory || commonDetails.certificateCategory}
-            exportMode
-          />
-        </div>
-      )}
-
-      {exportCertificate && (
-        <div className="certificate-export-host" aria-hidden="true">
-          <CertificateCanvas
-            id="bulk-zip-export-canvas"
+      {/* Off-screen Pure SVG Host for Batch ZIP Export */}
+      <div style={{ position: "fixed", left: "-20000px", top: "0" }} aria-hidden="true">
+        {exportCertificate && (
+          <CertificateSvg
+            ref={batchSvgRef}
+            id="bulk-zip-export-svg"
             {...exportCertificate}
             certificateCategory={exportCertificate.certificateCategory || commonDetails.certificateCategory}
-            exportMode
           />
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Breadcrumb Navigation */}
       <nav className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
@@ -717,7 +711,7 @@ function BulkGenerate() {
             <h3 className="text-base font-black text-slate-950 font-sans">Batch Sample Visual</h3>
           </div>
           <div className="overflow-hidden">
-            <CertificatePreview certificateData={samplePreviewData} previewId="bulk-sample-preview" />
+            <CertificatePreview certificateData={samplePreviewData} previewId="bulk-sample-preview-svg" />
           </div>
         </div>
       </div>
@@ -797,7 +791,11 @@ function BulkGenerate() {
             </button>
           </div>
 
-          <CertificatePreview certificateData={selectedCertificate} previewId="bulk-certificate-preview" />
+          <CertificatePreview
+            ref={selectedSvgRef}
+            certificateData={selectedCertificate}
+            previewId="bulk-certificate-preview-svg"
+          />
         </div>
       )}
     </section>

@@ -1,7 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import CertificatePreview from "../components/CertificatePreview.jsx";
-import CertificateCanvas from "../components/certificate/CertificateCanvas.jsx";
 import templateData from "../data/templateData.js";
 import { deleteCertificate, getCertificates, updateCertificate } from "../services/certificateApi.js";
 import downloadCertificatePdf from "../utils/downloadCertificatePdf.js";
@@ -54,6 +53,8 @@ function GeneratedCertificates() {
   const [selectedGenerationType, setSelectedGenerationType] = useState("All");
   const [selectedStatus, setSelectedStatus] = useState("All");
 
+  const selectedSvgRef = useRef(null);
+
   const categories = useMemo(() => {
     const savedCategories = certificates
       .map((certificate) => certificate.certificateCategory)
@@ -99,13 +100,13 @@ function GeneratedCertificates() {
   }, []);
 
   useEffect(() => {
-    if (!pendingDownload || !selectedCertificate) {
+    if (!pendingDownload || !selectedCertificate || !selectedSvgRef.current) {
       return;
     }
 
     const downloadSelectedCertificate = async () => {
       await new Promise((resolve) => requestAnimationFrame(resolve));
-      await downloadCertificatePdf("certificate-export-canvas", createPdfFileName(selectedCertificate));
+      await downloadCertificatePdf(selectedSvgRef.current, createPdfFileName(selectedCertificate));
       setPendingDownload(false);
     };
 
@@ -202,12 +203,12 @@ function GeneratedCertificates() {
   };
 
   const handleDownloadPdf = async () => {
-    if (!selectedCertificate) {
+    if (!selectedCertificate || !selectedSvgRef.current) {
       alert("Please select a certificate first.");
       return;
     }
 
-    await downloadCertificatePdf("certificate-export-canvas", createPdfFileName(selectedCertificate));
+    await downloadCertificatePdf(selectedSvgRef.current, createPdfFileName(selectedCertificate));
   };
 
   if (isLoading) {
@@ -232,18 +233,6 @@ function GeneratedCertificates() {
 
   return (
     <section className="space-y-8 pb-10">
-      {/* Off-screen Export Host Component for 1600x1131 PDF Capture */}
-      {selectedCertificate && (
-        <div className="certificate-export-host" aria-hidden="true">
-          <CertificateCanvas
-            id="certificate-export-canvas"
-            {...selectedCertificate}
-            certificateCategory={selectedCertificate.certificateCategory}
-            exportMode
-          />
-        </div>
-      )}
-
       {/* Breadcrumb Navigation */}
       <nav className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
         <Link to="/certificate-dashboard" className="hover:text-blue-600 transition">
@@ -435,7 +424,11 @@ function GeneratedCertificates() {
 
           <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
             <div className="overflow-hidden">
-              <CertificatePreview certificateData={selectedCertificate} previewId="generated-certificate-preview" />
+              <CertificatePreview
+                ref={selectedSvgRef}
+                certificateData={selectedCertificate}
+                previewId="generated-certificate-preview-svg"
+              />
             </div>
 
             <div className="rounded-2xl border border-slate-100 bg-slate-50/80 p-4 text-xs space-y-3">
