@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 
 const certificateItems = [
+  { name: "Certificate Dashboard", path: "/certificate-dashboard", icon: "📊" },
   { name: "Create Certificate", path: "/create-certificate", icon: "📝" },
   { name: "Templates", path: "/templates", icon: "🎨" },
   { name: "Categories", path: "/categories", icon: "🗂️" },
@@ -9,6 +10,7 @@ const certificateItems = [
 ];
 
 const reportItems = [
+  { name: "Report Dashboard", path: "/report-dashboard", icon: "📈" },
   { name: "Create Event Report", path: "/create-event-report", icon: "📋" },
   { name: "Event Reports", path: "/event-reports", icon: "📁" }
 ];

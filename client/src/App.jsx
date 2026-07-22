@@ -3,6 +3,8 @@ import Footer from "./components/Footer.jsx";
 import Navbar from "./components/Navbar.jsx";
 import Sidebar from "./components/Sidebar.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
+import CertificateDashboard from "./pages/CertificateDashboard.jsx";
+import ReportDashboard from "./pages/ReportDashboard.jsx";
 import CreateCertificate from "./pages/CreateCertificate.jsx";
 import Templates from "./pages/Templates.jsx";
 import Categories from "./pages/Categories.jsx";
@@ -21,6 +23,8 @@ function App() {
           <div className="min-w-0">
             <Routes>
               <Route path="/" element={<Dashboard />} />
+              <Route path="/certificate-dashboard" element={<CertificateDashboard />} />
+              <Route path="/report-dashboard" element={<ReportDashboard />} />
               <Route path="/create-certificate" element={<CreateCertificate />} />
               <Route path="/templates" element={<Templates />} />
               <Route path="/categories" element={<Categories />} />
