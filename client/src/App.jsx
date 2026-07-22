@@ -11,6 +11,8 @@ import Templates from "./pages/Templates.jsx";
 import Categories from "./pages/Categories.jsx";
 import BulkGenerate from "./pages/BulkGenerate.jsx";
 import GeneratedCertificates from "./pages/GeneratedCertificates.jsx";
+import CreatePoster from "./pages/CreatePoster.jsx";
+import PosterRecords from "./pages/PosterRecords.jsx";
 import CreateEventReport from "./pages/CreateEventReport.jsx";
 import EventReports from "./pages/EventReports.jsx";
 
@@ -30,6 +32,8 @@ function App() {
         <Route path="/categories" element={<Categories />} />
         <Route path="/bulk-generate" element={<BulkGenerate />} />
         <Route path="/generated-certificates" element={<GeneratedCertificates />} />
+        <Route path="/create-poster" element={<CreatePoster />} />
+        <Route path="/poster-records" element={<PosterRecords />} />
       </Route>
 
       {/* 3. Report Module Layout */}

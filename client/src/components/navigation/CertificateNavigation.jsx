@@ -21,6 +21,15 @@ const certificateNavItems = [
     )
   },
   {
+    name: "Poster Builder",
+    path: "/create-poster",
+    icon: (
+      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+      </svg>
+    )
+  },
+  {
     name: "Templates",
     path: "/templates",
     icon: (
@@ -53,6 +62,15 @@ const certificateNavItems = [
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+    )
+  },
+  {
+    name: "Poster Records",
+    path: "/poster-records",
+    icon: (
+      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
       </svg>
     )
   }
@@ -106,7 +124,7 @@ function CertificateNavigation() {
               key={item.path}
               to={item.path}
               className={({ isActive }) =>
-                `group relative flex items-center gap-3.5 rounded-2xl px-3.5 py-3 text-sm font-bold transition-all duration-300 ${
+                `group relative flex items-center gap-3.5 rounded-2xl px-3.5 py-2.5 text-xs font-bold transition-all duration-300 ${
                   isActive
                     ? "bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white shadow-md shadow-blue-500/25"
                     : "text-slate-600 hover:bg-blue-50/80 hover:text-blue-700"
@@ -119,7 +137,7 @@ function CertificateNavigation() {
                   {isActive && (
                     <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r-full bg-cyan-300 shadow-sm" />
                   )}
-                  <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-transform duration-300 ${isActive ? "text-white" : "text-blue-600 group-hover:scale-110"}`}>
+                  <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg transition-transform duration-300 ${isActive ? "text-white" : "text-blue-600 group-hover:scale-110"}`}>
                     {item.icon}
                   </span>
                   {!isCollapsed && <span className="truncate font-sans">{item.name}</span>}

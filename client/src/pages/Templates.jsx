@@ -189,19 +189,25 @@ function CertificateMiniPreview({ template }) {
 
 function PosterMiniPreview({ poster }) {
   return (
-    <div className={`mx-auto flex aspect-[3/4] max-h-72 w-full max-w-52 items-center justify-center rounded-2xl border-2 p-3 ${poster.previewClass}`}>
-      <div className="flex h-full w-full flex-col justify-between rounded-xl bg-white/80 p-4 text-center">
-        <div className={`mx-auto h-1.5 w-16 rounded-full ${poster.accentClass}`} />
-        <div>
-          <p className="text-sm font-black uppercase text-slate-800">Event Title</p>
-          <div className="mx-auto mt-3 h-2 w-20 rounded-full bg-slate-200" />
-          <div className="mx-auto mt-1.5 h-2 w-14 rounded-full bg-slate-200" />
-        </div>
-        <div className="space-y-1.5">
-          <div className="mx-auto h-2 w-24 rounded-full bg-slate-100" />
-          <div className="mx-auto h-2 w-16 rounded-full bg-slate-100" />
-          <div className={`mx-auto h-6 w-20 rounded-full ${poster.accentClass}`} />
-        </div>
+    <div className={`relative aspect-[4/5] overflow-hidden rounded-2xl border border-slate-200/80 bg-gradient-to-br ${poster.backgroundClass || "from-slate-900 via-blue-950 to-slate-950"} p-4 text-white shadow-xs flex flex-col justify-between`}>
+      <div className="flex items-center justify-between border-b border-white/15 pb-2">
+        <span className="text-[8px] font-black uppercase tracking-widest text-slate-300">ORGANIZATION LOGO</span>
+        <span className={`rounded-full border px-2 py-0.5 text-[8px] font-black uppercase ${poster.badgeClass}`}>
+          {poster.category}
+        </span>
+      </div>
+
+      <div className="my-auto text-center space-y-1.5">
+        <p className="text-[9px] font-black uppercase tracking-widest text-cyan-300">EVENT TAGLINE</p>
+        <p className="text-sm font-black uppercase leading-tight text-white font-sans truncate">
+          {poster.name}
+        </p>
+        <div className="mx-auto h-0.5 w-12 rounded-full bg-cyan-400" />
+      </div>
+
+      <div className="rounded-xl border border-white/10 bg-white/10 p-2 text-center text-[9px] font-bold space-y-1">
+        <div className="h-1 w-full bg-white/30 rounded" />
+        <div className="h-1 w-3/4 bg-white/30 rounded mx-auto" />
       </div>
     </div>
   );
@@ -239,14 +245,17 @@ function Templates() {
     navigate("/create-certificate");
   };
 
-  const handleUsePoster = () => {
-    alert("Poster generation is planned for a future release.");
+  const handleUsePoster = (poster) => {
+    localStorage.setItem("selectedPosterTemplate", poster.name);
+    localStorage.setItem("selectedPosterObject", JSON.stringify(poster));
+    alert("Poster template selected successfully.");
+    navigate("/create-poster");
   };
 
   const itemLabel = activeTab === "certificate" ? "certificate templates" : "poster designs";
 
   return (
-    <section className="space-y-8 pb-10">
+    <section className="space-y-6 pb-12 overflow-visible">
       {/* Breadcrumb Navigation */}
       <nav className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
         <Link to="/certificate-dashboard" className="hover:text-blue-600 transition">
@@ -265,18 +274,19 @@ function Templates() {
           Template Gallery
         </h1>
         <p className="mt-2 max-w-3xl text-base text-slate-600 font-medium leading-relaxed">
-          Select from our curated collection of professional certificate templates, ornate academic seals, and custom background image layouts.
+          Select from our curated collection of professional certificate templates, ornate academic seals, custom background layouts, and 12 dynamic event posters.
         </p>
       </div>
 
-      {/* Sticky Filter & Search Bar */}
-      <div className="sticky top-20 z-20 rounded-2xl border border-slate-200/90 bg-white/95 p-4 shadow-md backdrop-blur-xl">
-        <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-          <div className="flex items-center gap-1 rounded-xl bg-slate-100 p-1">
+      {/* FIXED/STICKY FILTER NAVBAR (PART 1 FIX: Normal flow on mobile, lg:sticky lg:top-24 z-30) */}
+      <div className="relative top-auto lg:sticky lg:top-24 z-30 mb-8 rounded-2xl border border-slate-200/90 bg-white/95 p-4 shadow-lg backdrop-blur-xl transition-all">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          {/* Tabs */}
+          <div className="flex items-center gap-1 rounded-xl bg-slate-100 p-1 w-full lg:w-auto">
             <button
               type="button"
               onClick={() => setActiveTab("certificate")}
-              className={`rounded-lg px-5 py-2 text-sm font-black transition ${
+              className={`flex-1 lg:flex-none rounded-lg px-5 py-2 text-sm font-black transition ${
                 activeTab === "certificate"
                   ? "bg-white text-blue-600 shadow-xs"
                   : "text-slate-600 hover:text-slate-950"
@@ -287,7 +297,7 @@ function Templates() {
             <button
               type="button"
               onClick={() => setActiveTab("poster")}
-              className={`rounded-lg px-5 py-2 text-sm font-black transition ${
+              className={`flex-1 lg:flex-none rounded-lg px-5 py-2 text-sm font-black transition ${
                 activeTab === "poster"
                   ? "bg-white text-blue-600 shadow-xs"
                   : "text-slate-600 hover:text-slate-950"
@@ -297,7 +307,8 @@ function Templates() {
             </button>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 xl:w-1/2">
+          {/* Search & Filter Dropdown */}
+          <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto lg:min-w-[500px]">
             <div className="relative flex-1">
               <input
                 type="search"
@@ -310,7 +321,7 @@ function Templates() {
             <select
               value={selectedCategory}
               onChange={(event) => setSelectedCategory(event.target.value)}
-              className="h-11 rounded-xl border border-slate-200 bg-slate-50/50 px-4 text-sm font-semibold outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 sm:w-52"
+              className="h-11 rounded-xl border border-slate-200 bg-slate-50/50 px-4 text-sm font-semibold outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 w-full sm:w-52"
             >
               {categories.map((category) => (
                 <option key={category} value={category}>
@@ -321,7 +332,7 @@ function Templates() {
           </div>
         </div>
 
-        <div className="mt-3 flex items-center justify-between text-xs font-bold text-slate-500 px-1">
+        <div className="mt-3 flex items-center justify-between text-xs font-bold text-slate-500 px-1 border-t border-slate-100 pt-2">
           <span>Showing {filteredItems.length} {itemLabel}</span>
           {selectedCategory !== "All" && (
             <button
@@ -335,7 +346,7 @@ function Templates() {
       </div>
 
       {/* Grid Display */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 pt-2">
         {filteredItems.map((item) => (
           <div
             key={item.id}
@@ -365,7 +376,7 @@ function Templates() {
             <div className="mt-5 pt-3 border-t border-slate-100">
               <button
                 type="button"
-                onClick={() => (activeTab === "certificate" ? handleUseTemplate(item.name) : handleUsePoster())}
+                onClick={() => (activeTab === "certificate" ? handleUseTemplate(item.name) : handleUsePoster(item))}
                 className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-2.5 text-sm font-black text-white shadow-xs hover:bg-blue-700 transition active:scale-98"
               >
                 <span>{activeTab === "certificate" ? "Use Template" : "Use Poster"}</span>

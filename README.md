@@ -8,7 +8,7 @@ This project includes three major modules:
 2. Event Report Generator  
 3. Event Poster Generator
 
-The Event Report Generator follows the academic event report structure provided in the mentor format, including event details, outline, objectives, outcomes, photos, coordinator, and dean section. :contentReference[oaicite:0]{index=0}
+The Event Report Generator follows the academic event report structure provided in the mentor format, including event details, outline, objectives, outcomes, photos, coordinator, and dean section.
 
 ---
 
@@ -76,16 +76,20 @@ The Event Report Generator allows users to create structured academic event repo
 
 ### 3. Event Poster Generator
 
-The Poster Generator backend stores poster content and design choices while the frontend handles poster preview and PNG/PDF export.
+The Event Poster Generator allows users to create engaging event promotional posters using customizable templates, live preview, optional event banner images, organization logos, and multi-format exports.
 
-#### Backend Features
+#### Features
 
-- Poster model with draft and generated statuses
-- Poster create and draft APIs
-- Poster records API
-- Optional event image upload
-- Optional organization logo upload
-- Poster update and delete support
+- 12 event poster templates (Seminar, Conference, FDP, Expert Talk, Workshop, Webinar, Hackathon, Cultural, Sports, Technical, Project Exhibition, Training)
+- Dynamic poster builder (`/create-poster`)
+- Live poster preview canvas
+- Event banner image upload support (Max 5MB)
+- Organization logo upload support (Max 5MB)
+- Save draft poster
+- PNG image download (1080 x 1350 resolution)
+- A4 portrait PDF download
+- Poster records management page (`/poster-records`)
+- View, search, filter, and delete saved poster records
 
 #### Poster API Summary
 
@@ -97,6 +101,23 @@ GET    /api/posters/:id
 PUT    /api/posters/:id
 DELETE /api/posters/:id
 ```
+
+---
+
+## Frontend Routes
+
+- `/` - Main Platform Landing Dashboard
+- `/certificate-dashboard` - Certificate Studio Workspace
+- `/create-certificate` - Certificate Builder
+- `/templates` - Template & Poster Gallery
+- `/categories` - Event Category Explorer
+- `/bulk-generate` - Bulk Certificate Generator
+- `/generated-certificates` - Certificate Records
+- `/create-poster` - Event Poster Builder
+- `/poster-records` - Poster Records
+- `/report-dashboard` - Report Studio Workspace
+- `/create-event-report` - Event Report Builder
+- `/event-reports` - Event Report Records
 
 ---
 
@@ -134,10 +155,16 @@ event-certificate-generator/
 │   │   └── certificate-backgrounds/
 │   ├── src/
 │   │   ├── components/
+│   │   │   └── PosterPreview.jsx
 │   │   ├── data/
+│   │   │   └── posterData.js
 │   │   ├── pages/
+│   │   │   ├── CreatePoster.jsx
+│   │   │   └── PosterRecords.jsx
 │   │   ├── services/
+│   │   │   └── posterApi.js
 │   │   ├── utils/
+│   │   │   └── downloadPoster.js
 │   │   ├── App.jsx
 │   │   ├── main.jsx
 │   │   └── index.css
@@ -153,9 +180,11 @@ event-certificate-generator/
 │   │   ├── app.js
 │   │   └── server.js
 │   ├── uploads/
-│   │   └── event-reports/
+│   │   ├── event-reports/
+│   │   └── posters/
 │   └── package.json
 │
 ├── README.md
 ├── LICENSE
 └── .gitignore
+```

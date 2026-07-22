@@ -37,12 +37,20 @@ function CertificateDashboard() {
       badge: "Popular"
     },
     {
+      title: "Event Poster Builder",
+      description: "Create event posters using customizable designs, images, logos, live preview, and PNG/PDF export tools.",
+      btnText: "Create Poster",
+      to: "/create-poster",
+      icon: "🖼️",
+      badge: "New Feature"
+    },
+    {
       title: "Template Gallery",
-      description: "Browse 24+ professional designs, ornate frames, dark luxury, and customizable image background layouts.",
+      description: "Browse 24+ certificate designs and 12 dynamic event posters with instant custom styling.",
       btnText: "Explore Gallery",
       to: "/templates",
       icon: "🎨",
-      badge: "24+ Styles"
+      badge: "36+ Designs"
     },
     {
       title: "Event Categories",
@@ -69,30 +77,40 @@ function CertificateDashboard() {
       badge: `${statsData.total || "All"} Records`
     },
     {
+      title: "Poster Records",
+      description: "Explore saved event poster records, view live document renders, and download PNG or A4 PDF files.",
+      btnText: "Poster Records",
+      to: "/poster-records",
+      icon: "📁",
+      badge: "Poster Archive"
+    },
+    {
       title: "Export Tools",
-      description: "Download single certificates as crisp vector PDFs or export batch runs in compressed ZIP files.",
+      description: "Download single certificates & posters as PNG/PDF or export batch runs in compressed ZIP files.",
       btnText: "Export Tools",
       to: "/generated-certificates",
       icon: "📦",
-      badge: "PDF & ZIP"
+      badge: "PNG, PDF & ZIP"
     }
   ];
 
   const quickInfoItems = [
-    { label: "24+ Templates", icon: "🎨" },
-    { label: "Bulk Generation", icon: "⚡" },
-    { label: "Live Preview", icon: "👁️" },
-    { label: "PDF & ZIP Export", icon: "📦" }
+    { label: "Certificate Templates", icon: "🎨" },
+    { label: "Poster Designs", icon: "🖼️" },
+    { label: "PDF Export", icon: "📥" },
+    { label: "PNG Export", icon: "🖼️" },
+    { label: "ZIP Export", icon: "📦" },
+    { label: "Record Management", icon: "📁" }
   ];
 
   return (
     <section className="space-y-8 pb-12">
       {/* Top Module Header */}
       <ModuleHeader
-        title="Certificate Studio"
-        subtitle="Professional certificate creation workspace"
+        title="Certificate & Design Studio"
+        subtitle="Professional certificate and poster creation workspace"
         theme="certificate"
-        badge="Certificate Module"
+        badge="Design Module"
         primaryAction={{
           label: "Create Certificate",
           to: "/create-certificate"
@@ -120,11 +138,11 @@ function CertificateDashboard() {
           <div className="space-y-6">
             <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-500/10 px-3.5 py-1 text-xs font-black uppercase tracking-widest text-cyan-300 backdrop-blur-md">
               <span className="h-2 w-2 rounded-full bg-cyan-400 animate-ping" />
-              OFFICIAL CERTIFICATE WORKSPACE
+              OFFICIAL DESIGN & CERTIFICATE WORKSPACE
             </div>
 
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-[1.15] font-sans">
-              Build certificates that look{" "}
+              Build certificates & posters that look{" "}
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 via-blue-200 to-indigo-200">
                 official, polished,
               </span>{" "}
@@ -132,7 +150,7 @@ function CertificateDashboard() {
             </h1>
 
             <p className="text-base sm:text-lg leading-relaxed text-slate-300 font-medium max-w-2xl">
-              Select a design, enter participant details, preview instantly, and export as PDF—or generate complete batches from CSV.
+              Select a certificate or poster design, enter event details, preview live, and export as PNG, A4 PDF, or ZIP archives.
             </p>
 
             {/* CTA Buttons */}
@@ -145,15 +163,15 @@ function CertificateDashboard() {
                 <span className="text-base font-bold">→</span>
               </Link>
               <Link
-                to="/templates"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700/80 bg-slate-900/80 px-6 py-3.5 text-sm font-black text-slate-200 shadow-md backdrop-blur-md transition-all duration-300 hover:border-blue-400 hover:bg-slate-800 hover:text-white active:scale-98"
+                to="/create-poster"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-blue-400/40 bg-blue-500/10 px-6 py-3.5 text-sm font-black text-cyan-200 shadow-md backdrop-blur-md transition-all duration-300 hover:border-cyan-300 hover:bg-blue-600 hover:text-white active:scale-98"
               >
-                <span>Browse Templates</span>
+                <span>Create Event Poster</span>
               </Link>
             </div>
 
-            {/* Quick Info Bar */}
-            <div className="pt-4 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {/* Quick Info Capability Bar */}
+            <div className="pt-4 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-3 gap-2.5">
               {quickInfoItems.map((item) => (
                 <div key={item.label} className="flex items-center gap-2 rounded-xl border border-blue-500/20 bg-blue-950/40 px-3 py-2 text-xs font-extrabold text-blue-200 backdrop-blur-sm">
                   <span>{item.icon}</span>
@@ -182,7 +200,7 @@ function CertificateDashboard() {
                 {/* Header Line */}
                 <div className="flex items-center justify-between">
                   <div className="h-1.5 w-14 rounded-full bg-blue-400/40" />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-amber-300">CERTIFICATE OF EXCELLENCE</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-amber-300">CERTIFICATE & POSTER STUDIO</span>
                   <div className="h-1.5 w-14 rounded-full bg-blue-400/40" />
                 </div>
 
@@ -220,28 +238,28 @@ function CertificateDashboard() {
 
             {/* Floating Mini Chip Badge */}
             <div className="absolute -bottom-4 -left-2 sm:left-4 rounded-xl border border-blue-300/40 bg-slate-900/90 px-3.5 py-2 text-xs font-black text-white shadow-xl backdrop-blur-md flex items-center gap-2">
-              <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-blue-600 text-xs">📄</span>
-              <span>24+ Templates Ready</span>
+              <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-blue-600 text-xs">🖼️</span>
+              <span>36+ Certificates & Posters</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* FEATURE TOOLS GRID (6 CARDS) */}
+      {/* FEATURE TOOLS GRID */}
       <div className="space-y-5">
         <div className="flex items-center justify-between">
           <div>
             <span className="text-xs font-black uppercase tracking-wider text-blue-600">WORKSPACE TOOLS</span>
             <h2 className="text-2xl font-black text-slate-950 tracking-tight font-sans">
-              Certificate Generator Tools
+              Certificate & Poster Generator Tools
             </h2>
           </div>
           <span className="text-xs font-extrabold text-slate-500 uppercase tracking-wider bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
-            6 Modules Active
+            8 Modules Active
           </span>
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {featureCards.map((card) => (
             <FeatureCard key={card.title} {...card} theme="blue" />
           ))}

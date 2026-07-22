@@ -5,10 +5,12 @@ import MainDashboardButton from "./MainDashboardButton.jsx";
 const certificateNavItems = [
   { name: "Overview", path: "/certificate-dashboard" },
   { name: "Create Certificate", path: "/create-certificate" },
+  { name: "Poster Builder", path: "/create-poster" },
   { name: "Templates", path: "/templates" },
   { name: "Categories", path: "/categories" },
   { name: "Bulk Generate", path: "/bulk-generate" },
-  { name: "Certificate Records", path: "/generated-certificates" }
+  { name: "Certificate Records", path: "/generated-certificates" },
+  { name: "Poster Records", path: "/poster-records" }
 ];
 
 const reportNavItems = [
