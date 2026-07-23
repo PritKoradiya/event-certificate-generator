@@ -19,16 +19,35 @@ const reportNavItems = [
   { name: "Event Report Records", path: "/event-reports" }
 ];
 
+const attendanceNavItems = [
+  { name: "Overview", path: "/attendance-dashboard" },
+  { name: "Student Master", path: "/student-list" },
+  { name: "Create Attendance Sheet", path: "/create-attendance-sheet" },
+  { name: "Attendance Records", path: "/attendance-records" }
+];
+
 function MobileModuleNavigation({ module = "certificate" }) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const isCertificate = module === "certificate";
-  const items = isCertificate ? certificateNavItems : reportNavItems;
-  const title = isCertificate ? "Certificate Studio" : "Report Studio";
-  const badgeBg = isCertificate ? "bg-blue-600" : "bg-purple-600";
-  const activeClass = isCertificate
-    ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white"
-    : "bg-gradient-to-r from-purple-600 to-pink-600 text-white";
+  let items = certificateNavItems;
+  let title = "Certificate Studio";
+  let badgeText = "CS";
+  let badgeBg = "bg-blue-600";
+  let activeClass = "bg-gradient-to-r from-blue-600 to-indigo-600 text-white";
+
+  if (module === "report") {
+    items = reportNavItems;
+    title = "Report Studio";
+    badgeText = "RS";
+    badgeBg = "bg-purple-600";
+    activeClass = "bg-gradient-to-r from-purple-600 to-pink-600 text-white";
+  } else if (module === "attendance") {
+    items = attendanceNavItems;
+    title = "Attendance Studio";
+    badgeText = "AS";
+    badgeBg = "bg-teal-600";
+    activeClass = "bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white";
+  }
 
   return (
     <div className="lg:hidden w-full mb-4">
@@ -36,7 +55,7 @@ function MobileModuleNavigation({ module = "certificate" }) {
       <div className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white/90 p-3 shadow-md backdrop-blur-lg">
         <div className="flex items-center gap-2.5">
           <span className={`flex h-8 w-8 items-center justify-center rounded-xl ${badgeBg} text-white font-black text-xs shadow-sm`}>
-            {isCertificate ? "CS" : "RS"}
+            {badgeText}
           </span>
           <div>
             <h2 className="text-sm font-black text-slate-900 leading-none">{title}</h2>

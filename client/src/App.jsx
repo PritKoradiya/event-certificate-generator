@@ -2,10 +2,13 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import LandingLayout from "./layouts/LandingLayout.jsx";
 import CertificateLayout from "./layouts/CertificateLayout.jsx";
 import ReportLayout from "./layouts/ReportLayout.jsx";
+import AttendanceLayout from "./layouts/AttendanceLayout.jsx";
 
 import Dashboard from "./pages/Dashboard.jsx";
 import CertificateDashboard from "./pages/CertificateDashboard.jsx";
 import ReportDashboard from "./pages/ReportDashboard.jsx";
+import AttendanceDashboard from "./pages/AttendanceDashboard.jsx";
+
 import CreateCertificate from "./pages/CreateCertificate.jsx";
 import Templates from "./pages/Templates.jsx";
 import Categories from "./pages/Categories.jsx";
@@ -15,6 +18,10 @@ import CreatePoster from "./pages/CreatePoster.jsx";
 import PosterRecords from "./pages/PosterRecords.jsx";
 import CreateEventReport from "./pages/CreateEventReport.jsx";
 import EventReports from "./pages/EventReports.jsx";
+
+import StudentList from "./pages/StudentList.jsx";
+import CreateAttendanceSheet from "./pages/CreateAttendanceSheet.jsx";
+import AttendanceRecords from "./pages/AttendanceRecords.jsx";
 
 function App() {
   return (
@@ -41,6 +48,14 @@ function App() {
         <Route path="/report-dashboard" element={<ReportDashboard />} />
         <Route path="/create-event-report" element={<CreateEventReport />} />
         <Route path="/event-reports" element={<EventReports />} />
+      </Route>
+
+      {/* 4. Attendance Module Layout */}
+      <Route element={<AttendanceLayout />}>
+        <Route path="/attendance-dashboard" element={<AttendanceDashboard />} />
+        <Route path="/student-list" element={<StudentList />} />
+        <Route path="/create-attendance-sheet" element={<CreateAttendanceSheet />} />
+        <Route path="/attendance-records" element={<AttendanceRecords />} />
       </Route>
 
       {/* Catch-all redirect to Landing */}

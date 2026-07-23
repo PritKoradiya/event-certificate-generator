@@ -8,8 +8,6 @@ This project includes three main academic document modules:
 2. Event Report Generator  
 3. Attendance Sheet Generator
 
-The Event Report Generator follows the academic event report structure provided in the mentor format, including event details, outline, objectives, outcomes, photos, coordinator, and dean section.
-
 ---
 
 ## Developed By
@@ -76,21 +74,34 @@ The Event Report Generator allows users to create structured academic event repo
 
 ### 3. Attendance Sheet Generator
 
-The Attendance Sheet Generator manages reusable student records and prepares stable attendance sheet data for frontend PDF rendering. Each generated record stores a snapshot of its selected students, so later student master changes do not alter existing sheets.
+The Attendance Sheet Generator manages reusable student records and generates structured multipage attendance sheets with exact mentor formatting, continuous serial numbers, repeated page headers, blank signature columns, and automatic pagination.
 
 #### Features
 
-- Master student list
-- Department and class filtering
-- Bulk student insertion with duplicate handling
-- Automatic continuous serial numbers
-- Blank signature column
-- Dynamic multipage sheet data with 39 rows per full page
-- Attendance sheet record management
-- Event coordinator prepared for display on the final page
-- Repeated reference header and table structure prepared for frontend PDF rendering
-- Default school name: `School of Engineering, PPSU`
-- Default document title: `Attendance Sheet`
+- Third platform main module (`/attendance-dashboard`)
+- Student master-list management (`/student-list`)
+- Department and class filtering (CE/IT, CSE, AIML, etc.)
+- Bulk student import (CSV upload and raw text parsing)
+- Fixed mentor-format SVG preview (A4 portrait)
+- Automatic multipage pagination (39 rows per full page)
+- Continuous serial numbers across all pages
+- Blank Sign column
+- Event Coordinator placement on the final page only
+- Repeated header on every page:
+  - `School of Engineering, PPSU`
+  - `[Department] Department`
+  - `[Heading]`
+  - `Attendance Sheet`
+  - `Class- [Class]`
+  - Bordered `Date` row
+- Saved attendance sheet records management (`/attendance-records`)
+
+#### Frontend Routes
+
+- `/attendance-dashboard` - Attendance Studio Workspace
+- `/student-list` - Student Master Roster & Bulk CSV Import
+- `/create-attendance-sheet` - Attendance Sheet Form & Multipage Live Preview
+- `/attendance-records` - Attendance Sheet Records Management
 
 #### Attendance Student API Summary
 
@@ -114,8 +125,6 @@ PUT    /api/attendance-sheets/:id
 DELETE /api/attendance-sheets/:id
 ```
 
-Attendance sheet PDFs are intentionally rendered by the frontend; the backend stores the normalized data and student snapshot only.
-
 ---
 
 ### Additional Event Poster Generator
@@ -135,22 +144,11 @@ The Event Poster Generator allows users to create engaging event promotional pos
 - Poster records management page (`/poster-records`)
 - View, search, filter, and delete saved poster records
 
-#### Poster API Summary
-
-```txt
-POST   /api/posters
-POST   /api/posters/draft
-GET    /api/posters
-GET    /api/posters/:id
-PUT    /api/posters/:id
-DELETE /api/posters/:id
-```
-
 ---
 
-## Frontend Routes
+## Frontend Routes Summary
 
-- `/` - Main Platform Landing Dashboard
+- `/` - Main Platform Landing Dashboard (3 Module Cards)
 - `/certificate-dashboard` - Certificate Studio Workspace
 - `/create-certificate` - Certificate Builder
 - `/templates` - Template & Poster Gallery
@@ -162,6 +160,10 @@ DELETE /api/posters/:id
 - `/report-dashboard` - Report Studio Workspace
 - `/create-event-report` - Event Report Builder
 - `/event-reports` - Event Report Records
+- `/attendance-dashboard` - Attendance Studio Workspace
+- `/student-list` - Student Master Roster
+- `/create-attendance-sheet` - Create Attendance Sheet
+- `/attendance-records` - Attendance Records
 
 ---
 
@@ -173,6 +175,7 @@ DELETE /api/posters/:id
 - Vite
 - Tailwind CSS
 - React Router DOM
+- SVG Multipage Canvas Renderer
 - html2canvas
 - jsPDF
 - JSZip
@@ -196,38 +199,33 @@ event-certificate-generator/
 │
 ├── client/
 │   ├── public/
-│   │   └── certificate-backgrounds/
 │   ├── src/
 │   │   ├── components/
-│   │   │   └── PosterPreview.jsx
-│   │   ├── data/
-│   │   │   └── posterData.js
+│   │   │   ├── attendance/
+│   │   │   │   ├── AttendanceSheetSvgPreview.jsx
+│   │   │   │   ├── AttendanceSheetSvgPage.jsx
+│   │   │   │   ├── AttendanceSheetTable.jsx
+│   │   │   │   └── AttendanceSheetHeader.jsx
+│   │   │   └── navigation/
+│   │   │       ├── AttendanceNavigation.jsx
+│   │   │       └── MobileModuleNavigation.jsx
+│   │   ├── layouts/
+│   │   │   └── AttendanceLayout.jsx
 │   │   ├── pages/
-│   │   │   ├── CreatePoster.jsx
-│   │   │   └── PosterRecords.jsx
+│   │   │   ├── AttendanceDashboard.jsx
+│   │   │   ├── StudentList.jsx
+│   │   │   ├── CreateAttendanceSheet.jsx
+│   │   │   └── AttendanceRecords.jsx
 │   │   ├── services/
-│   │   │   └── posterApi.js
-│   │   ├── utils/
-│   │   │   └── downloadPoster.js
+│   │   │   ├── attendanceStudentApi.js
+│   │   │   └── attendanceSheetApi.js
 │   │   ├── App.jsx
 │   │   ├── main.jsx
 │   │   └── index.css
 │   └── package.json
 │
 ├── server/
-│   ├── src/
-│   │   ├── config/
-│   │   ├── controllers/
-│   │   ├── middleware/
-│   │   ├── models/
-│   │   ├── routes/
-│   │   ├── app.js
-│   │   └── server.js
-│   ├── uploads/
-│   │   ├── event-reports/
-│   │   └── posters/
-│   └── package.json
-│
+│   └── ...
 ├── README.md
 ├── LICENSE
 └── .gitignore

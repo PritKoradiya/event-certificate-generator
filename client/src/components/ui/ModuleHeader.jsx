@@ -8,18 +8,22 @@ function ModuleHeader({
   theme = "certificate",
   primaryAction
 }) {
-  const isCertificate = theme === "certificate";
-  const badgeColors = isCertificate
-    ? "border-blue-200/80 bg-blue-50/80 text-blue-700"
-    : "border-purple-200/80 bg-purple-50/80 text-purple-700";
+  let badgeColors = "border-blue-200/80 bg-blue-50/80 text-blue-700";
+  let iconBg = "bg-gradient-to-br from-blue-600 to-indigo-600 shadow-blue-500/20";
+  let iconSymbol = "🏆";
+  let btnBg = "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700";
 
-  const iconBg = isCertificate
-    ? "bg-gradient-to-br from-blue-600 to-indigo-600 shadow-blue-500/20"
-    : "bg-gradient-to-br from-purple-600 to-pink-600 shadow-purple-500/20";
-
-  const btnBg = isCertificate
-    ? "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
-    : "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700";
+  if (theme === "report") {
+    badgeColors = "border-purple-200/80 bg-purple-50/80 text-purple-700";
+    iconBg = "bg-gradient-to-br from-purple-600 to-pink-600 shadow-purple-500/20";
+    iconSymbol = "📋";
+    btnBg = "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700";
+  } else if (theme === "attendance") {
+    badgeColors = "border-teal-200/80 bg-teal-50/80 text-teal-800";
+    iconBg = "bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-600 shadow-teal-500/20";
+    iconSymbol = "📑";
+    btnBg = "bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-700 hover:to-teal-700";
+  }
 
   return (
     <header className="sticky top-0 z-30 mb-6 rounded-2xl border border-slate-200/80 bg-white/85 p-4 shadow-sm backdrop-blur-xl transition-all">
@@ -27,7 +31,7 @@ function ModuleHeader({
         {/* Left Branding */}
         <div className="flex items-center gap-3.5">
           <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-white text-lg font-black shadow-md ${iconBg}`}>
-            {isCertificate ? "🏆" : "📋"}
+            {iconSymbol}
           </div>
           <div>
             <div className="flex items-center gap-2">
