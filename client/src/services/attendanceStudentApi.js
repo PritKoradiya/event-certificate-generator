@@ -126,21 +126,33 @@ export const bulkCreateStudents = async ({ department, className, students }) =>
   const list = getLocalStudents();
   let inserted = 0;
   let skipped = 0;
-  const errors = [];
+  let invalid = 0;
+  const skippedRows = [];
   const insertedList = [];
 
   students.forEach((stud, idx) => {
+    const rowNo = idx + 1;
     const enroll = (stud.enrollmentNo || "").toString().trim().toUpperCase();
     const name = (stud.studentName || "").toString().trim().toUpperCase();
 
     if (!enroll || !name) {
-      errors.push(`Row ${idx + 1}: Missing enrollment number or student name.`);
+      invalid++;
+      skippedRows.push({
+        rowNo,
+        enrollmentNo: enroll || "N/A",
+        reason: "Missing enrollment number or student name"
+      });
       return;
     }
 
     const duplicate = list.some((s) => s.enrollmentNo.toUpperCase() === enroll);
     if (duplicate) {
       skipped++;
+      skippedRows.push({
+        rowNo,
+        enrollmentNo: enroll,
+        reason: "Duplicate enrollment number in system"
+      });
       return;
     }
 
@@ -166,11 +178,85 @@ export const bulkCreateStudents = async ({ department, className, students }) =>
       totalInput: students.length,
       inserted,
       skipped,
-      errorsCount: errors.length
+      invalid
     },
-    errors,
-    message: `Bulk insert complete: ${inserted} added, ${skipped} skipped (duplicates).`
+    skippedRows,
+    message: `Bulk insert complete: ${inserted} added, ${skipped} duplicates skipped, ${invalid} invalid.`
   };
+};
+
+export const getStudentCsvTemplate = async () => {
+  const filename = "attendance_student_template.csv";
+  try {
+    const response = await fetch(`${API_BASE_URL}/attendance-students/csv-template`);
+    if (response.ok) {
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+      return { success: true };
+    }
+  } catch (e) {
+    // Fallback below
+  }
+
+  // Frontend Fallback Blob Download
+  const templateCsvContent = `enrollmentNo,studentName\n24SE02CE001,STUDENT NAME ONE\n24SE02CE002,STUDENT NAME TWO\n`;
+  const blob = new Blob([templateCsvContent], { type: "text/csv;charset=utf-8;" });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", filename);
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.URL.revokeObjectURL(url);
+  return { success: true };
+};
+
+export const importStudentCsv = async (formData) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/attendance-students/import-csv`, {
+      method: "POST",
+      body: formData
+    });
+    if (response.ok) {
+      return await response.json();
+    }
+  } catch (e) {
+    // Fallback to client-side parsing
+  }
+
+  const department = formData.get("department") || "CE/IT";
+  const className = formData.get("className") || "CE4";
+  const csvFile = formData.get("studentCsv");
+
+  if (!csvFile) {
+    throw new Error("No CSV file provided.");
+  }
+
+  const text = await csvFile.text();
+  const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+  const parsedStudents = [];
+
+  lines.forEach((line, index) => {
+    // Skip header line
+    if (index === 0 && line.toLowerCase().includes("enrollmentno")) {
+      return;
+    }
+    const parts = line.split(",").map((p) => p.trim());
+    parsedStudents.push({
+      enrollmentNo: parts[0] || "",
+      studentName: parts[1] || parts[0] || ""
+    });
+  });
+
+  return await bulkCreateStudents({ department, className, students: parsedStudents });
 };
 
 export const updateStudent = async (id, studentData) => {

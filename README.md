@@ -80,12 +80,11 @@ The Attendance Sheet Generator manages reusable student records and generates st
 
 - Third platform main module (`/attendance-dashboard`)
 - Student master-list management (`/student-list`)
+- CSV Template Download (`attendance_student_template.csv`) with frontend Blob fallback
+- Student CSV Roster Import (`studentCsv`, max 2MB) with duplicate and invalid row reporting table
 - Department and class filtering (CE/IT, CSE, AIML, etc.)
-- Bulk student import (CSV upload and raw text parsing)
-- Downloadable student CSV template
-- Row-level CSV import validation without stopping valid rows
-- Duplicate enrollment detection within CSV files and existing classes
-- Fixed mentor-format SVG preview (A4 portrait)
+- Fixed mentor-format SVG preview & rendering (A4 portrait `viewBox="0 0 1240 1754"`)
+- Multipage A4 PDF Export (`jsPDF` vector image rendering, zero html2canvas dependency)
 - Automatic multipage pagination (39 rows per full page)
 - Continuous serial numbers across all pages
 - Blank Sign column
@@ -98,15 +97,17 @@ The Attendance Sheet Generator manages reusable student records and generates st
   - `Class- [Class]`
   - Bordered `Date` row
 - Saved attendance sheet records management (`/attendance-records`)
-- Explicit attendance sheet regeneration from the current active student list
-- Duplicate an attendance sheet and its student snapshot as a new draft
+- Direct PDF Download from saved records
+- Student List Regeneration / Roster Refresh (`regenerateAttendanceSheet`)
+- Duplicate Attendance Sheet as Draft (`duplicateAttendanceSheet`)
+- Layout validation utility (`validateAttendanceSheetLayout`) before PDF generation
 
 #### Frontend Routes
 
 - `/attendance-dashboard` - Attendance Studio Workspace
-- `/student-list` - Student Master Roster & Bulk CSV Import
-- `/create-attendance-sheet` - Attendance Sheet Form & Multipage Live Preview
-- `/attendance-records` - Attendance Sheet Records Management
+- `/student-list` - Student Master Roster & CSV Import
+- `/create-attendance-sheet` - Attendance Sheet Form & Multipage PDF Export
+- `/attendance-records` - Attendance Records & PDF Download
 
 #### Attendance Student API Summary
 
@@ -155,27 +156,6 @@ The Event Poster Generator allows users to create engaging event promotional pos
 
 ---
 
-## Frontend Routes Summary
-
-- `/` - Main Platform Landing Dashboard (3 Module Cards)
-- `/certificate-dashboard` - Certificate Studio Workspace
-- `/create-certificate` - Certificate Builder
-- `/templates` - Template & Poster Gallery
-- `/categories` - Event Category Explorer
-- `/bulk-generate` - Bulk Certificate Generator
-- `/generated-certificates` - Certificate Records
-- `/create-poster` - Event Poster Builder
-- `/poster-records` - Poster Records
-- `/report-dashboard` - Report Studio Workspace
-- `/create-event-report` - Event Report Builder
-- `/event-reports` - Event Report Records
-- `/attendance-dashboard` - Attendance Studio Workspace
-- `/student-list` - Student Master Roster
-- `/create-attendance-sheet` - Create Attendance Sheet
-- `/attendance-records` - Attendance Records
-
----
-
 ## Tech Stack
 
 ### Frontend
@@ -185,8 +165,8 @@ The Event Poster Generator allows users to create engaging event promotional pos
 - Tailwind CSS
 - React Router DOM
 - SVG Multipage Canvas Renderer
-- html2canvas
-- jsPDF
+- jsPDF (A4 Vector/JPEG rendering)
+- html2canvas (Certificates/Posters)
 - JSZip
 
 ### Backend
@@ -228,6 +208,9 @@ event-certificate-generator/
 │   │   ├── services/
 │   │   │   ├── attendanceStudentApi.js
 │   │   │   └── attendanceSheetApi.js
+│   │   ├── utils/
+│   │   │   ├── downloadAttendanceSheetPdf.js
+│   │   │   └── validateAttendanceSheetLayout.js
 │   │   ├── App.jsx
 │   │   ├── main.jsx
 │   │   └── index.css

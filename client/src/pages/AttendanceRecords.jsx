@@ -1,15 +1,31 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ModuleHeader from "../components/ui/ModuleHeader.jsx";
 import AttendanceSheetSvgPreview from "../components/attendance/AttendanceSheetSvgPreview.jsx";
 import {
   getAttendanceSheets,
+  regenerateAttendanceSheet,
+  duplicateAttendanceSheet,
   deleteAttendanceSheet
 } from "../services/attendanceSheetApi.js";
+import downloadAttendanceSheetPdf from "../utils/downloadAttendanceSheetPdf.js";
+import validateAttendanceSheetLayout from "../utils/validateAttendanceSheetLayout.js";
 
 const DEPARTMENTS = ["CE/IT", "CSE", "AIML", "ME", "EC", "CIVIL"];
 const CLASSES = ["CE4", "CE6", "CSE2", "AIML1", "ME2", "EC2"];
 
+const formatPdfFileName = (heading, className, date, sheetId) => {
+  const sanitize = (str) => (str || "").trim().replace(/[^a-zA-Z0-9_-]/g, "_").replace(/_+/g, "_");
+  const cleanHeading = sanitize(heading) || "Event";
+  const cleanClass = sanitize(className) || "Class";
+  const cleanDate = sanitize(date) || "Date";
+  const cleanId = sanitize(sheetId) || "Sheet";
+
+  return `Attendance_Sheet_${cleanHeading}_${cleanClass}_${cleanDate}_${cleanId}.pdf`;
+};
+
 function AttendanceRecords() {
+  const previewRef = useRef(null);
+
   const [sheets, setSheets] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -20,6 +36,10 @@ function AttendanceRecords() {
 
   // View modal state
   const [activeSheetModal, setActiveSheetModal] = useState(null);
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
+
+  // Open action dropdown menu ID
+  const [openMenuId, setOpenMenuId] = useState(null);
 
   // Toast notice
   const [notice, setNotice] = useState("");
@@ -47,10 +67,15 @@ function AttendanceRecords() {
     loadSheets();
   }, []);
 
+  // Delete Action
   const handleDelete = async (id, heading) => {
+    setOpenMenuId(null);
     if (window.confirm(`Are you sure you want to delete attendance record '${heading}'?`)) {
       try {
         await deleteAttendanceSheet(id);
+        if (activeSheetModal && activeSheetModal.id === id) {
+          setActiveSheetModal(null);
+        }
         showNotice("Attendance sheet record deleted.");
         loadSheets();
       } catch (e) {
@@ -59,8 +84,88 @@ function AttendanceRecords() {
     }
   };
 
-  const handleDownloadPdfNotice = () => {
-    showNotice("Attendance PDF export will be added in the next step.");
+  // PART 8: REGENERATE ACTION
+  const handleRegenerate = async (sheet) => {
+    setOpenMenuId(null);
+    const confirmMsg =
+      "This will replace the saved student snapshot with the current active students of the selected department and class. Continue?";
+
+    if (window.confirm(confirmMsg)) {
+      try {
+        const res = await regenerateAttendanceSheet(sheet.id);
+        if (res && res.success) {
+          showNotice(`Student roster refreshed for ${sheet.heading}.`);
+          if (activeSheetModal && activeSheetModal.id === sheet.id) {
+            setActiveSheetModal(res.data);
+          }
+          loadSheets();
+        }
+      } catch (e) {
+        showNotice("Failed to refresh student list.");
+      }
+    }
+  };
+
+  // PART 9: DUPLICATE ACTION
+  const handleDuplicate = async (id) => {
+    setOpenMenuId(null);
+    try {
+      const res = await duplicateAttendanceSheet(id);
+      if (res && res.success) {
+        showNotice("Attendance sheet duplicated as draft.");
+        loadSheets();
+      }
+    } catch (e) {
+      showNotice("Failed to duplicate attendance sheet.");
+    }
+  };
+
+  // PART 7: PDF DOWNLOAD ACTION
+  const handleDownloadPdf = async (sheet) => {
+    const targetSheet = sheet || activeSheetModal;
+    if (!targetSheet) return;
+
+    // If modal is not open for target sheet, open modal first to mount SVG pages
+    if (!activeSheetModal || activeSheetModal.id !== targetSheet.id) {
+      setActiveSheetModal(targetSheet);
+      // Wait for React to mount the modal DOM
+      await new Promise((r) => setTimeout(r, 200));
+    }
+
+    if (!previewRef.current) {
+      showNotice("SVG Page refs not ready.");
+      return;
+    }
+
+    const pageElements = previewRef.current.getPageElements();
+    const validation = validateAttendanceSheetLayout(targetSheet, pageElements);
+
+    if (!validation.valid) {
+      alert(`Cannot export PDF: ${validation.errors.join(", ")}`);
+      return;
+    }
+
+    setIsDownloadingPdf(true);
+
+    try {
+      const fileName = formatPdfFileName(
+        targetSheet.heading,
+        targetSheet.className,
+        targetSheet.date,
+        targetSheet.id
+      );
+
+      await downloadAttendanceSheetPdf({
+        pageSvgs: pageElements,
+        fileName
+      });
+      showNotice("Attendance sheet PDF downloaded successfully.");
+    } catch (err) {
+      console.error("Failed to download PDF", err);
+      showNotice(err.message || "Failed to download PDF.");
+    } finally {
+      setIsDownloadingPdf(false);
+    }
   };
 
   const filteredSheets = sheets.filter((sheet) => {
@@ -81,7 +186,7 @@ function AttendanceRecords() {
       {/* Top Header */}
       <ModuleHeader
         title="Attendance Records"
-        subtitle="Search, filter, view, and manage saved class attendance sheets."
+        subtitle="Search, filter, view, regenerate student snapshots, and export saved class attendance sheets to PDF."
         theme="attendance"
         badge="Record Workspace"
         primaryAction={{
@@ -226,33 +331,69 @@ function AttendanceRecords() {
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              <div className="mt-5 flex items-center justify-between gap-2 border-t border-slate-100 pt-3">
+              {/* Action Buttons Toolbar & Dropdown Menu */}
+              <div className="mt-5 flex items-center justify-between gap-2 border-t border-slate-100 pt-3 relative">
                 <button
                   type="button"
                   onClick={() => setActiveSheetModal(sheet)}
                   className="flex-1 rounded-xl bg-teal-600 px-3 py-2 text-xs font-bold text-white shadow-sm hover:bg-teal-700 transition"
                 >
-                  View Preview
+                  View
                 </button>
 
                 <button
                   type="button"
-                  onClick={handleDownloadPdfNotice}
-                  className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100 transition"
-                  title="Download PDF"
+                  onClick={() => handleDownloadPdf(sheet)}
+                  className="rounded-xl border border-blue-200 bg-blue-50 px-3 py-2 text-xs font-bold text-blue-700 hover:bg-blue-100 transition flex items-center gap-1"
                 >
-                  📥 PDF
+                  <span>📥</span>
+                  <span>PDF</span>
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => handleDelete(sheet.id, sheet.heading)}
-                  className="rounded-xl border border-rose-200 bg-rose-50 px-2.5 py-2 text-xs font-bold text-rose-600 hover:bg-rose-100 transition"
-                  title="Delete Record"
-                >
-                  🗑️
-                </button>
+                {/* More Options Dropdown */}
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setOpenMenuId(openMenuId === sheet.id ? null : sheet.id)}
+                    className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 transition"
+                    title="More Options"
+                  >
+                    •••
+                  </button>
+
+                  {openMenuId === sheet.id && (
+                    <div className="absolute right-0 bottom-10 z-30 w-52 rounded-2xl border border-slate-200 bg-white p-2 shadow-2xl space-y-1 animate-hero-fade-in">
+                      <button
+                        type="button"
+                        onClick={() => handleRegenerate(sheet)}
+                        className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-teal-50 hover:text-teal-800 flex items-center gap-2"
+                      >
+                        <span>🔄</span>
+                        <span>Refresh Student List</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleDuplicate(sheet.id)}
+                        className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-teal-50 hover:text-teal-800 flex items-center gap-2"
+                      >
+                        <span>📋</span>
+                        <span>Duplicate as Draft</span>
+                      </button>
+
+                      <div className="border-t border-slate-100 my-1" />
+
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(sheet.id, sheet.heading)}
+                        className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-rose-600 hover:bg-rose-50 flex items-center gap-2"
+                      >
+                        <span>🗑️</span>
+                        <span>Delete Record</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           ))}
@@ -272,13 +413,24 @@ function AttendanceRecords() {
                   {activeSheetModal.department} • Class {activeSheetModal.className} • Date: {activeSheetModal.date}
                 </p>
               </div>
-              <div className="flex items-center gap-3">
+
+              <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={handleDownloadPdfNotice}
-                  className="rounded-xl bg-teal-600 px-4 py-2 text-xs font-bold text-white shadow-md hover:bg-teal-700 transition"
+                  onClick={() => handleRegenerate(activeSheetModal)}
+                  className="rounded-xl border border-teal-200 bg-teal-50 px-3.5 py-2 text-xs font-bold text-teal-800 hover:bg-teal-100 transition"
+                  title="Refresh student roster"
                 >
-                  Download PDF
+                  🔄 Refresh Roster
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleDownloadPdf(activeSheetModal)}
+                  disabled={isDownloadingPdf}
+                  className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-xs font-bold text-white shadow-md hover:from-blue-500 hover:to-indigo-500 transition disabled:opacity-60"
+                >
+                  {isDownloadingPdf ? "Preparing PDF..." : "📥 Export PDF"}
                 </button>
 
                 <button
@@ -293,7 +445,7 @@ function AttendanceRecords() {
 
             {/* Multipage SVG Preview */}
             <div className="py-2">
-              <AttendanceSheetSvgPreview sheetData={activeSheetModal} />
+              <AttendanceSheetSvgPreview ref={previewRef} sheetData={activeSheetModal} />
             </div>
           </div>
         </div>

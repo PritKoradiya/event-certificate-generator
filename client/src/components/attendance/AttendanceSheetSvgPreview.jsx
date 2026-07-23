@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useImperativeHandle, useRef } from "react";
 import AttendanceSheetSvgPage from "./AttendanceSheetSvgPage.jsx";
 
 const ROWS_PER_PAGE = 39;
 
-function AttendanceSheetSvgPreview({ sheetData = {} }) {
+const AttendanceSheetSvgPreview = React.forwardRef(function AttendanceSheetSvgPreview(
+  { sheetData = {} },
+  ref
+) {
+  const containerRef = useRef(null);
+
   const {
     department = "",
     heading = "",
@@ -25,8 +30,17 @@ function AttendanceSheetSvgPreview({ sheetData = {} }) {
 
   const totalPages = studentChunks.length;
 
+  // Expose getPageElements() imperative handle method to parent components
+  useImperativeHandle(ref, () => ({
+    getPageElements: () => {
+      if (!containerRef.current) return [];
+      const svgNodes = containerRef.current.querySelectorAll(".attendance-svg-page");
+      return Array.from(svgNodes);
+    }
+  }));
+
   return (
-    <div className="w-full space-y-8 max-w-[880px] mx-auto">
+    <div ref={containerRef} className="w-full space-y-8 max-w-[880px] mx-auto">
       {/* Live Preview Header & Summary Info Bar */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-2xl border border-teal-200/80 bg-teal-50/60 p-4 backdrop-blur-md">
         <div>
@@ -93,6 +107,6 @@ function AttendanceSheetSvgPreview({ sheetData = {} }) {
       </div>
     </div>
   );
-}
+});
 
 export default AttendanceSheetSvgPreview;

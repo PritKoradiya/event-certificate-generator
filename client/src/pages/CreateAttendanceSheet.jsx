@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ModuleHeader from "../components/ui/ModuleHeader.jsx";
 import AttendanceSheetSvgPreview from "../components/attendance/AttendanceSheetSvgPreview.jsx";
 import { getStudents } from "../services/attendanceStudentApi.js";
@@ -6,11 +6,26 @@ import {
   createAttendanceSheet,
   saveDraftAttendanceSheet
 } from "../services/attendanceSheetApi.js";
+import downloadAttendanceSheetPdf from "../utils/downloadAttendanceSheetPdf.js";
+import validateAttendanceSheetLayout from "../utils/validateAttendanceSheetLayout.js";
 
 const DEPARTMENTS = ["CE/IT", "CSE", "AIML", "ME", "EC", "CIVIL"];
 const CLASSES = ["CE4", "CE6", "CSE2", "AIML1", "ME2", "EC2"];
 
+// Helper to format safe filename
+const formatPdfFileName = (heading, className, date, sheetId) => {
+  const sanitize = (str) => (str || "").trim().replace(/[^a-zA-Z0-9_-]/g, "_").replace(/_+/g, "_");
+  const cleanHeading = sanitize(heading) || "Event";
+  const cleanClass = sanitize(className) || "Class";
+  const cleanDate = sanitize(date) || "Date";
+  const cleanId = sanitize(sheetId) || "Sheet";
+
+  return `Attendance_Sheet_${cleanHeading}_${cleanClass}_${cleanDate}_${cleanId}.pdf`;
+};
+
 function CreateAttendanceSheet() {
+  const previewRef = useRef(null);
+
   const [department, setDepartment] = useState("CE/IT");
   const [heading, setHeading] = useState("Expert Talk - Prompt Engineering");
   const [className, setClassName] = useState("CE4");
@@ -30,6 +45,7 @@ function CreateAttendanceSheet() {
   // Form errors & status notifications
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
 
   // Stored / Generated Attendance Sheet State for live preview
   const [generatedSheet, setGeneratedSheet] = useState(null);
@@ -147,7 +163,7 @@ function CreateAttendanceSheet() {
 
       if (res && res.success) {
         setSuccessMessage(
-          `Attendance sheet generated successfully! Total ${matchingStudents.length} students across ${res.data.pageCount} page(s).`
+          `Attendance sheet generated successfully! Total ${matchingStudents.length} students across ${res.data.pageCount} page(s). Click 'Download PDF' below to export.`
         );
         setGeneratedSheet(res.data);
 
@@ -161,6 +177,56 @@ function CreateAttendanceSheet() {
       }
     } catch (err) {
       setErrorMessage(err.message || "Failed to generate attendance sheet.");
+    }
+  };
+
+  // Download Multipage PDF Action
+  const handleDownloadPdf = async () => {
+    const sheetToExport = generatedSheet || {
+      id: "TEMP-PREVIEW",
+      department,
+      heading,
+      className,
+      date,
+      eventCoordinatorName,
+      students: matchingStudents
+    };
+
+    if (!previewRef.current) {
+      setErrorMessage("Preview elements not ready for PDF download.");
+      return;
+    }
+
+    const pageElements = previewRef.current.getPageElements();
+
+    // Validate layout before PDF generation
+    const validation = validateAttendanceSheetLayout(sheetToExport, pageElements);
+    if (!validation.valid) {
+      setErrorMessage(`Validation failed: ${validation.errors.join("; ")}`);
+      return;
+    }
+
+    setIsDownloadingPdf(true);
+    setErrorMessage("");
+
+    try {
+      const fileName = formatPdfFileName(
+        sheetToExport.heading,
+        sheetToExport.className,
+        sheetToExport.date,
+        sheetToExport.id
+      );
+
+      await downloadAttendanceSheetPdf({
+        pageSvgs: pageElements,
+        fileName
+      });
+      setSuccessMessage("Attendance sheet PDF downloaded successfully!");
+    } catch (err) {
+      console.error("PDF download error", err);
+      setErrorMessage(err.message || "Failed to generate attendance sheet PDF.");
+    } finally {
+      setIsDownloadingPdf(false);
     }
   };
 
@@ -355,26 +421,51 @@ function CreateAttendanceSheet() {
               >
                 Generate Attendance Sheet
               </button>
+
+              {/* PART 6: DOWNLOAD PDF BUTTON */}
+              {generatedSheet && (
+                <button
+                  type="button"
+                  onClick={handleDownloadPdf}
+                  disabled={isDownloadingPdf}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3 text-sm font-black text-white shadow-lg shadow-blue-500/30 hover:from-blue-500 hover:to-indigo-500 transition active:scale-98 disabled:opacity-60"
+                >
+                  <span>📥</span>
+                  <span>{isDownloadingPdf ? "Preparing PDF..." : "Download PDF"}</span>
+                </button>
+              )}
             </div>
           </div>
         </form>
       </div>
 
       {/* LIVE MULTIPAGE PREVIEW SECTION */}
-      <div id="attendance-live-preview" className="pt-6">
-        <div className="text-center mb-6 max-w-2xl mx-auto space-y-1">
-          <span className="text-xs font-black uppercase tracking-wider text-teal-600">
-            DOCUMENT LIVE PREVIEW
-          </span>
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-950 font-sans">
-            Attendance Sheet Preview
-          </h2>
-          <p className="text-xs font-medium text-slate-500">
-            The final document will automatically create additional pages based on the student list.
-          </p>
+      <div id="attendance-live-preview" className="pt-6 space-y-4">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 max-w-[880px] mx-auto">
+          <div>
+            <span className="text-xs font-black uppercase tracking-wider text-teal-600">
+              DOCUMENT LIVE PREVIEW
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-950 font-sans">
+              Attendance Sheet Preview
+            </h2>
+          </div>
+
+          {generatedSheet && (
+            <button
+              type="button"
+              onClick={handleDownloadPdf}
+              disabled={isDownloadingPdf}
+              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-xs font-black text-white shadow-md hover:from-blue-500 hover:to-indigo-500 transition disabled:opacity-60"
+            >
+              <span>📥</span>
+              <span>{isDownloadingPdf ? "Preparing PDF..." : "Download Attendance PDF"}</span>
+            </button>
+          )}
         </div>
 
         <AttendanceSheetSvgPreview
+          ref={previewRef}
           sheetData={
             generatedSheet || {
               department,

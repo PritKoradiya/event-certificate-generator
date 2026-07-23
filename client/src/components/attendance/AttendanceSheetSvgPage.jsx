@@ -14,13 +14,14 @@ function AttendanceSheetSvgPage({
   pageIndex = 0,
   totalPages = 1
 }) {
-  const headerY = 285;
+  const headerY = 292;
   const headerHeight = 34;
-  const rowHeight = 31;
+  const rowHeight = 29;
   const tableBottomY = headerY + headerHeight + studentsChunk.length * rowHeight;
 
-  // Placement for Event Coordinator below table on the last page
-  const coordinatorY = Math.max(tableBottomY + 50, 1620);
+  // Placement for Event Coordinator below table on last page
+  // Keeps coordinator near the table if few students on last page
+  const coordinatorY = Math.min(tableBottomY + 45, 1560);
 
   return (
     <svg
@@ -28,7 +29,7 @@ function AttendanceSheetSvgPage({
       viewBox="0 0 1240 1754"
       width="1240"
       height="1754"
-      className="w-full h-auto bg-white shadow-2xl rounded-sm border border-slate-300"
+      className="attendance-svg-page w-full h-auto bg-white shadow-2xl rounded-sm border border-slate-300"
       style={{ display: "block" }}
     >
       {/* Background Page Canvas */}

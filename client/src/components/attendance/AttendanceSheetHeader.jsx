@@ -1,7 +1,7 @@
 import React from "react";
 
 function AttendanceSheetHeader({ department = "", heading = "", className = "", date = "" }) {
-  // Ensure department has "Department" suffix cleanly
+  // Format department cleanly
   const formattedDepartment = department
     ? department.toLowerCase().includes("department")
       ? department
@@ -10,10 +10,10 @@ function AttendanceSheetHeader({ department = "", heading = "", className = "", 
 
   return (
     <g className="attendance-sheet-header">
-      {/* Centered Black Serif Header Text */}
+      {/* Centered Plain Black Serif Header Text */}
       <text
         x="620"
-        y="75"
+        y="78"
         textAnchor="middle"
         fontFamily="Times New Roman, Georgia, serif"
         fontSize="26"
@@ -25,7 +25,7 @@ function AttendanceSheetHeader({ department = "", heading = "", className = "", 
 
       <text
         x="620"
-        y="112"
+        y="116"
         textAnchor="middle"
         fontFamily="Times New Roman, Georgia, serif"
         fontSize="21"
@@ -37,7 +37,7 @@ function AttendanceSheetHeader({ department = "", heading = "", className = "", 
 
       <text
         x="620"
-        y="148"
+        y="152"
         textAnchor="middle"
         fontFamily="Times New Roman, Georgia, serif"
         fontSize="21"
@@ -49,7 +49,7 @@ function AttendanceSheetHeader({ department = "", heading = "", className = "", 
 
       <text
         x="620"
-        y="185"
+        y="188"
         textAnchor="middle"
         fontFamily="Times New Roman, Georgia, serif"
         fontSize="23"
@@ -61,7 +61,7 @@ function AttendanceSheetHeader({ department = "", heading = "", className = "", 
 
       <text
         x="620"
-        y="218"
+        y="222"
         textAnchor="middle"
         fontFamily="Times New Roman, Georgia, serif"
         fontSize="19"
@@ -71,19 +71,19 @@ function AttendanceSheetHeader({ department = "", heading = "", className = "", 
         Class- {className || "—"}
       </text>
 
-      {/* Date Row Box */}
+      {/* Bordered Date Row Box */}
       <rect
         x="100"
-        y="238"
+        y="246"
         width="1040"
-        height="36"
+        height="38"
         fill="#ffffff"
         stroke="#000000"
         strokeWidth="1.5"
       />
       <text
         x="115"
-        y="261"
+        y="271"
         fontFamily="Times New Roman, Georgia, serif"
         fontSize="16"
         fontWeight="bold"

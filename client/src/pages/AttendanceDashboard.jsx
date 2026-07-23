@@ -6,20 +6,29 @@ import { getStudents } from "../services/attendanceStudentApi.js";
 import { getAttendanceSheets } from "../services/attendanceSheetApi.js";
 
 function AttendanceDashboard() {
-  const [studentCount, setStudentCount] = useState(0);
-  const [sheetCount, setSheetCount] = useState(0);
+  const [statsData, setStatsData] = useState({
+    totalStudents: 0,
+    totalSheets: 0,
+    generatedSheets: 0,
+    draftSheets: 0
+  });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const studentsRes = await getStudents();
-        if (studentsRes && studentsRes.total !== undefined) {
-          setStudentCount(studentsRes.total);
-        }
         const sheetsRes = await getAttendanceSheets();
-        if (sheetsRes && sheetsRes.total !== undefined) {
-          setSheetCount(sheetsRes.total);
-        }
+
+        const allSheets = sheetsRes && sheetsRes.data ? sheetsRes.data : [];
+        const generated = allSheets.filter((s) => s.status === "Generated").length;
+        const draft = allSheets.filter((s) => s.status === "Draft").length;
+
+        setStatsData({
+          totalStudents: studentsRes && studentsRes.total !== undefined ? studentsRes.total : 0,
+          totalSheets: allSheets.length,
+          generatedSheets: generated,
+          draftSheets: draft
+        });
       } catch (e) {
         console.error("Failed to load dashboard stats", e);
       }
@@ -34,7 +43,7 @@ function AttendanceDashboard() {
       btnText: "Manage Students",
       to: "/student-list",
       icon: "👥",
-      badge: `${studentCount} Students`
+      badge: `${statsData.totalStudents} Students`
     },
     {
       title: "Create Attendance Sheet",
@@ -46,11 +55,11 @@ function AttendanceDashboard() {
     },
     {
       title: "Attendance Records",
-      description: "Browse, view, filter by department or class, and manage stored attendance document records.",
+      description: "Browse, view, filter by department or class, export to A4 PDF, and manage stored attendance document records.",
       btnText: "View Records",
       to: "/attendance-records",
       icon: "📁",
-      badge: `${sheetCount} Saved`
+      badge: `${statsData.totalSheets} Saved`
     },
     {
       title: "Class and Department Filter",
@@ -92,7 +101,7 @@ function AttendanceDashboard() {
         }}
       />
 
-      {/* ULTRA-PREMIUM HERO SECTION WITH ATTENDANCE TABLE GRAPHIC */}
+      {/* ULTRA-PREMIUM HERO SECTION WITH REAL STATS & ATTENDANCE TABLE GRAPHIC */}
       <div className="relative overflow-hidden rounded-[2rem] border border-teal-200/80 bg-gradient-to-br from-teal-950/20 via-slate-900/90 to-emerald-950/80 p-6 sm:p-10 shadow-2xl backdrop-blur-2xl animate-module-hero-fade">
         {/* Layered Background Spotlight & Floating Orbs */}
         <div className="absolute -left-20 -top-20 h-72 w-72 rounded-full bg-gradient-to-br from-teal-500/25 via-emerald-400/20 to-transparent blur-3xl animate-float-orb" />
@@ -126,8 +135,8 @@ function AttendanceDashboard() {
               Manage student rosters, filter by department and class, and render exact multipage attendance sheets with repeated headers and blank sign columns.
             </p>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
+            {/* CTA & Quick Action Buttons */}
+            <div className="flex flex-wrap items-center gap-3 pt-2">
               <Link
                 to="/create-attendance-sheet"
                 className="inline-flex items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 px-6 py-3.5 text-sm font-black text-white shadow-lg shadow-teal-500/30 transition-all duration-300 hover:from-emerald-500 hover:to-teal-500 hover:shadow-teal-500/50 active:scale-98"
@@ -135,27 +144,43 @@ function AttendanceDashboard() {
                 <span>Create Attendance Sheet</span>
                 <span className="text-base font-bold">→</span>
               </Link>
+
               <Link
                 to="/student-list"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700/80 bg-slate-900/80 px-6 py-3.5 text-sm font-black text-slate-200 shadow-md backdrop-blur-md transition-all duration-300 hover:border-teal-400 hover:bg-slate-800 hover:text-white active:scale-98"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700/80 bg-slate-900/80 px-5 py-3.5 text-sm font-black text-slate-200 shadow-md backdrop-blur-md transition-all duration-300 hover:border-teal-400 hover:bg-slate-800 hover:text-white active:scale-98"
               >
-                <span>Manage Students</span>
+                <span>Import Student CSV</span>
+              </Link>
+
+              <Link
+                to="/attendance-records"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700/80 bg-slate-900/80 px-5 py-3.5 text-sm font-black text-slate-200 shadow-md backdrop-blur-md transition-all duration-300 hover:border-teal-400 hover:bg-slate-800 hover:text-white active:scale-98"
+              >
+                <span>View Records</span>
               </Link>
             </div>
 
-            {/* Quick Info Pills */}
-            <div className="pt-4 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {[
-                { label: "Student Master", icon: "👥" },
-                { label: "Class Filter", icon: "🔍" },
-                { label: "39 Rows / Page", icon: "📄" },
-                { label: "Blank Sign Column", icon: "✒️" }
-              ].map((item) => (
-                <div key={item.label} className="flex items-center gap-2 rounded-xl border border-teal-500/20 bg-teal-950/40 px-3 py-2 text-xs font-extrabold text-teal-200 backdrop-blur-sm">
-                  <span>{item.icon}</span>
-                  <span className="truncate">{item.label}</span>
-                </div>
-              ))}
+            {/* Real Stats Bar */}
+            <div className="pt-4 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-bold font-mono">
+              <div className="rounded-xl border border-teal-500/20 bg-teal-950/40 px-3 py-2.5 text-teal-200 backdrop-blur-sm">
+                <span className="text-[10px] text-teal-400 uppercase block">Total Students</span>
+                <span className="text-lg font-black text-white">{statsData.totalStudents}</span>
+              </div>
+
+              <div className="rounded-xl border border-teal-500/20 bg-teal-950/40 px-3 py-2.5 text-teal-200 backdrop-blur-sm">
+                <span className="text-[10px] text-teal-400 uppercase block">Total Sheets</span>
+                <span className="text-lg font-black text-white">{statsData.totalSheets}</span>
+              </div>
+
+              <div className="rounded-xl border border-emerald-500/20 bg-emerald-950/40 px-3 py-2.5 text-emerald-200 backdrop-blur-sm">
+                <span className="text-[10px] text-emerald-400 uppercase block">Generated</span>
+                <span className="text-lg font-black text-emerald-300">{statsData.generatedSheets}</span>
+              </div>
+
+              <div className="rounded-xl border border-amber-500/20 bg-amber-950/40 px-3 py-2.5 text-amber-200 backdrop-blur-sm">
+                <span className="text-[10px] text-amber-400 uppercase block">Draft Sheets</span>
+                <span className="text-lg font-black text-amber-300">{statsData.draftSheets}</span>
+              </div>
             </div>
           </div>
 

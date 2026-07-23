@@ -1,3 +1,5 @@
+import { getStudents } from "./attendanceStudentApi.js";
+
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 const LOCAL_SHEETS_KEY = "attendance_sheets_records";
 
@@ -135,6 +137,85 @@ export const saveDraftAttendanceSheet = async (sheetData) => {
   list.unshift(draftSheet);
   saveLocalSheets(list);
   return { success: true, data: draftSheet, message: "Draft attendance sheet saved." };
+};
+
+export const regenerateAttendanceSheet = async (id) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/attendance-sheets/${id}/regenerate`, {
+      method: "POST"
+    });
+    if (response.ok) {
+      return await response.json();
+    }
+  } catch (e) {
+    // Fallback
+  }
+
+  const list = getLocalSheets();
+  const index = list.findIndex((s) => s.id === id);
+  if (index === -1) {
+    throw new Error("Attendance sheet record not found.");
+  }
+
+  const currentSheet = list[index];
+  const activeStudentsRes = await getStudents({
+    department: currentSheet.department,
+    className: currentSheet.className
+  });
+  const activeStudents = activeStudentsRes.data || [];
+
+  const studentCount = activeStudents.length;
+  const pageCount = Math.ceil(studentCount / 39) || 1;
+
+  list[index] = {
+    ...currentSheet,
+    students: activeStudents,
+    studentCount,
+    pageCount,
+    updatedAt: new Date().toISOString()
+  };
+
+  saveLocalSheets(list);
+  return {
+    success: true,
+    data: list[index],
+    message: "Attendance sheet regenerated with current active student roster."
+  };
+};
+
+export const duplicateAttendanceSheet = async (id) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/attendance-sheets/${id}/duplicate`, {
+      method: "POST"
+    });
+    if (response.ok) {
+      return await response.json();
+    }
+  } catch (e) {
+    // Fallback
+  }
+
+  const list = getLocalSheets();
+  const original = list.find((s) => s.id === id);
+  if (!original) {
+    throw new Error("Attendance sheet record not found.");
+  }
+
+  const duplicateSheet = {
+    ...original,
+    id: `att_sheet_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
+    heading: `${original.heading} (Copy)`,
+    status: "Draft",
+    createdAt: new Date().toISOString()
+  };
+
+  list.unshift(duplicateSheet);
+  saveLocalSheets(list);
+  return {
+    success: true,
+    data: duplicateSheet,
+    message: "Attendance sheet duplicated as draft."
+  };
 };
 
 export const updateAttendanceSheet = async (id, sheetData) => {
