@@ -105,8 +105,19 @@ const getPaginationData = (students) => {
   return {
     totalStudents: students.length,
     rowsPerPage: ROWS_PER_PAGE,
-    totalPages: Math.max(1, Math.ceil(students.length / ROWS_PER_PAGE))
+    totalPages: students.length > 0
+      ? Math.ceil(students.length / ROWS_PER_PAGE)
+      : 0
   };
+};
+
+const copyStudentSnapshot = (students) => {
+  return students.map((student, index) => ({
+    serialNo: index + 1,
+    enrollmentNo: student.enrollmentNo,
+    studentName: student.studentName,
+    signature: ""
+  }));
 };
 
 const controllerErrorResponse = (res, error, fallbackMessage) => {
@@ -184,6 +195,7 @@ export const saveDraftAttendanceSheet = async (req, res) => {
 
     const attendanceSheet = await createAttendanceSheetRecord({
       ...draftData,
+      ...getPaginationData([]),
       status: "Draft"
     });
 
@@ -303,37 +315,10 @@ export const updateAttendanceSheet = async (req, res) => {
       }
     }
 
-    if (req.body.refreshStudents === true) {
-      if (
-        isMissingRequiredValue(attendanceSheet.department)
-        || isMissingRequiredValue(attendanceSheet.className)
-      ) {
-        return res.status(400).json({
-          success: false,
-          message: "Department and className are required to refresh students."
-        });
-      }
-
-      const students = await getStudentSnapshot(
-        attendanceSheet.department,
-        attendanceSheet.className
-      );
-
-      if (students.length === 0) {
-        return res.status(404).json({
-          success: false,
-          message: "No students found for the selected department and class."
-        });
-      }
-
-      attendanceSheet.students = students;
-      Object.assign(attendanceSheet, getPaginationData(students));
-    }
-
     if (attendanceSheet.status === "Generated" && attendanceSheet.students.length === 0) {
       return res.status(400).json({
         success: false,
-        message: "A generated attendance sheet must contain students. Set refreshStudents to true."
+        message: "A generated attendance sheet must contain students."
       });
     }
 
@@ -346,6 +331,110 @@ export const updateAttendanceSheet = async (req, res) => {
     });
   } catch (error) {
     return controllerErrorResponse(res, error, "Failed to update attendance sheet");
+  }
+};
+
+export const regenerateAttendanceSheet = async (req, res) => {
+  try {
+    if (!isDatabaseConnected()) {
+      return databaseUnavailableResponse(res);
+    }
+
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      return res.status(404).json({
+        success: false,
+        message: "Attendance sheet not found"
+      });
+    }
+
+    const attendanceSheet = await AttendanceSheet.findById(req.params.id);
+
+    if (!attendanceSheet) {
+      return res.status(404).json({
+        success: false,
+        message: "Attendance sheet not found"
+      });
+    }
+
+    if (
+      isMissingRequiredValue(attendanceSheet.department)
+      || isMissingRequiredValue(attendanceSheet.className)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Department and className are required to regenerate the attendance sheet."
+      });
+    }
+
+    const students = await getStudentSnapshot(
+      attendanceSheet.department,
+      attendanceSheet.className
+    );
+
+    if (attendanceSheet.status === "Generated" && students.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No students found for the selected department and class."
+      });
+    }
+
+    attendanceSheet.students = students;
+    Object.assign(attendanceSheet, getPaginationData(students));
+    await attendanceSheet.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Attendance sheet regenerated successfully",
+      data: attendanceSheet
+    });
+  } catch (error) {
+    return controllerErrorResponse(res, error, "Failed to regenerate attendance sheet");
+  }
+};
+
+export const duplicateAttendanceSheet = async (req, res) => {
+  try {
+    if (!isDatabaseConnected()) {
+      return databaseUnavailableResponse(res);
+    }
+
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      return res.status(404).json({
+        success: false,
+        message: "Attendance sheet not found"
+      });
+    }
+
+    const sourceSheet = await AttendanceSheet.findById(req.params.id);
+
+    if (!sourceSheet) {
+      return res.status(404).json({
+        success: false,
+        message: "Attendance sheet not found"
+      });
+    }
+
+    const students = copyStudentSnapshot(sourceSheet.students);
+    const duplicatedSheet = await createAttendanceSheetRecord({
+      schoolName: sourceSheet.schoolName,
+      department: sourceSheet.department,
+      heading: sourceSheet.heading,
+      className: sourceSheet.className,
+      attendanceDate: sourceSheet.attendanceDate,
+      eventCoordinatorName: sourceSheet.eventCoordinatorName,
+      documentTitle: sourceSheet.documentTitle,
+      students,
+      ...getPaginationData(students),
+      status: "Draft"
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "Attendance sheet duplicated as draft successfully",
+      data: duplicatedSheet
+    });
+  } catch (error) {
+    return controllerErrorResponse(res, error, "Failed to duplicate attendance sheet");
   }
 };
 

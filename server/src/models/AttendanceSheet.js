@@ -62,7 +62,27 @@ const attendanceSheetSchema = new mongoose.Schema(
     },
     students: {
       type: [attendanceSheetStudentSchema],
-      default: []
+      default: [],
+      validate: [
+        {
+          validator: function (students) {
+            return this.status === "Draft" || students.length > 0;
+          },
+          message: "A generated attendance sheet must contain students."
+        },
+        {
+          validator: (students) => students.every((student, index) => {
+            return student.serialNo === index + 1;
+          }),
+          message: "Student serial numbers must be continuous."
+        },
+        {
+          validator: (students) => students.every((student) => {
+            return !student.signature;
+          }),
+          message: "Student signatures must remain blank."
+        }
+      ]
     },
     totalStudents: {
       type: Number,
@@ -70,11 +90,13 @@ const attendanceSheetSchema = new mongoose.Schema(
     },
     rowsPerPage: {
       type: Number,
-      default: 39
+      default: 39,
+      enum: [39]
     },
     totalPages: {
       type: Number,
-      default: 1
+      default: 0,
+      min: 0
     },
     status: {
       type: String,

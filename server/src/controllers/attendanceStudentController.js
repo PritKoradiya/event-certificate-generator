@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { parse } from "csv-parse/sync";
 import AttendanceStudent from "../models/AttendanceStudent.js";
 
 const isDatabaseConnected = () => mongoose.connection.readyState === 1;
@@ -60,6 +61,254 @@ const validationErrorResponse = (res, error, fallbackMessage) => {
     success: false,
     message: fallbackMessage
   });
+};
+
+const normalizeCsvHeader = (header) => {
+  const normalizedHeader = String(header ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
+
+  if (["enrollmentno", "enrollmentnumber"].includes(normalizedHeader)) {
+    return "enrollmentNo";
+  }
+
+  if (["studentname", "name"].includes(normalizedHeader)) {
+    return "studentName";
+  }
+
+  return normalizedHeader;
+};
+
+const escapeRegularExpression = (value) => {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+};
+
+export const downloadStudentCsvTemplate = (req, res) => {
+  const csvTemplate = [
+    "enrollmentNo,studentName",
+    "24SE02CE001,STUDENT NAME ONE",
+    "24SE02CE002,STUDENT NAME TWO"
+  ].join("\n");
+
+  res.setHeader("Content-Type", "text/csv");
+  res.setHeader(
+    "Content-Disposition",
+    'attachment; filename="attendance_student_template.csv"'
+  );
+
+  return res.status(200).send(csvTemplate);
+};
+
+export const importStudentsFromCsv = async (req, res) => {
+  try {
+    if (!isDatabaseConnected()) {
+      return databaseUnavailableResponse(res);
+    }
+
+    const { department, className } = req.body;
+
+    if (isMissingRequiredValue(department) || isMissingRequiredValue(className)) {
+      return res.status(400).json({
+        success: false,
+        message: "Department and className are required."
+      });
+    }
+
+    if (!req.file?.buffer) {
+      return res.status(400).json({
+        success: false,
+        message: "Student CSV file is required."
+      });
+    }
+
+    let parsedRows;
+
+    try {
+      parsedRows = parse(req.file.buffer, {
+        bom: true,
+        info: true,
+        relax_column_count: true,
+        skip_empty_lines: false
+      });
+    } catch (error) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid CSV file: ${error.message}`
+      });
+    }
+
+    const nonEmptyParsedRows = parsedRows.filter(({ record }) => {
+      return record.some((value) => String(value ?? "").trim());
+    });
+
+    if (nonEmptyParsedRows.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "CSV file is empty."
+      });
+    }
+
+    const headers = nonEmptyParsedRows[0].record.map(normalizeCsvHeader);
+    const enrollmentNoIndex = headers.indexOf("enrollmentNo");
+    const studentNameIndex = headers.indexOf("studentName");
+
+    if (enrollmentNoIndex === -1 || studentNameIndex === -1) {
+      return res.status(400).json({
+        success: false,
+        message: "CSV must contain enrollmentNo and studentName headers."
+      });
+    }
+
+    const dataRows = nonEmptyParsedRows.slice(1);
+
+    if (dataRows.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "CSV does not contain any student rows."
+      });
+    }
+
+    const normalizedDepartment = String(department).trim();
+    const normalizedClassName = String(className).trim().toUpperCase();
+    const invalidRows = [];
+    const skippedRows = [];
+    const uniqueRows = [];
+    const enrollmentNumbersInCsv = new Set();
+
+    dataRows.forEach(({ record, info }) => {
+      const enrollmentNo = String(record[enrollmentNoIndex] ?? "").trim().toUpperCase();
+      const studentName = String(record[studentNameIndex] ?? "").trim().toUpperCase();
+      const rowNumber = info.lines;
+
+      if (!enrollmentNo) {
+        invalidRows.push({
+          rowNumber,
+          reason: "Enrollment number is missing"
+        });
+        return;
+      }
+
+      if (!studentName) {
+        invalidRows.push({
+          rowNumber,
+          enrollmentNo,
+          reason: "Student name is missing"
+        });
+        return;
+      }
+
+      if (enrollmentNumbersInCsv.has(enrollmentNo)) {
+        skippedRows.push({
+          rowNumber,
+          enrollmentNo,
+          reason: "Duplicate enrollment number"
+        });
+        return;
+      }
+
+      enrollmentNumbersInCsv.add(enrollmentNo);
+      uniqueRows.push({
+        rowNumber,
+        enrollmentNo,
+        studentData: {
+          enrollmentNo,
+          studentName,
+          department: normalizedDepartment,
+          className: normalizedClassName
+        }
+      });
+    });
+
+    const existingStudents = uniqueRows.length > 0
+      ? await AttendanceStudent.find({
+        department: normalizedDepartment,
+        className: normalizedClassName,
+        enrollmentNo: {
+          $in: uniqueRows.map((row) => row.enrollmentNo)
+        }
+      }).select("enrollmentNo")
+      : [];
+    const existingEnrollmentNumbers = new Set(
+      existingStudents.map((student) => student.enrollmentNo)
+    );
+    const rowsToInsert = [];
+
+    uniqueRows.forEach((row) => {
+      if (existingEnrollmentNumbers.has(row.enrollmentNo)) {
+        skippedRows.push({
+          rowNumber: row.rowNumber,
+          enrollmentNo: row.enrollmentNo,
+          reason: "Duplicate enrollment number"
+        });
+        return;
+      }
+
+      rowsToInsert.push(row);
+    });
+
+    const operations = rowsToInsert.map((row) => ({
+      updateOne: {
+        filter: {
+          department: normalizedDepartment,
+          className: normalizedClassName,
+          enrollmentNo: row.enrollmentNo
+        },
+        update: {
+          $setOnInsert: row.studentData
+        },
+        upsert: true
+      }
+    }));
+    const result = operations.length > 0
+      ? await AttendanceStudent.bulkWrite(operations, { ordered: false })
+      : { upsertedIds: {} };
+    const upsertedIds = result.upsertedIds || {};
+    const insertedOperationIndexes = new Set(
+      Object.keys(upsertedIds).map((index) => Number(index))
+    );
+
+    rowsToInsert.forEach((row, index) => {
+      if (!insertedOperationIndexes.has(index)) {
+        skippedRows.push({
+          rowNumber: row.rowNumber,
+          enrollmentNo: row.enrollmentNo,
+          reason: "Duplicate enrollment number"
+        });
+      }
+    });
+
+    const insertedIds = Object.values(upsertedIds);
+    const insertedStudents = insertedIds.length > 0
+      ? await AttendanceStudent.find({
+        _id: {
+          $in: insertedIds
+        }
+      }).sort({
+        enrollmentNo: 1,
+        studentName: 1
+      })
+      : [];
+
+    skippedRows.sort((firstRow, secondRow) => firstRow.rowNumber - secondRow.rowNumber);
+    invalidRows.sort((firstRow, secondRow) => firstRow.rowNumber - secondRow.rowNumber);
+
+    return res.status(200).json({
+      success: true,
+      message: "Student CSV import completed",
+      data: {
+        totalRows: dataRows.length,
+        insertedCount: insertedStudents.length,
+        skippedCount: skippedRows.length,
+        invalidCount: invalidRows.length,
+        insertedStudents,
+        skippedRows,
+        invalidRows
+      }
+    });
+  } catch (error) {
+    return validationErrorResponse(res, error, "Failed to import students from CSV");
+  }
 };
 
 export const createStudent = async (req, res) => {
@@ -220,6 +469,18 @@ export const getStudents = async (req, res) => {
 
     if (typeof req.query.className === "string" && req.query.className.trim()) {
       filters.className = req.query.className.trim().toUpperCase();
+    }
+
+    if (typeof req.query.search === "string" && req.query.search.trim()) {
+      const searchPattern = new RegExp(
+        escapeRegularExpression(req.query.search.trim()),
+        "i"
+      );
+
+      filters.$or = [
+        { enrollmentNo: searchPattern },
+        { studentName: searchPattern }
+      ];
     }
 
     const students = await AttendanceStudent.find(filters).sort({

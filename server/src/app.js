@@ -54,9 +54,15 @@ app.use("/api", (req, res) => {
 
 app.use((error, req, res, next) => {
   if (error instanceof multer.MulterError && error.code === "LIMIT_FILE_SIZE") {
-    const message = req.originalUrl.startsWith("/api/posters")
-      ? "Poster asset must be smaller than 5MB."
-      : "Image size must be less than 5MB.";
+    let message = "Image size must be less than 5MB.";
+
+    if (req.originalUrl.startsWith("/api/posters")) {
+      message = "Poster asset must be smaller than 5MB.";
+    }
+
+    if (req.originalUrl.startsWith("/api/attendance-students/import-csv")) {
+      message = "CSV file must be smaller than 2MB.";
+    }
 
     return res.status(400).json({
       success: false,

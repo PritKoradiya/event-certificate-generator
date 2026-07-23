@@ -82,6 +82,9 @@ The Attendance Sheet Generator manages reusable student records and generates st
 - Student master-list management (`/student-list`)
 - Department and class filtering (CE/IT, CSE, AIML, etc.)
 - Bulk student import (CSV upload and raw text parsing)
+- Downloadable student CSV template
+- Row-level CSV import validation without stopping valid rows
+- Duplicate enrollment detection within CSV files and existing classes
 - Fixed mentor-format SVG preview (A4 portrait)
 - Automatic multipage pagination (39 rows per full page)
 - Continuous serial numbers across all pages
@@ -95,6 +98,8 @@ The Attendance Sheet Generator manages reusable student records and generates st
   - `Class- [Class]`
   - Bordered `Date` row
 - Saved attendance sheet records management (`/attendance-records`)
+- Explicit attendance sheet regeneration from the current active student list
+- Duplicate an attendance sheet and its student snapshot as a new draft
 
 #### Frontend Routes
 
@@ -106,6 +111,8 @@ The Attendance Sheet Generator manages reusable student records and generates st
 #### Attendance Student API Summary
 
 ```txt
+GET    /api/attendance-students/csv-template
+POST   /api/attendance-students/import-csv
 POST   /api/attendance-students
 POST   /api/attendance-students/bulk
 GET    /api/attendance-students
@@ -119,6 +126,8 @@ DELETE /api/attendance-students/:id
 ```txt
 POST   /api/attendance-sheets
 POST   /api/attendance-sheets/draft
+POST   /api/attendance-sheets/:id/regenerate
+POST   /api/attendance-sheets/:id/duplicate
 GET    /api/attendance-sheets
 GET    /api/attendance-sheets/:id
 PUT    /api/attendance-sheets/:id
