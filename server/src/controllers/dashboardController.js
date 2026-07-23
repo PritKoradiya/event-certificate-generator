@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import AttendanceSheet from "../models/AttendanceSheet.js";
+import AttendanceStudent from "../models/AttendanceStudent.js";
 import Certificate from "../models/Certificate.js";
 import EventReport from "../models/EventReport.js";
 
@@ -21,7 +23,12 @@ export const getDashboardStats = async (req, res) => {
       bulkCertificates,
       totalEventReports,
       generatedEventReports,
-      draftEventReports
+      draftEventReports,
+      totalAttendanceSheets,
+      generatedAttendanceSheets,
+      draftAttendanceSheets,
+      totalStudents,
+      activeStudents
     ] = await Promise.all([
       Certificate.countDocuments(),
       Certificate.countDocuments({ status: "Generated" }),
@@ -30,7 +37,12 @@ export const getDashboardStats = async (req, res) => {
       Certificate.countDocuments({ generationType: "Bulk" }),
       EventReport.countDocuments(),
       EventReport.countDocuments({ status: "Generated" }),
-      EventReport.countDocuments({ status: "Draft" })
+      EventReport.countDocuments({ status: "Draft" }),
+      AttendanceSheet.countDocuments(),
+      AttendanceSheet.countDocuments({ status: "Generated" }),
+      AttendanceSheet.countDocuments({ status: "Draft" }),
+      AttendanceStudent.countDocuments(),
+      AttendanceStudent.countDocuments({ isActive: true })
     ]);
 
     return res.status(200).json({
@@ -48,10 +60,19 @@ export const getDashboardStats = async (req, res) => {
           generated: generatedEventReports,
           draft: draftEventReports
         },
+        attendanceSheets: {
+          total: totalAttendanceSheets,
+          generated: generatedAttendanceSheets,
+          draft: draftAttendanceSheets
+        },
+        studentMaster: {
+          totalStudents,
+          activeStudents
+        },
         platform: {
           certificateTemplates: 24,
           posterDesigns: 12,
-          modules: 2
+          modules: 3
         }
       }
     });

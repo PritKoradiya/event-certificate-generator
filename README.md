@@ -1,12 +1,12 @@
-# Event Certificate & Report Generator
+# Event Certificate, Report & Attendance Management Platform
 
-A full-stack MERN platform for generating professional event certificates, structured academic event reports, and event posters with live preview, template selection, image support, export tools, and record management.
+A full-stack MERN platform for generating professional event certificates, structured academic event reports, attendance sheets, and event posters with record management and frontend export tools.
 
-This project includes three major modules:
+This project includes three main academic document modules:
 
 1. Event Certificate Generator  
 2. Event Report Generator  
-3. Event Poster Generator
+3. Attendance Sheet Generator
 
 The Event Report Generator follows the academic event report structure provided in the mentor format, including event details, outline, objectives, outcomes, photos, coordinator, and dean section.
 
@@ -74,7 +74,51 @@ The Event Report Generator allows users to create structured academic event repo
 
 ---
 
-### 3. Event Poster Generator
+### 3. Attendance Sheet Generator
+
+The Attendance Sheet Generator manages reusable student records and prepares stable attendance sheet data for frontend PDF rendering. Each generated record stores a snapshot of its selected students, so later student master changes do not alter existing sheets.
+
+#### Features
+
+- Master student list
+- Department and class filtering
+- Bulk student insertion with duplicate handling
+- Automatic continuous serial numbers
+- Blank signature column
+- Dynamic multipage sheet data with 39 rows per full page
+- Attendance sheet record management
+- Event coordinator prepared for display on the final page
+- Repeated reference header and table structure prepared for frontend PDF rendering
+- Default school name: `School of Engineering, PPSU`
+- Default document title: `Attendance Sheet`
+
+#### Attendance Student API Summary
+
+```txt
+POST   /api/attendance-students
+POST   /api/attendance-students/bulk
+GET    /api/attendance-students
+PUT    /api/attendance-students/:id
+DELETE /api/attendance-students/class
+DELETE /api/attendance-students/:id
+```
+
+#### Attendance Sheet API Summary
+
+```txt
+POST   /api/attendance-sheets
+POST   /api/attendance-sheets/draft
+GET    /api/attendance-sheets
+GET    /api/attendance-sheets/:id
+PUT    /api/attendance-sheets/:id
+DELETE /api/attendance-sheets/:id
+```
+
+Attendance sheet PDFs are intentionally rendered by the frontend; the backend stores the normalized data and student snapshot only.
+
+---
+
+### Additional Event Poster Generator
 
 The Event Poster Generator allows users to create engaging event promotional posters using customizable templates, live preview, optional event banner images, organization logos, and multi-format exports.
 

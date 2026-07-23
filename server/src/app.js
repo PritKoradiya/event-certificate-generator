@@ -3,6 +3,8 @@ import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 import multer from "multer";
+import attendanceSheetRoutes from "./routes/attendanceSheetRoutes.js";
+import attendanceStudentRoutes from "./routes/attendanceStudentRoutes.js";
 import certificateRoutes from "./routes/certificateRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import eventReportRoutes from "./routes/eventReportRoutes.js";
@@ -33,6 +35,8 @@ app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 app.use("/api/health", healthRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/attendance-students", attendanceStudentRoutes);
+app.use("/api/attendance-sheets", attendanceSheetRoutes);
 app.use("/api/certificates", certificateRoutes);
 app.use("/api/event-reports", eventReportRoutes);
 app.use("/api/posters", posterRoutes);
