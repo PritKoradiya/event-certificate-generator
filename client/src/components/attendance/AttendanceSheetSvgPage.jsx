@@ -1,6 +1,9 @@
 import React from "react";
 import AttendanceSheetHeader from "./AttendanceSheetHeader.jsx";
 import AttendanceSheetTable from "./AttendanceSheetTable.jsx";
+import { ATTENDANCE_LAYOUT, ATTENDANCE_TYPOGRAPHY } from "../../config/attendanceSheetLayout.js";
+
+const ptToMm = (pt) => (pt * 25.4) / 72;
 
 function AttendanceSheetSvgPage({
   department = "",
@@ -14,26 +17,24 @@ function AttendanceSheetSvgPage({
   pageIndex = 0,
   totalPages = 1
 }) {
-  const headerY = 292;
-  const headerHeight = 34;
-  const rowHeight = 29;
-  const tableBottomY = headerY + headerHeight + studentsChunk.length * rowHeight;
+  const { studentRowsY, rowHeight, coordinatorGap, tableX } = ATTENDANCE_LAYOUT;
+  const fontFam = ATTENDANCE_TYPOGRAPHY.svgFontFamily;
 
-  // Placement for Event Coordinator below table on last page
-  // Keeps coordinator near the table if few students on last page
-  const coordinatorY = Math.min(tableBottomY + 45, 1560);
+  const tableBottomY = studentRowsY + studentsChunk.length * rowHeight;
+  const coordinatorY = tableBottomY + coordinatorGap;
 
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 1240 1754"
-      width="1240"
-      height="1754"
+      viewBox="0 0 210 297"
+      width="210mm"
+      height="297mm"
+      preserveAspectRatio="xMidYMid meet"
       className="attendance-svg-page w-full h-auto bg-white shadow-2xl rounded-sm border border-slate-300"
       style={{ display: "block" }}
     >
       {/* Background Page Canvas */}
-      <rect x="0" y="0" width="1240" height="1754" fill="#ffffff" stroke="#e2e8f0" strokeWidth="1" />
+      <rect x="0" y="0" width="210" height="297" fill="#ffffff" stroke="#e2e8f0" strokeWidth="0.5" />
 
       {/* Repeated Document Header */}
       <AttendanceSheetHeader
@@ -49,14 +50,14 @@ function AttendanceSheetSvgPage({
         startSrNo={startSrNo}
       />
 
-      {/* Event Coordinator - ONLY rendered on the final page */}
+      {/* Event Coordinator - ONLY rendered on the final page immediately below table */}
       {isLastPage && (
         <g className="event-coordinator-section">
           <text
-            x="100"
+            x={tableX}
             y={coordinatorY}
-            fontFamily="Times New Roman, Georgia, serif"
-            fontSize="18"
+            fontFamily={fontFam}
+            fontSize={ptToMm(ATTENDANCE_TYPOGRAPHY.coordinator.size)}
             fill="#000000"
           >
             <tspan fontWeight="bold">Event Coordinator : </tspan>

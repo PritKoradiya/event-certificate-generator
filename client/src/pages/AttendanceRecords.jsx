@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import ModuleHeader from "../components/ui/ModuleHeader.jsx";
 import AttendanceSheetSvgPreview from "../components/attendance/AttendanceSheetSvgPreview.jsx";
 import {
@@ -24,8 +24,6 @@ const formatPdfFileName = (heading, className, date, sheetId) => {
 };
 
 function AttendanceRecords() {
-  const previewRef = useRef(null);
-
   const [sheets, setSheets] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -84,7 +82,7 @@ function AttendanceRecords() {
     }
   };
 
-  // PART 8: REGENERATE ACTION
+  // REGENERATE ACTION (Part 8)
   const handleRegenerate = async (sheet) => {
     setOpenMenuId(null);
     const confirmMsg =
@@ -106,7 +104,7 @@ function AttendanceRecords() {
     }
   };
 
-  // PART 9: DUPLICATE ACTION
+  // DUPLICATE ACTION (Part 9)
   const handleDuplicate = async (id) => {
     setOpenMenuId(null);
     try {
@@ -120,26 +118,12 @@ function AttendanceRecords() {
     }
   };
 
-  // PART 7: PDF DOWNLOAD ACTION
+  // DIRECT VECTOR PDF DOWNLOAD ACTION (Part 15)
   const handleDownloadPdf = async (sheet) => {
     const targetSheet = sheet || activeSheetModal;
     if (!targetSheet) return;
 
-    // If modal is not open for target sheet, open modal first to mount SVG pages
-    if (!activeSheetModal || activeSheetModal.id !== targetSheet.id) {
-      setActiveSheetModal(targetSheet);
-      // Wait for React to mount the modal DOM
-      await new Promise((r) => setTimeout(r, 200));
-    }
-
-    if (!previewRef.current) {
-      showNotice("SVG Page refs not ready.");
-      return;
-    }
-
-    const pageElements = previewRef.current.getPageElements();
-    const validation = validateAttendanceSheetLayout(targetSheet, pageElements);
-
+    const validation = validateAttendanceSheetLayout(targetSheet);
     if (!validation.valid) {
       alert(`Cannot export PDF: ${validation.errors.join(", ")}`);
       return;
@@ -155,11 +139,12 @@ function AttendanceRecords() {
         targetSheet.id
       );
 
+      // Direct vector PDF drawing with jsPDF
       await downloadAttendanceSheetPdf({
-        pageSvgs: pageElements,
+        sheet: targetSheet,
         fileName
       });
-      showNotice("Attendance sheet PDF downloaded successfully.");
+      showNotice("Attendance sheet vector PDF downloaded successfully.");
     } catch (err) {
       console.error("Failed to download PDF", err);
       showNotice(err.message || "Failed to download PDF.");
@@ -430,7 +415,7 @@ function AttendanceRecords() {
                   disabled={isDownloadingPdf}
                   className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-xs font-bold text-white shadow-md hover:from-blue-500 hover:to-indigo-500 transition disabled:opacity-60"
                 >
-                  {isDownloadingPdf ? "Preparing PDF..." : "📥 Export PDF"}
+                  {isDownloadingPdf ? "Preparing Vector PDF..." : "📥 Export Vector PDF"}
                 </button>
 
                 <button
@@ -445,7 +430,7 @@ function AttendanceRecords() {
 
             {/* Multipage SVG Preview */}
             <div className="py-2">
-              <AttendanceSheetSvgPreview ref={previewRef} sheetData={activeSheetModal} />
+              <AttendanceSheetSvgPreview sheetData={activeSheetModal} />
             </div>
           </div>
         </div>

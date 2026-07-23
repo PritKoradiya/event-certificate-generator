@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import ModuleHeader from "../components/ui/ModuleHeader.jsx";
 import AttendanceSheetSvgPreview from "../components/attendance/AttendanceSheetSvgPreview.jsx";
+import AttendanceTypographyTestPanel from "../components/attendance/AttendanceTypographyTestPanel.jsx";
 import { getStudents } from "../services/attendanceStudentApi.js";
 import {
   createAttendanceSheet,
@@ -163,7 +164,7 @@ function CreateAttendanceSheet() {
 
       if (res && res.success) {
         setSuccessMessage(
-          `Attendance sheet generated successfully! Total ${matchingStudents.length} students across ${res.data.pageCount} page(s). Click 'Download PDF' below to export.`
+          `Attendance sheet generated successfully! Total ${matchingStudents.length} students across ${res.data.pageCount} page(s). Click 'Download PDF' below to export crisp vector PDF.`
         );
         setGeneratedSheet(res.data);
 
@@ -180,10 +181,11 @@ function CreateAttendanceSheet() {
     }
   };
 
-  // Download Multipage PDF Action
+  // DIRECT VECTOR MULTIPAGE PDF DOWNLOAD ACTION (Part 14)
   const handleDownloadPdf = async () => {
     const sheetToExport = generatedSheet || {
       id: "TEMP-PREVIEW",
+      schoolName: "School of Engineering, PPSU",
       department,
       heading,
       className,
@@ -192,15 +194,8 @@ function CreateAttendanceSheet() {
       students: matchingStudents
     };
 
-    if (!previewRef.current) {
-      setErrorMessage("Preview elements not ready for PDF download.");
-      return;
-    }
-
-    const pageElements = previewRef.current.getPageElements();
-
     // Validate layout before PDF generation
-    const validation = validateAttendanceSheetLayout(sheetToExport, pageElements);
+    const validation = validateAttendanceSheetLayout(sheetToExport);
     if (!validation.valid) {
       setErrorMessage(`Validation failed: ${validation.errors.join("; ")}`);
       return;
@@ -217,11 +212,12 @@ function CreateAttendanceSheet() {
         sheetToExport.id
       );
 
+      // Direct vector PDF export using jsPDF drawing methods
       await downloadAttendanceSheetPdf({
-        pageSvgs: pageElements,
+        sheet: sheetToExport,
         fileName
       });
-      setSuccessMessage("Attendance sheet PDF downloaded successfully!");
+      setSuccessMessage("Crisp vector attendance sheet PDF downloaded successfully!");
     } catch (err) {
       console.error("PDF download error", err);
       setErrorMessage(err.message || "Failed to generate attendance sheet PDF.");
@@ -240,6 +236,23 @@ function CreateAttendanceSheet() {
         subtitle="Select a stored student class and generate a multipage attendance sheet in the mentor-provided format."
         theme="attendance"
         badge="Attendance Form"
+      />
+
+      {/* DEV-ONLY TYPOGRAPHY & LAYOUT CALIBRATION TEST PANEL (Part 17) */}
+      <AttendanceTypographyTestPanel
+        onLoadTestScenario={({ department: d, className: c, heading: h, students: s }) => {
+          setDepartment(d);
+          setClassName(c);
+          setHeading(h);
+          setMatchingStudents(s);
+          setGeneratedSheet(null);
+        }}
+        onTriggerDirectPdf={async (testSheet) => {
+          await downloadAttendanceSheetPdf({
+            sheet: testSheet,
+            fileName: `Test_Attendance_Sheet_${testSheet.students.length}_Students.pdf`
+          });
+        }}
       />
 
       {/* Main Form Box */}
@@ -422,7 +435,7 @@ function CreateAttendanceSheet() {
                 Generate Attendance Sheet
               </button>
 
-              {/* PART 6: DOWNLOAD PDF BUTTON */}
+              {/* DOWNLOAD VECTOR PDF BUTTON */}
               {generatedSheet && (
                 <button
                   type="button"
@@ -431,7 +444,7 @@ function CreateAttendanceSheet() {
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3 text-sm font-black text-white shadow-lg shadow-blue-500/30 hover:from-blue-500 hover:to-indigo-500 transition active:scale-98 disabled:opacity-60"
                 >
                   <span>📥</span>
-                  <span>{isDownloadingPdf ? "Preparing PDF..." : "Download PDF"}</span>
+                  <span>{isDownloadingPdf ? "Preparing Vector PDF..." : "Download Vector PDF"}</span>
                 </button>
               )}
             </div>
@@ -459,7 +472,7 @@ function CreateAttendanceSheet() {
               className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-xs font-black text-white shadow-md hover:from-blue-500 hover:to-indigo-500 transition disabled:opacity-60"
             >
               <span>📥</span>
-              <span>{isDownloadingPdf ? "Preparing PDF..." : "Download Attendance PDF"}</span>
+              <span>{isDownloadingPdf ? "Preparing Vector PDF..." : "Download Vector PDF"}</span>
             </button>
           )}
         </div>

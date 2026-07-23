@@ -1,13 +1,13 @@
 import React, { useImperativeHandle, useRef } from "react";
 import AttendanceSheetSvgPage from "./AttendanceSheetSvgPage.jsx";
-
-const ROWS_PER_PAGE = 39;
+import { ATTENDANCE_LAYOUT } from "../../config/attendanceSheetLayout.js";
 
 const AttendanceSheetSvgPreview = React.forwardRef(function AttendanceSheetSvgPreview(
   { sheetData = {} },
   ref
 ) {
   const containerRef = useRef(null);
+  const rowsPerPage = ATTENDANCE_LAYOUT.rowsPerPage; // 39
 
   const {
     department = "",
@@ -23,8 +23,8 @@ const AttendanceSheetSvgPreview = React.forwardRef(function AttendanceSheetSvgPr
   if (students.length === 0) {
     studentChunks.push([]);
   } else {
-    for (let i = 0; i < students.length; i += ROWS_PER_PAGE) {
-      studentChunks.push(students.slice(i, i + ROWS_PER_PAGE));
+    for (let i = 0; i < students.length; i += rowsPerPage) {
+      studentChunks.push(students.slice(i, i + rowsPerPage));
     }
   }
 
@@ -71,7 +71,7 @@ const AttendanceSheetSvgPreview = React.forwardRef(function AttendanceSheetSvgPr
       {/* Pages Vertical List */}
       <div className="space-y-10">
         {studentChunks.map((chunk, pageIndex) => {
-          const startSrNo = pageIndex * ROWS_PER_PAGE + 1;
+          const startSrNo = pageIndex * rowsPerPage + 1;
           const isLastPage = pageIndex === totalPages - 1;
 
           return (
