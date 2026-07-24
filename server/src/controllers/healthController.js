@@ -1,8 +1,14 @@
 export const getHealthStatus = (req, res) => {
   res.status(200).json({
     success: true,
-    message: "Event Certificate and Report Generator API is running",
-    modules: ["Certificate Generator", "Event Report Generator"],
+    message: "Event Document Generator API is running",
+    projectName: "Event Document Generator",
+    modules: [
+      "Event Certificate Generator",
+      "Poster Generator",
+      "Event Report Generator",
+      "Attendance Sheet Generator"
+    ],
     environment: process.env.NODE_ENV || "development"
   });
 };

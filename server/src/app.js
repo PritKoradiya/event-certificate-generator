@@ -42,7 +42,7 @@ app.use("/api/event-reports", eventReportRoutes);
 app.use("/api/posters", posterRoutes);
 
 app.get("/", (req, res) => {
-  res.send("Event Certificate and Report Generator API");
+  res.send("Event Document Generator API");
 });
 
 app.use("/api", (req, res) => {

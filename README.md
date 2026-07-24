@@ -1,12 +1,15 @@
-# Event Certificate, Report & Attendance Management Platform
+# Event Document Generator
+
+**Event Certificate, Poster, Event Report and Attendance Sheet Generator**
 
 A full-stack MERN platform for generating professional event certificates, structured academic event reports, attendance sheets, and event posters with record management and frontend export tools.
 
-This project includes three main academic document modules:
+This project includes four main academic document modules:
 
 1. Event Certificate Generator  
 2. Event Report Generator  
 3. Attendance Sheet Generator
+4. Poster Generator
 
 ---
 

@@ -1,6 +1,7 @@
 {
-  "name": "event-certificate-generator-server",
+  "name": "event-document-generator-server",
   "version": "1.0.0",
+  "description": "Backend API for Event Document Generator with certificate, poster, event report, and attendance sheet modules.",
   "author": "Pritkumar Koradiya",
   "private": true,
   "type": "module",
