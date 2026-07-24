@@ -2,17 +2,17 @@ import { Link } from "react-router-dom";
 import { brandingData } from "../data/brandingData.js";
 
 const footerLinks = [
-  { label: "Dashboard", path: "/" },
-  { label: "Create Certificate", path: "/create-certificate" },
-  { label: "Templates", path: "/templates" },
-  { label: "Categories", path: "/categories" },
-  { label: "Bulk Generate", path: "/bulk-generate" },
-  { label: "Generated Certificates", path: "/generated-certificates" }
+  { label: "Main Dashboard", path: "/" },
+  { label: "Certificate Studio", path: "/certificate-dashboard" },
+  { label: "Poster Studio", path: "/create-poster" },
+  { label: "Report Studio", path: "/report-dashboard" },
+  { label: "Attendance Studio", path: "/attendance-dashboard" },
+  { label: "Student Master List", path: "/student-list" }
 ];
 
 function Footer() {
   return (
-    <footer className="footer-fade-up mt-4 overflow-hidden rounded-3xl border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-cyan-50 p-[1px] shadow-xl">
+    <footer className="footer-fade-up mt-8 overflow-hidden rounded-3xl border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-cyan-50 p-[1px] shadow-xl">
       <div className="footer-gradient-line h-1 w-full" />
       <div className="rounded-[1.35rem] bg-white/90 px-5 py-7 text-slate-700 backdrop-blur sm:px-7 lg:px-8">
         <div className="grid gap-8 md:grid-cols-3">
@@ -20,8 +20,8 @@ function Footer() {
             <h2 className="text-xl font-black tracking-tight text-slate-950">
               {brandingData.appName}
             </h2>
-            <p className="mt-3 max-w-sm text-sm font-semibold leading-6 text-slate-500">
-              {brandingData.tagline}
+            <p className="mt-3 max-w-sm text-xs sm:text-sm font-semibold leading-relaxed text-slate-500">
+              {brandingData.subtitle}
             </p>
           </section>
 
@@ -49,7 +49,7 @@ function Footer() {
             <p className="footer-developer-name mt-4 w-fit text-lg font-black text-slate-950 transition">
               {brandingData.developerName}
             </p>
-            <p className="mt-1 text-sm font-semibold text-slate-500">{brandingData.role}</p>
+            <p className="mt-1 text-sm font-semibold text-slate-500">Developed by {brandingData.developerName}</p>
             <div className="mt-4 flex flex-wrap gap-3 text-sm font-black">
               <a
                 href="#"
@@ -71,7 +71,10 @@ function Footer() {
           <p className="text-base font-black text-slate-900">
             {brandingData.appName}
           </p>
-          <p className="mt-1">
+          <p className="mt-1 font-semibold text-slate-600">
+            {brandingData.subtitle}
+          </p>
+          <p className="mt-2 text-slate-700">
             Developed by {brandingData.developerName}
           </p>
           <p className="mt-1">

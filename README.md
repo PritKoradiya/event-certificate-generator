@@ -2,14 +2,14 @@
 
 **Event Certificate, Poster, Event Report and Attendance Sheet Generator**
 
-A full-stack MERN platform for generating professional event certificates, structured academic event reports, attendance sheets, and event posters with record management and frontend export tools.
+Event Document Generator is a MERN stack platform that provides four integrated modules for creating professional event documents with live previews, data management, and export support.
 
 This project includes four main academic document modules:
 
-1. Event Certificate Generator  
-2. Event Report Generator  
-3. Attendance Sheet Generator
-4. Poster Generator
+1. Event Certificate Generator
+2. Poster Generator
+3. Event Report Generator
+4. Attendance Sheet Generator
 
 ---
 
@@ -51,7 +51,26 @@ The Certificate Generator allows users to create and manage professional certifi
 
 ---
 
-### 2. Event Report Generator
+### 2. Poster Generator
+
+The Event Poster Generator allows users to create engaging event promotional posters using customizable templates, live preview, optional event banner images, organization logos, and multi-format exports.
+
+#### Features
+
+- 12 event poster templates (Seminar, Conference, FDP, Expert Talk, Workshop, Webinar, Hackathon, Cultural, Sports, Technical, Project Exhibition, Training)
+- Dynamic poster builder (`/create-poster`)
+- Live poster preview canvas
+- Event banner image upload support (Max 5MB)
+- Organization logo upload support (Max 5MB)
+- Save draft poster
+- PNG image download (1080 x 1350 resolution)
+- A4 portrait PDF download
+- Poster records management page (`/poster-records`)
+- View, search, filter, and delete saved poster records
+
+---
+
+### 3. Event Report Generator
 
 The Event Report Generator allows users to create structured academic event reports using event details, objectives, outcomes, photos, and signature details.
 
@@ -75,23 +94,24 @@ The Event Report Generator allows users to create structured academic event repo
 
 ---
 
-### 3. Attendance Sheet Generator
+### 4. Attendance Sheet Generator
 
 The Attendance Sheet Generator manages reusable student records and generates structured multipage attendance sheets with exact mentor formatting, continuous serial numbers, repeated page headers, blank signature columns, and automatic pagination.
 
 #### Features
 
-- Third platform main module (`/attendance-dashboard`)
+- Multipage attendance studio workspace (`/attendance-dashboard`)
 - Student master-list management (`/student-list`)
 - CSV Template Download (`attendance_student_template.csv`) with frontend Blob fallback
 - Student CSV Roster Import (`studentCsv`, max 2MB) with duplicate and invalid row reporting table
 - Department and class filtering (CE/IT, CSE, AIML, etc.)
-- Fixed mentor-format SVG preview & rendering (A4 portrait `viewBox="0 0 1240 1754"`)
-- Multipage A4 PDF Export (`jsPDF` vector image rendering, zero html2canvas dependency)
+- Fixed mentor-format SVG preview & rendering (A4 portrait `viewBox="0 0 210 297"`)
+- Direct Vector Multipage A4 PDF Export (`jsPDF` vector rendering using single source of truth metrics)
+- Adaptive row height and font scaling (fills page body for partial final pages like 24 rows @ ~8.4mm)
 - Automatic multipage pagination (39 rows per full page)
 - Continuous serial numbers across all pages
 - Blank Sign column
-- Event Coordinator placement on the final page only
+- Event Coordinator placement on the final page only directly below final table
 - Repeated header on every page:
   - `School of Engineering, PPSU`
   - `[Department] Department`
@@ -107,55 +127,14 @@ The Attendance Sheet Generator manages reusable student records and generates st
 
 #### Frontend Routes
 
+- `/` - Main Landing Workspace
+- `/certificate-dashboard` - Certificate Studio Workspace
+- `/create-poster` - Poster Builder Studio
+- `/report-dashboard` - Event Report Studio Workspace
 - `/attendance-dashboard` - Attendance Studio Workspace
 - `/student-list` - Student Master Roster & CSV Import
 - `/create-attendance-sheet` - Attendance Sheet Form & Multipage PDF Export
 - `/attendance-records` - Attendance Records & PDF Download
-
-#### Attendance Student API Summary
-
-```txt
-GET    /api/attendance-students/csv-template
-POST   /api/attendance-students/import-csv
-POST   /api/attendance-students
-POST   /api/attendance-students/bulk
-GET    /api/attendance-students
-PUT    /api/attendance-students/:id
-DELETE /api/attendance-students/class
-DELETE /api/attendance-students/:id
-```
-
-#### Attendance Sheet API Summary
-
-```txt
-POST   /api/attendance-sheets
-POST   /api/attendance-sheets/draft
-POST   /api/attendance-sheets/:id/regenerate
-POST   /api/attendance-sheets/:id/duplicate
-GET    /api/attendance-sheets
-GET    /api/attendance-sheets/:id
-PUT    /api/attendance-sheets/:id
-DELETE /api/attendance-sheets/:id
-```
-
----
-
-### Additional Event Poster Generator
-
-The Event Poster Generator allows users to create engaging event promotional posters using customizable templates, live preview, optional event banner images, organization logos, and multi-format exports.
-
-#### Features
-
-- 12 event poster templates (Seminar, Conference, FDP, Expert Talk, Workshop, Webinar, Hackathon, Cultural, Sports, Technical, Project Exhibition, Training)
-- Dynamic poster builder (`/create-poster`)
-- Live poster preview canvas
-- Event banner image upload support (Max 5MB)
-- Organization logo upload support (Max 5MB)
-- Save draft poster
-- PNG image download (1080 x 1350 resolution)
-- A4 portrait PDF download
-- Poster records management page (`/poster-records`)
-- View, search, filter, and delete saved poster records
 
 ---
 
@@ -168,7 +147,7 @@ The Event Poster Generator allows users to create engaging event promotional pos
 - Tailwind CSS
 - React Router DOM
 - SVG Multipage Canvas Renderer
-- jsPDF (A4 Vector/JPEG rendering)
+- jsPDF (A4 Vector rendering)
 - html2canvas (Certificates/Posters)
 - JSZip
 
@@ -201,9 +180,15 @@ event-certificate-generator/
 │   │   │   └── navigation/
 │   │   │       ├── AttendanceNavigation.jsx
 │   │   │       └── MobileModuleNavigation.jsx
+│   │   ├── data/
+│   │   │   └── brandingData.js
 │   │   ├── layouts/
+│   │   │   ├── LandingLayout.jsx
+│   │   │   ├── CertificateLayout.jsx
+│   │   │   ├── ReportLayout.jsx
 │   │   │   └── AttendanceLayout.jsx
 │   │   ├── pages/
+│   │   │   ├── Dashboard.jsx
 │   │   │   ├── AttendanceDashboard.jsx
 │   │   │   ├── StudentList.jsx
 │   │   │   ├── CreateAttendanceSheet.jsx
@@ -212,6 +197,7 @@ event-certificate-generator/
 │   │   │   ├── attendanceStudentApi.js
 │   │   │   └── attendanceSheetApi.js
 │   │   ├── utils/
+│   │   │   ├── resolveAttendancePageMetrics.js
 │   │   │   ├── downloadAttendanceSheetPdf.js
 │   │   │   └── validateAttendanceSheetLayout.js
 │   │   ├── App.jsx

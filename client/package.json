@@ -1,6 +1,7 @@
 {
-  "name": "event-certificate-generator-client",
+  "name": "event-document-generator",
   "version": "1.0.0",
+  "description": "Frontend for Event Document Generator with certificate, poster, event report, and attendance sheet tools.",
   "author": "Pritkumar Koradiya",
   "private": true,
   "type": "module",
