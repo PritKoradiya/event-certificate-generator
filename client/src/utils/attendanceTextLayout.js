@@ -17,7 +17,7 @@ export const fitPdfTextToWidth = ({
 
   let textWidth = pdf.getTextWidth(text);
 
-  while (textWidth > maxWidth && currentSize > minimumSize) {
+  while (textWidth > maxWidth && currentSize > minimumSize + 0.01) {
     currentSize = Math.max(minimumSize, Number((currentSize - 0.2).toFixed(2)));
     pdf.setFontSize(currentSize);
     textWidth = pdf.getTextWidth(text);
@@ -64,10 +64,15 @@ export const fitSvgAttendanceText = ({
 
   let textWidthMm = getMeasuredWidthMm(currentSize);
 
-  while (textWidthMm > maxWidth && currentSize > minimumSize) {
+  while (textWidthMm > maxWidth && currentSize > minimumSize + 0.01) {
     currentSize = Math.max(minimumSize, Number((currentSize - 0.2).toFixed(2)));
     textWidthMm = getMeasuredWidthMm(currentSize);
   }
 
   return currentSize;
+};
+
+export default {
+  fitPdfTextToWidth,
+  fitSvgAttendanceText
 };

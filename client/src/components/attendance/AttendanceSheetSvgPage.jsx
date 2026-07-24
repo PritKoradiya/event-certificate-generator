@@ -1,9 +1,8 @@
 import React from "react";
 import AttendanceSheetHeader from "./AttendanceSheetHeader.jsx";
 import AttendanceSheetTable from "./AttendanceSheetTable.jsx";
-import { ATTENDANCE_LAYOUT, ATTENDANCE_TYPOGRAPHY } from "../../config/attendanceSheetLayout.js";
-
-const ptToMm = (pt) => (pt * 25.4) / 72;
+import { ATTENDANCE_TYPOGRAPHY } from "../../config/attendanceSheetLayout.js";
+import { resolveAttendancePageMetrics, ptToSvgUnit } from "../../utils/resolveAttendancePageMetrics.js";
 
 function AttendanceSheetSvgPage({
   department = "",
@@ -17,11 +16,12 @@ function AttendanceSheetSvgPage({
   pageIndex = 0,
   totalPages = 1
 }) {
-  const { studentRowsY, rowHeight, coordinatorGap, tableX } = ATTENDANCE_LAYOUT;
-  const fontFam = ATTENDANCE_TYPOGRAPHY.svgFontFamily;
+  const metrics = resolveAttendancePageMetrics({
+    rowsOnPage: studentsChunk.length,
+    isLastPage
+  });
 
-  const tableBottomY = studentRowsY + studentsChunk.length * rowHeight;
-  const coordinatorY = tableBottomY + coordinatorGap;
+  const fontFam = ATTENDANCE_TYPOGRAPHY.svgFontFamily;
 
   return (
     <svg
@@ -42,22 +42,24 @@ function AttendanceSheetSvgPage({
         heading={heading}
         className={className}
         date={date}
+        metrics={metrics}
       />
 
       {/* Attendance Table */}
       <AttendanceSheetTable
         studentsChunk={studentsChunk}
         startSrNo={startSrNo}
+        metrics={metrics}
       />
 
       {/* Event Coordinator - ONLY rendered on the final page immediately below table */}
       {isLastPage && (
         <g className="event-coordinator-section">
           <text
-            x={tableX}
-            y={coordinatorY}
+            x={metrics.tableX}
+            y={metrics.coordinatorY}
             fontFamily={fontFam}
-            fontSize={ptToMm(ATTENDANCE_TYPOGRAPHY.coordinator.size)}
+            fontSize={ptToSvgUnit(ATTENDANCE_TYPOGRAPHY.coordinator.size)}
             fill="#000000"
           >
             <tspan fontWeight="bold">Event Coordinator : </tspan>

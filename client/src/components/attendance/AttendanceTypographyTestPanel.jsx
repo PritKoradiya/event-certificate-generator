@@ -1,5 +1,6 @@
 import React from "react";
-import { ATTENDANCE_LAYOUT, ATTENDANCE_TYPOGRAPHY } from "../../config/attendanceSheetLayout.js";
+import { ATTENDANCE_LAYOUT } from "../../config/attendanceSheetLayout.js";
+import { resolveAttendancePageMetrics } from "../../utils/resolveAttendancePageMetrics.js";
 
 const generateTestStudents = (count, nameOverride = null) => {
   return Array.from({ length: count }, (_, i) => {
@@ -24,10 +25,14 @@ function AttendanceTypographyTestPanel({ onLoadTestScenario, onTriggerDirectPdf 
 
   const scenarios = [
     { label: "1 Student", count: 1 },
+    { label: "10 Students", count: 10 },
+    { label: "24 Students", count: 24 },
     { label: "39 Students (1 Full Pg)", count: 39 },
     { label: "40 Students (2 Pgs)", count: 40 },
-    { label: "45 Students (Reference)", count: 45 },
-    { label: "78 Students (2 Full Pgs)", count: 78 }
+    { label: "45 Students", count: 45 },
+    { label: "63 Students (AIML1)", count: 63 },
+    { label: "78 Students (2 Full Pgs)", count: 78 },
+    { label: "79 Students (3 Pgs)", count: 79 }
   ];
 
   const handleScenarioClick = (count) => {
@@ -55,7 +60,7 @@ function AttendanceTypographyTestPanel({ onLoadTestScenario, onTriggerDirectPdf 
         department: "CE/IT",
         className: "CE4"
       },
-      ...generateTestStudents(43)
+      ...generateTestStudents(61)
     ];
 
     onLoadTestScenario({
@@ -71,7 +76,7 @@ function AttendanceTypographyTestPanel({ onLoadTestScenario, onTriggerDirectPdf 
       department: "CE/IT",
       className: "CE4",
       heading: "International Workshop on Advanced Quantum Computing, Generative AI Models, and Autonomous Software Systems Architecture",
-      students: generateTestStudents(45)
+      students: generateTestStudents(63)
     });
   };
 
@@ -84,7 +89,7 @@ function AttendanceTypographyTestPanel({ onLoadTestScenario, onTriggerDirectPdf 
       className: "CE4",
       date: "23/07/2026",
       eventCoordinatorName: "Dr. Jayshri Patil",
-      students: generateTestStudents(45)
+      students: generateTestStudents(63)
     };
     onTriggerDirectPdf(testSheet);
   };
@@ -101,9 +106,9 @@ function AttendanceTypographyTestPanel({ onLoadTestScenario, onTriggerDirectPdf 
           </h4>
         </div>
         <div className="flex items-center gap-3 text-[11px] font-mono text-amber-800">
-          <span>Rows/Pg: <strong>{ATTENDANCE_LAYOUT.rowsPerPage}</strong></span>
-          <span>RowHeight: <strong>{ATTENDANCE_LAYOUT.rowHeight}mm</strong></span>
+          <span>Max Rows/Pg: <strong>{ATTENDANCE_LAYOUT.rowsPerPage}</strong></span>
           <span>TableWidth: <strong>{ATTENDANCE_LAYOUT.tableWidth}mm</strong></span>
+          <span>SignWidth: <strong>{ATTENDANCE_LAYOUT.columns.sign}mm</strong></span>
         </div>
       </div>
 

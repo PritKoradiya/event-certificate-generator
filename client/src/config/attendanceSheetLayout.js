@@ -4,35 +4,33 @@ export const ATTENDANCE_PAGE = {
 };
 
 export const ATTENDANCE_LAYOUT = {
-  tableX: 25,
-  tableWidth: 160,
-
-  headerTop: 11,
+  tableX: 12,
+  tableWidth: 186,
 
   schoolY: 16,
-  departmentY: 22,
-  headingY: 28,
-  documentTitleY: 34,
-  classY: 40,
+  departmentY: 22.5,
+  headingY: 28.5,
+  documentTitleY: 34.5,
+  classY: 40.5,
 
-  dateRowY: 45,
-  dateRowHeight: 7,
+  dateRowY: 44.5,
+  dateRowHeight: 8,
 
-  columnHeaderY: 52,
-  columnHeaderHeight: 7,
+  columnHeaderY: 52.5,
+  columnHeaderHeight: 8,
 
-  studentRowsY: 59,
-  rowHeight: 5.25,
+  studentRowsY: 60.5,
+  rowHeight: 5.35,
 
   rowsPerPage: 39,
 
-  coordinatorGap: 9,
+  coordinatorGap: 8,
 
   columns: {
-    serial: 16,
+    serial: 15,
     enrollment: 43,
-    name: 82,
-    sign: 19
+    name: 110,
+    sign: 18
   }
 };
 
@@ -41,62 +39,62 @@ export const ATTENDANCE_TYPOGRAPHY = {
   svgFontFamily: "'Times New Roman', Times, serif",
 
   school: {
-    size: 13,
+    size: 15,
     weight: "bold"
   },
 
   department: {
-    size: 10.5,
+    size: 12,
     weight: "bold"
   },
 
   heading: {
-    size: 10,
-    weight: "bold"
-  },
-
-  documentTitle: {
     size: 11.5,
     weight: "bold"
   },
 
+  documentTitle: {
+    size: 13,
+    weight: "bold"
+  },
+
   className: {
-    size: 10,
+    size: 11.5,
     weight: "bold"
   },
 
   date: {
-    size: 8.5,
+    size: 9.5,
     weight: "normal"
   },
 
   dateLabel: {
-    size: 8.5,
+    size: 9.5,
     weight: "bold"
   },
 
   columnHeader: {
-    size: 8.3,
+    size: 9.5,
     weight: "bold"
   },
 
   serial: {
-    size: 7.8,
-    minimumSize: 7
+    size: 8.8,
+    minimumSize: 7.2
   },
 
   enrollment: {
-    size: 7.5,
-    minimumSize: 6.7
+    size: 8.6,
+    minimumSize: 7.2
   },
 
   studentName: {
-    size: 8,
-    minimumSize: 6.7
+    size: 9.0,
+    minimumSize: 7.4
   },
 
   coordinator: {
-    size: 9.5,
+    size: 10.5,
     weight: "bold"
   }
 };
